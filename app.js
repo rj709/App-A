@@ -281,10 +281,13 @@ function render() {
     list.appendChild(cardEl);
   }
 
+  const feesTotal = state.cards.reduce((s, c) => s + (Number(c.annualFee) || 0), 0);
+
   document.getElementById('stat-unused').textContent = fmtMoney(unusedTotal);
   document.getElementById('stat-expiring').textContent = expiringCount;
   document.getElementById('stat-ytd').textContent =
     annualTotal > 0 ? `${fmtMoney(ytdTotal)} / ${fmtMoney(annualTotal)}` : fmtMoney(ytdTotal);
+  document.getElementById('stat-fees').textContent = fmtMoney(feesTotal);
 
   renderExpiring(expiringItems);
 }
