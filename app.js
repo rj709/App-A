@@ -238,12 +238,9 @@ function render() {
       } else if (isPartial) {
         metaParts.push(`${fmtMoney(capturedThisPeriod)} used`);
       }
-      if (daysLeft !== null) {
-        metaParts.push(`${daysLeft}d left`);
-        if (!used && !credit.ignored && daysLeft <= 30) {
-          expiringCount += 1;
-          expiringItems.push({ card, ...dc });
-        }
+      if (daysLeft !== null && !used && !credit.ignored && daysLeft <= 30) {
+        expiringCount += 1;
+        expiringItems.push({ card, ...dc });
       }
       if (annual > 0) {
         metaParts.push(`${fmtMoney(ytd)} / ${fmtMoney(annual)} YTD`);
