@@ -302,3 +302,39 @@ dialog menu {
 }
 
 dialog menu button[value="delete"] { margin-right: auto; }
+
+#history-list {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.25rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.history-row:hover { background: rgba(148, 163, 184, 0.08); }
+
+.history-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.history-label {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  gap: 0.75rem;
+}
+
+.history-period { font-weight: 500; }
+.history-meta { color: var(--muted); font-size: 0.8rem; }
+
+.history-row.used .history-period { color: var(--good); }

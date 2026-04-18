@@ -215,6 +215,7 @@ function render() {
           <button class="row-btn" data-move-credit="${credit.id}" data-dir="up" title="Move up" ${isFirst ? 'disabled' : ''}>▲</button>
           <button class="row-btn" data-move-credit="${credit.id}" data-dir="down" title="Move down" ${isLast ? 'disabled' : ''}>▼</button>
         </div>
+        <button class="row-btn" data-history-credit="${credit.id}" title="History">⟳</button>
         <button class="row-btn" data-edit-credit="${credit.id}" title="Edit">✎</button>
       `;
       row.querySelector('.credit-name').textContent = credit.name;
@@ -226,6 +227,7 @@ function render() {
       row.addEventListener('click', (e) => {
         if (e.target.closest('[data-edit-credit]')) return;
         if (e.target.closest('[data-move-credit]')) return;
+        if (e.target.closest('[data-history-credit]')) return;
         toggleUsed(credit);
       });
       credList.appendChild(row);
@@ -437,8 +439,101 @@ document.getElementById('cards-list').addEventListener('click', (e) => {
   const moveCredit = e.target.closest('[data-move-credit]');
   if (moveCredit) {
     moveCreditInCard(moveCredit.dataset.moveCredit, moveCredit.dataset.dir);
+    return;
+  }
+  const historyCredit = e.target.closest('[data-history-credit]');
+  if (historyCredit) {
+    const credit = state.credits.find((c) => c.id === historyCredit.dataset.historyCredit);
+    openHistoryDialog(credit);
   }
 });
+
+// Build every period from the credit's anchor up to (and including) the
+// current one. Used for retroactive "catch-up" marking.
+function allPeriods(credit, now = new Date()) {
+  if (credit.frequency === 'one-time') {
+    return [{ start: new Date(credit.resetDate + 'T00:00:00'), end: null }];
+  }
+  const monthsPer = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12 }[credit.frequency];
+  if (!monthsPer) return [];
+  const anchor = new Date(credit.resetDate + 'T00:00:00');
+  const periods = [];
+  let start = new Date(anchor);
+  while (start <= now) {
+    const end = new Date(start);
+    end.setMonth(end.getMonth() + monthsPer);
+    periods.push({ start: new Date(start), end: new Date(end) });
+    if (end > now) break;
+    start = end;
+  }
+  return periods;
+}
+
+function formatPeriod(period, freq) {
+  if (!period.end) return 'One-time';
+  const s = period.start;
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const y = s.getFullYear();
+  const m = s.getMonth();
+  if (freq === 'monthly') return `${monthNames[m]} ${y}`;
+  if (freq === 'quarterly') return `Q${Math.floor(m / 3) + 1} ${y}`;
+  if (freq === 'semiannual') return `${m < 6 ? 'H1' : 'H2'} ${y}`;
+  if (freq === 'annual') {
+    const eY = new Date(period.end);
+    eY.setDate(eY.getDate() - 1);
+    return y === eY.getFullYear() ? `${y}` : `${y}–${eY.getFullYear()}`;
+  }
+  return s.toISOString().slice(0, 10);
+}
+
+function openHistoryDialog(credit) {
+  const dialog = document.getElementById('history-dialog');
+  document.getElementById('history-title').textContent = `${credit.name} — history`;
+  document.getElementById('history-sub').textContent =
+    `${fmtMoney(credit.value)} · ${formatFrequency(credit.frequency)}`;
+  renderHistoryList(credit);
+  dialog.showModal();
+}
+
+function renderHistoryList(credit) {
+  const list = document.getElementById('history-list');
+  list.innerHTML = '';
+  const periods = allPeriods(credit).reverse();
+  const now = new Date();
+
+  for (const p of periods) {
+    const key = p.end ? `${credit.id}::${p.start.toISOString().slice(0, 10)}` : `${credit.id}::one-time`;
+    const used = !!state.usages[key];
+    const isCurrent = p.end && p.start <= now && now < p.end;
+
+    const row = document.createElement('label');
+    row.className = 'history-row' + (used ? ' used' : '');
+    row.innerHTML = `
+      <input type="checkbox" ${used ? 'checked' : ''} />
+      <div class="history-label">
+        <span class="history-period"></span>
+        <span class="history-meta"></span>
+      </div>
+    `;
+    row.querySelector('.history-period').textContent = formatPeriod(p, credit.frequency);
+    row.querySelector('.history-meta').textContent = isCurrent ? 'Current' : '';
+
+    row.querySelector('input').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        // Use now if the period contains today, otherwise a date inside
+        // the period — so YTD totals attribute to the correct year.
+        const ts = p.end && (now < p.start || now >= p.end) ? p.start : new Date();
+        state.usages[key] = ts.toISOString();
+      } else {
+        delete state.usages[key];
+      }
+      save();
+      renderHistoryList(credit);
+      render();
+    });
+    list.appendChild(row);
+  }
+}
 
 function moveCreditInCard(creditId, dir) {
   const credit = state.credits.find((c) => c.id === creditId);
