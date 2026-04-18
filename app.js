@@ -1,7 +1,8 @@
 const STORAGE_KEY = 'credit-tracker-v1';
 
 const state = load() || { cards: [], credits: [], usages: {} };
-if (!state.ui) state.ui = { hideUsed: false };
+if (!state.ui) state.ui = { hideUsed: false, hidePartial: false };
+if (state.ui.hidePartial === undefined) state.ui.hidePartial = false;
 
 function load() {
   try {
@@ -208,9 +209,15 @@ function render() {
     const credList = document.createElement('div');
     credList.className = 'credits';
 
-    const visibleCredits = state.ui.hideUsed
-      ? cardCredits.filter((dc) => !dc.used)
-      : cardCredits;
+    const visibleCredits = cardCredits.filter((dc) => {
+      if (state.ui.hideUsed && dc.used) return false;
+      if (state.ui.hidePartial && dc.used) {
+        const ytd = yearlyCaptured(dc.credit);
+        const annual = annualValue(dc.credit);
+        if (annual > 0 && ytd < annual) return false;
+      }
+      return true;
+    });
 
     if (cardCredits.length === 0) {
       const p = document.createElement('p');
@@ -480,17 +487,26 @@ document.querySelectorAll('[data-close]').forEach((b) =>
 );
 
 const toggleUsedBtn = document.getElementById('toggle-used');
-function updateToggleUsedBtn() {
+const togglePartialBtn = document.getElementById('toggle-partial');
+function updateFilterButtons() {
   toggleUsedBtn.textContent = state.ui.hideUsed ? 'Show used' : 'Hide used';
   toggleUsedBtn.classList.toggle('active', state.ui.hideUsed);
+  togglePartialBtn.textContent = state.ui.hidePartial ? 'Show in-progress' : 'Hide in-progress';
+  togglePartialBtn.classList.toggle('active', state.ui.hidePartial);
 }
 toggleUsedBtn.addEventListener('click', () => {
   state.ui.hideUsed = !state.ui.hideUsed;
   save();
-  updateToggleUsedBtn();
+  updateFilterButtons();
   render();
 });
-updateToggleUsedBtn();
+togglePartialBtn.addEventListener('click', () => {
+  state.ui.hidePartial = !state.ui.hidePartial;
+  save();
+  updateFilterButtons();
+  render();
+});
+updateFilterButtons();
 
 document.getElementById('add-card-btn').addEventListener('click', () => openCardDialog());
 document.getElementById('add-credit-btn').addEventListener('click', () => {
