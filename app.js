@@ -85,6 +85,33 @@ function decorateCredit(credit) {
   return { credit, period, used, daysLeft };
 }
 
+function periodsPerYear(freq) {
+  return { monthly: 12, quarterly: 4, semiannual: 2, annual: 1, 'one-time': 1 }[freq] || 0;
+}
+
+function annualValue(credit) {
+  return periodsPerYear(credit.frequency) * (Number(credit.value) || 0);
+}
+
+// Sum value of all redemptions recorded this calendar year for a credit.
+function yearlyCaptured(credit, year = new Date().getFullYear()) {
+  const prefix = credit.id + '::';
+  const value = Number(credit.value) || 0;
+  let captured = 0;
+  for (const [key, ts] of Object.entries(state.usages)) {
+    if (!key.startsWith(prefix)) continue;
+    const suffix = key.slice(prefix.length);
+    let periodYear;
+    if (suffix === 'one-time') {
+      periodYear = new Date(ts).getFullYear();
+    } else {
+      periodYear = new Date(suffix + 'T00:00:00').getFullYear();
+    }
+    if (periodYear === year) captured += value;
+  }
+  return captured;
+}
+
 function render() {
   const list = document.getElementById('cards-list');
   const empty = document.getElementById('empty-state');
@@ -98,6 +125,8 @@ function render() {
 
   let unusedTotal = 0;
   let expiringCount = 0;
+  let ytdTotal = 0;
+  let annualTotal = 0;
   const expiringItems = [];
 
   for (const card of state.cards) {
@@ -105,13 +134,15 @@ function render() {
       .filter((c) => c.cardId === card.id)
       .map(decorateCredit);
 
+    const cardYtd = cardCredits.reduce((s, dc) => s + yearlyCaptured(dc.credit), 0);
+    const cardAnnual = cardCredits.reduce((s, dc) => s + annualValue(dc.credit), 0);
+
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
     cardEl.style.borderLeftColor = card.color || '#6366f1';
 
-    const sub = [card.issuer, card.last4 ? `•••• ${card.last4}` : null]
-      .filter(Boolean)
-      .join(' · ');
+    const subParts = [card.issuer, card.last4 ? `•••• ${card.last4}` : null].filter(Boolean);
+    const sub = subParts.join(' · ');
 
     const head = document.createElement('div');
     head.className = 'card-head';
@@ -119,6 +150,7 @@ function render() {
       <div>
         <div class="card-title"></div>
         <div class="card-sub"></div>
+        <div class="card-ytd"></div>
       </div>
       <div class="card-actions">
         <button data-edit-card="${card.id}">Edit</button>
@@ -127,6 +159,10 @@ function render() {
     `;
     head.querySelector('.card-title').textContent = card.name;
     head.querySelector('.card-sub').textContent = sub;
+    if (cardAnnual > 0) {
+      head.querySelector('.card-ytd').textContent =
+        `${fmtMoney(cardYtd)} / ${fmtMoney(cardAnnual)} YTD`;
+    }
     cardEl.appendChild(head);
 
     const credList = document.createElement('div');
@@ -139,9 +175,15 @@ function render() {
       credList.appendChild(p);
     }
 
+    ytdTotal += cardYtd;
+    annualTotal += cardAnnual;
+
     for (const dc of cardCredits) {
       const { credit, used, daysLeft } = dc;
       if (!used) unusedTotal += Number(credit.value) || 0;
+
+      const ytd = yearlyCaptured(credit);
+      const annual = annualValue(credit);
 
       const metaParts = [formatFrequency(credit.frequency)];
       if (daysLeft !== null) {
@@ -150,6 +192,9 @@ function render() {
           expiringCount += 1;
           expiringItems.push({ card, ...dc });
         }
+      }
+      if (annual > 0) {
+        metaParts.push(`${fmtMoney(ytd)} / ${fmtMoney(annual)} YTD`);
       }
       if (credit.notes) metaParts.push(credit.notes);
 
@@ -189,6 +234,8 @@ function render() {
 
   document.getElementById('stat-unused').textContent = fmtMoney(unusedTotal);
   document.getElementById('stat-expiring').textContent = expiringCount;
+  document.getElementById('stat-ytd').textContent =
+    annualTotal > 0 ? `${fmtMoney(ytdTotal)} / ${fmtMoney(annualTotal)}` : fmtMoney(ytdTotal);
 
   renderExpiring(expiringItems);
 }

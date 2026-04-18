@@ -129,6 +129,14 @@ button.danger:hover { background: #dc2626; }
   font-size: 0.85rem;
 }
 
+.card-ytd {
+  color: var(--good);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.15rem;
+}
+
 .card-actions button {
   background: transparent;
   color: var(--muted);
