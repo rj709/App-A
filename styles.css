@@ -303,6 +303,19 @@ dialog menu {
 
 dialog menu button[value="delete"] { margin-right: auto; }
 
+dialog label.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+dialog label.checkbox input {
+  width: auto;
+  margin: 0;
+}
+
 #history-list {
   max-height: 60vh;
   overflow-y: auto;

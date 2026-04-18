@@ -65,11 +65,40 @@ function isUsedThisPeriod(credit, period) {
   return !!state.usages[periodKey(credit, period)];
 }
 
+// A usage is either a timestamp string (fixed-value credit) or
+// { ts, amount } for variable credits where the user captured part of a cap.
+function usageTs(usage) {
+  return typeof usage === 'object' && usage !== null ? usage.ts : usage;
+}
+
+function usageAmount(credit, usage) {
+  if (usage == null) return 0;
+  if (typeof usage === 'object' && 'amount' in usage) return Number(usage.amount) || 0;
+  return Number(credit.value) || 0;
+}
+
+function promptForAmount(credit, existing) {
+  const cap = Number(credit.value) || 0;
+  const msg = `Amount used from "${credit.name}" (cap $${cap}):`;
+  const raw = prompt(msg, existing != null ? String(existing) : '');
+  if (raw === null) return null;
+  const amount = parseFloat(raw);
+  if (!isFinite(amount) || amount < 0) {
+    alert('Enter a number ≥ 0.');
+    return null;
+  }
+  return amount;
+}
+
 function toggleUsed(credit) {
   const period = currentPeriod(credit);
   const key = period.end ? periodKey(credit, period) : credit.id + '::one-time';
   if (state.usages[key]) {
     delete state.usages[key];
+  } else if (credit.isVariable) {
+    const amount = promptForAmount(credit);
+    if (amount == null) return;
+    state.usages[key] = { ts: new Date().toISOString(), amount };
   } else {
     state.usages[key] = new Date().toISOString();
   }
@@ -98,11 +127,12 @@ function annualValue(credit) {
 // reset anchor isn't Jan 1 still attribute correctly.
 function yearlyCaptured(credit, year = new Date().getFullYear()) {
   const prefix = credit.id + '::';
-  const value = Number(credit.value) || 0;
   let captured = 0;
-  for (const [key, ts] of Object.entries(state.usages)) {
+  for (const [key, usage] of Object.entries(state.usages)) {
     if (!key.startsWith(prefix)) continue;
-    if (new Date(ts).getFullYear() === year) captured += value;
+    if (new Date(usageTs(usage)).getFullYear() === year) {
+      captured += usageAmount(credit, usage);
+    }
   }
   return captured;
 }
@@ -182,13 +212,17 @@ function render() {
       const dc = cardCredits[i];
       const isFirst = i === 0;
       const isLast = i === cardCredits.length - 1;
-      const { credit, used, daysLeft } = dc;
+      const { credit, period, used, daysLeft } = dc;
+      const usageKey = period.end ? periodKey(credit, period) : credit.id + '::one-time';
+      const currentUsage = state.usages[usageKey];
+      const capturedThisPeriod = used ? usageAmount(credit, currentUsage) : 0;
       if (!used) unusedTotal += Number(credit.value) || 0;
 
       const ytd = yearlyCaptured(credit);
       const annual = annualValue(credit);
 
       const metaParts = [formatFrequency(credit.frequency)];
+      if (credit.isVariable) metaParts.push(used ? `${fmtMoney(capturedThisPeriod)} used` : 'Variable');
       if (daysLeft !== null) {
         metaParts.push(`${daysLeft}d left`);
         if (!used && daysLeft <= 30) {
@@ -327,6 +361,7 @@ function openCreditDialog(credit = null, defaultCardId = null) {
   creditForm.elements.frequency.value = credit?.frequency || 'monthly';
   creditForm.elements.resetDate.value = credit?.resetDate || defaultResetDate();
   creditForm.elements.notes.value = credit?.notes || '';
+  creditForm.elements.variable.checked = !!credit?.isVariable;
   creditDeleteBtn.classList.toggle('hidden', !credit);
   creditDialog.showModal();
 }
@@ -375,6 +410,7 @@ creditForm.addEventListener('submit', (e) => {
     frequency: data.frequency,
     resetDate: data.resetDate,
     notes: data.notes,
+    isVariable: !!data.variable,
   };
   if (data.id) {
     const credit = state.credits.find((c) => c.id === data.id);
@@ -526,14 +562,24 @@ function renderHistoryList(credit) {
       </div>
     `;
     row.querySelector('.history-period').textContent = formatPeriod(p, credit.frequency);
-    row.querySelector('.history-meta').textContent = isCurrent ? 'Current' : '';
+    const metaBits = [];
+    if (isCurrent) metaBits.push('Current');
+    if (used && credit.isVariable) metaBits.push(fmtMoney(usageAmount(credit, state.usages[key])));
+    row.querySelector('.history-meta').textContent = metaBits.join(' · ');
 
     row.querySelector('input').addEventListener('change', (e) => {
       if (e.target.checked) {
-        // Use now if the period contains today, otherwise a date inside
-        // the period — so YTD totals attribute to the correct year.
         const ts = p.end && (now < p.start || now >= p.end) ? p.start : new Date();
-        state.usages[key] = ts.toISOString();
+        if (credit.isVariable) {
+          const amount = promptForAmount(credit);
+          if (amount == null) {
+            e.target.checked = false;
+            return;
+          }
+          state.usages[key] = { ts: ts.toISOString(), amount };
+        } else {
+          state.usages[key] = ts.toISOString();
+        }
       } else {
         delete state.usages[key];
       }
