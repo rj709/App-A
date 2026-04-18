@@ -124,7 +124,10 @@ function render() {
   let annualTotal = 0;
   const expiringItems = [];
 
-  for (const card of state.cards) {
+  for (let ci = 0; ci < state.cards.length; ci++) {
+    const card = state.cards[ci];
+    const isFirstCard = ci === 0;
+    const isLastCard = ci === state.cards.length - 1;
     const cardCredits = state.credits
       .filter((c) => c.cardId === card.id)
       .map(decorateCredit);
@@ -148,6 +151,8 @@ function render() {
         <div class="card-ytd"></div>
       </div>
       <div class="card-actions">
+        <button class="row-btn" data-move-card="${card.id}" data-dir="up" title="Move earlier" ${isFirstCard ? 'disabled' : ''}>▲</button>
+        <button class="row-btn" data-move-card="${card.id}" data-dir="down" title="Move later" ${isLastCard ? 'disabled' : ''}>▼</button>
         <button data-edit-card="${card.id}">Edit</button>
         <button data-delete-card="${card.id}">Delete</button>
       </div>
@@ -410,6 +415,11 @@ document.getElementById('add-credit-btn').addEventListener('click', () => {
 });
 
 document.getElementById('cards-list').addEventListener('click', (e) => {
+  const moveCard = e.target.closest('[data-move-card]');
+  if (moveCard) {
+    moveCardOrder(moveCard.dataset.moveCard, moveCard.dataset.dir);
+    return;
+  }
   const editCard = e.target.closest('[data-edit-card]');
   if (editCard) {
     const card = state.cards.find((c) => c.id === editCard.dataset.editCard);
@@ -533,6 +543,16 @@ function renderHistoryList(credit) {
     });
     list.appendChild(row);
   }
+}
+
+function moveCardOrder(cardId, dir) {
+  const idx = state.cards.findIndex((c) => c.id === cardId);
+  if (idx === -1) return;
+  const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= state.cards.length) return;
+  [state.cards[idx], state.cards[swapIdx]] = [state.cards[swapIdx], state.cards[idx]];
+  save();
+  render();
 }
 
 function moveCreditInCard(creditId, dir) {
