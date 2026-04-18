@@ -147,20 +147,7 @@ button.danger:hover { background: #dc2626; }
 }
 .card-actions button:hover { color: var(--text); background: var(--surface-2); }
 
-.credits {
-  margin-top: 0.5rem;
-  max-height: 180px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.credits::-webkit-scrollbar { width: 8px; }
-.credits::-webkit-scrollbar-track { background: transparent; }
-.credits::-webkit-scrollbar-thumb {
-  background: var(--surface-2);
-  border-radius: 4px;
-}
-.credits::-webkit-scrollbar-thumb:hover { background: #475569; }
+.credits { margin-top: 0.5rem; }
 
 .credit {
   display: flex;
