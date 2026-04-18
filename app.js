@@ -230,7 +230,12 @@ function render() {
       const annual = annualValue(credit);
 
       const metaParts = [formatFrequency(credit.frequency)];
-      if (credit.isVariable) metaParts.push(used ? `${fmtMoney(capturedThisPeriod)} used` : 'Variable');
+      const isPartial = used && typeof currentUsage === 'object' && currentUsage !== null && 'amount' in currentUsage;
+      if (credit.isVariable) {
+        metaParts.push(used ? `${fmtMoney(capturedThisPeriod)} used` : 'Variable');
+      } else if (isPartial) {
+        metaParts.push(`${fmtMoney(capturedThisPeriod)} used`);
+      }
       if (daysLeft !== null) {
         metaParts.push(`${daysLeft}d left`);
         if (!used && daysLeft <= 30) {
@@ -262,6 +267,7 @@ function render() {
           <button class="row-btn" data-move-credit="${credit.id}" data-dir="up" title="Move up" ${isFirst ? 'disabled' : ''}>▲</button>
           <button class="row-btn" data-move-credit="${credit.id}" data-dir="down" title="Move down" ${isLast ? 'disabled' : ''}>▼</button>
         </div>
+        <button class="row-btn" data-amount-credit="${credit.id}" title="Enter partial amount">$</button>
         <button class="row-btn" data-history-credit="${credit.id}" title="History">⟳</button>
         <button class="row-btn" data-edit-credit="${credit.id}" title="Edit">✎</button>
       `;
@@ -275,6 +281,7 @@ function render() {
         if (e.target.closest('[data-edit-credit]')) return;
         if (e.target.closest('[data-move-credit]')) return;
         if (e.target.closest('[data-history-credit]')) return;
+        if (e.target.closest('[data-amount-credit]')) return;
         toggleUsed(credit);
       });
       credList.appendChild(row);
@@ -511,8 +518,32 @@ document.getElementById('cards-list').addEventListener('click', (e) => {
   if (historyCredit) {
     const credit = state.credits.find((c) => c.id === historyCredit.dataset.historyCredit);
     openHistoryDialog(credit);
+    return;
+  }
+  const amountCredit = e.target.closest('[data-amount-credit]');
+  if (amountCredit) {
+    const credit = state.credits.find((c) => c.id === amountCredit.dataset.amountCredit);
+    setPartialAmount(credit);
   }
 });
+
+function setPartialAmount(credit) {
+  const period = currentPeriod(credit);
+  const key = period.end ? periodKey(credit, period) : credit.id + '::one-time';
+  const existing = state.usages[key];
+  const current = existing != null ? usageAmount(credit, existing) : Number(credit.value) || 0;
+  const raw = prompt(`Amount used from "${credit.name}" (face $${credit.value}):`, String(current));
+  if (raw === null) return;
+  const amt = parseFloat(raw);
+  if (!isFinite(amt) || amt < 0) { alert('Enter a number ≥ 0.'); return; }
+  const now = new Date();
+  const ts = existing != null
+    ? usageTs(existing)
+    : (period.end && (now < period.start || now >= period.end) ? period.start.toISOString() : now.toISOString());
+  state.usages[key] = { ts, amount: amt };
+  save();
+  render();
+}
 
 // Build every period from the credit's anchor up to (and including) the
 // current one. Used for retroactive "catch-up" marking.
