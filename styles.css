@@ -353,3 +353,15 @@ dialog label.checkbox input {
 .history-meta { color: var(--muted); font-size: 0.8rem; }
 
 .history-row.used .history-period { color: var(--good); }
+
+.history-check {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.history-amount-btn {
+  font-weight: 600;
+  color: var(--muted);
+}
+.history-amount-btn:hover { color: var(--text); }

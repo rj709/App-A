@@ -603,20 +603,44 @@ function renderHistoryList(credit) {
     const used = !!state.usages[key];
     const isCurrent = p.end && p.start <= now && now < p.end;
 
-    const row = document.createElement('label');
+    const row = document.createElement('div');
     row.className = 'history-row' + (used ? ' used' : '');
     row.innerHTML = `
-      <input type="checkbox" ${used ? 'checked' : ''} />
+      <label class="history-check">
+        <input type="checkbox" ${used ? 'checked' : ''} />
+      </label>
       <div class="history-label">
         <span class="history-period"></span>
         <span class="history-meta"></span>
       </div>
+      <button type="button" class="row-btn history-amount-btn" title="Enter amount used">$</button>
     `;
     row.querySelector('.history-period').textContent = formatPeriod(p, credit.frequency);
     const metaBits = [];
     if (isCurrent) metaBits.push('Current');
-    if (used && credit.isVariable) metaBits.push(fmtMoney(usageAmount(credit, state.usages[key])));
+    if (used) metaBits.push(fmtMoney(usageAmount(credit, state.usages[key])));
     row.querySelector('.history-meta').textContent = metaBits.join(' · ');
+
+    row.querySelector('.history-amount-btn').addEventListener('click', () => {
+      const existing = state.usages[key];
+      const current = existing != null
+        ? usageAmount(credit, existing)
+        : Number(credit.value) || 0;
+      const raw = prompt(
+        `Amount used for ${formatPeriod(p, credit.frequency)} (face $${credit.value}):`,
+        String(current)
+      );
+      if (raw === null) return;
+      const amt = parseFloat(raw);
+      if (!isFinite(amt) || amt < 0) { alert('Enter a number ≥ 0.'); return; }
+      const ts = existing != null
+        ? usageTs(existing)
+        : (p.end && (now < p.start || now >= p.end) ? p.start.toISOString() : new Date().toISOString());
+      state.usages[key] = { ts, amount: amt };
+      save();
+      renderHistoryList(credit);
+      render();
+    });
 
     row.querySelector('input').addEventListener('change', (e) => {
       if (e.target.checked) {
