@@ -166,6 +166,13 @@ button.danger:hover { background: #dc2626; }
 .credit.used { opacity: 0.55; }
 .credit.used .credit-name { text-decoration: line-through; }
 
+.credit.ignored {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+.credit.ignored .credit-name { color: var(--muted); }
+.credit.ignored .credit-value { text-decoration: line-through; }
+
 .credit-check {
   width: 22px;
   height: 22px;

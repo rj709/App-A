@@ -165,8 +165,9 @@ function render() {
       .filter((c) => c.cardId === card.id)
       .map(decorateCredit);
 
-    const cardYtd = cardCredits.reduce((s, dc) => s + yearlyCaptured(dc.credit), 0);
-    const cardAnnual = cardCredits.reduce((s, dc) => s + annualValue(dc.credit), 0);
+    const activeCredits = cardCredits.filter((dc) => !dc.credit.ignored);
+    const cardYtd = activeCredits.reduce((s, dc) => s + yearlyCaptured(dc.credit), 0);
+    const cardAnnual = activeCredits.reduce((s, dc) => s + annualValue(dc.credit), 0);
 
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
@@ -224,12 +225,13 @@ function render() {
       const usageKey = period.end ? periodKey(credit, period) : credit.id + '::one-time';
       const currentUsage = state.usages[usageKey];
       const capturedThisPeriod = used ? usageAmount(credit, currentUsage) : 0;
-      if (!used) unusedTotal += Number(credit.value) || 0;
+      if (!used && !credit.ignored) unusedTotal += Number(credit.value) || 0;
 
       const ytd = yearlyCaptured(credit);
       const annual = annualValue(credit);
 
       const metaParts = [formatFrequency(credit.frequency)];
+      if (credit.ignored) metaParts.push('Not using');
       const isPartial = used && typeof currentUsage === 'object' && currentUsage !== null && 'amount' in currentUsage;
       if (credit.isVariable) {
         metaParts.push(used ? `${fmtMoney(capturedThisPeriod)} used` : 'Variable');
@@ -238,7 +240,7 @@ function render() {
       }
       if (daysLeft !== null) {
         metaParts.push(`${daysLeft}d left`);
-        if (!used && daysLeft <= 30) {
+        if (!used && !credit.ignored && daysLeft <= 30) {
           expiringCount += 1;
           expiringItems.push({ card, ...dc });
         }
@@ -254,7 +256,7 @@ function render() {
       else if (daysLeft !== null && daysLeft <= 30) badgeClass = 'warn';
 
       const row = document.createElement('div');
-      row.className = 'credit' + (used ? ' used' : '');
+      row.className = 'credit' + (used ? ' used' : '') + (credit.ignored ? ' ignored' : '');
       row.innerHTML = `
         <div class="credit-check">✓</div>
         <div class="credit-body">
@@ -381,6 +383,7 @@ function openCreditDialog(credit = null, defaultCardId = null) {
   creditForm.elements.resetDate.value = credit?.resetDate || defaultResetDate();
   creditForm.elements.notes.value = credit?.notes || '';
   creditForm.elements.variable.checked = !!credit?.isVariable;
+  creditForm.elements.ignored.checked = !!credit?.ignored;
   creditDeleteBtn.classList.toggle('hidden', !credit);
   creditDialog.showModal();
 }
@@ -438,6 +441,7 @@ creditForm.addEventListener('submit', (e) => {
     resetDate: data.resetDate,
     notes: data.notes,
     isVariable: !!data.variable,
+    ignored: !!data.ignored,
   };
   if (data.id) {
     const credit = state.credits.find((c) => c.id === data.id);
