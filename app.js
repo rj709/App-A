@@ -93,21 +93,16 @@ function annualValue(credit) {
   return periodsPerYear(credit.frequency) * (Number(credit.value) || 0);
 }
 
-// Sum value of all redemptions recorded this calendar year for a credit.
+// Sum value of redemptions recorded this calendar year for a credit.
+// Uses the timestamp of when the user marked it used, so credits whose
+// reset anchor isn't Jan 1 still attribute correctly.
 function yearlyCaptured(credit, year = new Date().getFullYear()) {
   const prefix = credit.id + '::';
   const value = Number(credit.value) || 0;
   let captured = 0;
   for (const [key, ts] of Object.entries(state.usages)) {
     if (!key.startsWith(prefix)) continue;
-    const suffix = key.slice(prefix.length);
-    let periodYear;
-    if (suffix === 'one-time') {
-      periodYear = new Date(ts).getFullYear();
-    } else {
-      periodYear = new Date(suffix + 'T00:00:00').getFullYear();
-    }
-    if (periodYear === year) captured += value;
+    if (new Date(ts).getFullYear() === year) captured += value;
   }
   return captured;
 }
