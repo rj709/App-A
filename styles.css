@@ -192,6 +192,33 @@ button.danger:hover { background: #dc2626; }
   font-variant-numeric: tabular-nums;
 }
 
+.credit-reorder {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.row-btn {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.row-btn:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.row-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
 .badge {
   font-size: 0.7rem;
   padding: 0.1rem 0.5rem;

@@ -173,7 +173,10 @@ function render() {
     ytdTotal += cardYtd;
     annualTotal += cardAnnual;
 
-    for (const dc of cardCredits) {
+    for (let i = 0; i < cardCredits.length; i++) {
+      const dc = cardCredits[i];
+      const isFirst = i === 0;
+      const isLast = i === cardCredits.length - 1;
       const { credit, used, daysLeft } = dc;
       if (!used) unusedTotal += Number(credit.value) || 0;
 
@@ -208,7 +211,11 @@ function render() {
         </div>
         <div class="credit-value"></div>
         <span class="badge ${badgeClass}"></span>
-        <button class="edit-credit" data-edit-credit="${credit.id}" title="Edit">✎</button>
+        <div class="credit-reorder">
+          <button class="row-btn" data-move-credit="${credit.id}" data-dir="up" title="Move up" ${isFirst ? 'disabled' : ''}>▲</button>
+          <button class="row-btn" data-move-credit="${credit.id}" data-dir="down" title="Move down" ${isLast ? 'disabled' : ''}>▼</button>
+        </div>
+        <button class="row-btn" data-edit-credit="${credit.id}" title="Edit">✎</button>
       `;
       row.querySelector('.credit-name').textContent = credit.name;
       row.querySelector('.credit-meta').textContent = metaParts.join(' · ');
@@ -218,6 +225,7 @@ function render() {
 
       row.addEventListener('click', (e) => {
         if (e.target.closest('[data-edit-credit]')) return;
+        if (e.target.closest('[data-move-credit]')) return;
         toggleUsed(credit);
       });
       credList.appendChild(row);
@@ -424,8 +432,27 @@ document.getElementById('cards-list').addEventListener('click', (e) => {
   if (editCredit) {
     const credit = state.credits.find((c) => c.id === editCredit.dataset.editCredit);
     openCreditDialog(credit);
+    return;
+  }
+  const moveCredit = e.target.closest('[data-move-credit]');
+  if (moveCredit) {
+    moveCreditInCard(moveCredit.dataset.moveCredit, moveCredit.dataset.dir);
   }
 });
+
+function moveCreditInCard(creditId, dir) {
+  const credit = state.credits.find((c) => c.id === creditId);
+  if (!credit) return;
+  const siblings = state.credits.filter((c) => c.cardId === credit.cardId);
+  const localIdx = siblings.indexOf(credit);
+  const swapWith = dir === 'up' ? siblings[localIdx - 1] : siblings[localIdx + 1];
+  if (!swapWith) return;
+  const a = state.credits.indexOf(credit);
+  const b = state.credits.indexOf(swapWith);
+  [state.credits[a], state.credits[b]] = [state.credits[b], state.credits[a]];
+  save();
+  render();
+}
 
 // Export / import
 document.getElementById('export-btn').addEventListener('click', () => {
