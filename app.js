@@ -341,7 +341,7 @@ function formatFrequency(f) {
   return {
     monthly: 'Monthly',
     quarterly: 'Quarterly',
-    semiannual: 'Every 6 mo',
+    semiannual: 'Biannual',
     annual: 'Annual',
     'one-time': 'One-time',
   }[f] || f;
