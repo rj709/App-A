@@ -21,7 +21,10 @@ function uid() {
 
 function fmtMoney(n) {
   const v = Number(n) || 0;
-  return v % 1 === 0 ? `$${v}` : `$${v.toFixed(2)}`;
+  const opts = v % 1 === 0
+    ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+    : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  return `$${v.toLocaleString('en-US', opts)}`;
 }
 
 function daysBetween(a, b) {
