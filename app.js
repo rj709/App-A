@@ -45,7 +45,7 @@ function currentPeriod(credit, now = new Date()) {
     return { start: anchor, end: null };
   }
 
-  const monthsPer = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12 }[freq];
+  const monthsPer = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12, quadrennial: 48 }[freq];
   if (!monthsPer) return { start: anchor, end: null };
 
   // Walk the period start forward until it contains `now`.
@@ -121,7 +121,7 @@ function decorateCredit(credit) {
 }
 
 function periodsPerYear(freq) {
-  return { monthly: 12, quarterly: 4, semiannual: 2, annual: 1, 'one-time': 1 }[freq] || 0;
+  return { monthly: 12, quarterly: 4, semiannual: 2, annual: 1, quadrennial: 0.25, 'one-time': 1 }[freq] || 0;
 }
 
 function annualValue(credit) {
@@ -362,6 +362,7 @@ function formatFrequency(f) {
     quarterly: 'Quarterly',
     semiannual: 'Biannual',
     annual: 'Annual',
+    quadrennial: 'Every 4 years',
     'one-time': 'One-time',
   }[f] || f;
 }
@@ -603,7 +604,7 @@ function allPeriods(credit, through = endOfCurrentYear()) {
   if (credit.frequency === 'one-time') {
     return [{ start: new Date(credit.resetDate + 'T00:00:00'), end: null }];
   }
-  const monthsPer = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12 }[credit.frequency];
+  const monthsPer = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12, quadrennial: 48 }[credit.frequency];
   if (!monthsPer) return [];
   const anchor = new Date(credit.resetDate + 'T00:00:00');
   const periods = [];
@@ -631,7 +632,7 @@ function formatPeriod(period, freq) {
   if (freq === 'monthly') return `${monthNames[m]} ${y}`;
   if (freq === 'quarterly') return `Q${Math.floor(m / 3) + 1} ${y}`;
   if (freq === 'semiannual') return `${m < 6 ? 'H1' : 'H2'} ${y}`;
-  if (freq === 'annual') {
+  if (freq === 'annual' || freq === 'quadrennial') {
     const eY = new Date(period.end);
     eY.setDate(eY.getDate() - 1);
     return y === eY.getFullYear() ? `${y}` : `${y}–${eY.getFullYear()}`;
