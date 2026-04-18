@@ -545,9 +545,10 @@ function setPartialAmount(credit) {
   render();
 }
 
-// Build every period from the credit's anchor up to (and including) the
-// current one. Used for retroactive "catch-up" marking.
-function allPeriods(credit, now = new Date()) {
+// Build every period from the credit's anchor through the end of the
+// current calendar year, so the user can see and pre-mark upcoming
+// periods too.
+function allPeriods(credit, through = endOfCurrentYear()) {
   if (credit.frequency === 'one-time') {
     return [{ start: new Date(credit.resetDate + 'T00:00:00'), end: null }];
   }
@@ -556,14 +557,18 @@ function allPeriods(credit, now = new Date()) {
   const anchor = new Date(credit.resetDate + 'T00:00:00');
   const periods = [];
   let start = new Date(anchor);
-  while (start <= now) {
+  while (start <= through) {
     const end = new Date(start);
     end.setMonth(end.getMonth() + monthsPer);
     periods.push({ start: new Date(start), end: new Date(end) });
-    if (end > now) break;
     start = end;
   }
   return periods;
+}
+
+function endOfCurrentYear() {
+  const y = new Date().getFullYear();
+  return new Date(y, 11, 31, 23, 59, 59, 999);
 }
 
 function formatPeriod(period, freq) {
@@ -615,11 +620,14 @@ function renderHistoryList(credit) {
       </div>
       <button type="button" class="row-btn history-amount-btn" title="Enter amount used">$</button>
     `;
+    const isFuture = p.end && p.start > now;
     row.querySelector('.history-period').textContent = formatPeriod(p, credit.frequency);
     const metaBits = [];
     if (isCurrent) metaBits.push('Current');
+    else if (isFuture) metaBits.push('Upcoming');
     if (used) metaBits.push(fmtMoney(usageAmount(credit, state.usages[key])));
     row.querySelector('.history-meta').textContent = metaBits.join(' · ');
+    if (isFuture) row.classList.add('future');
 
     row.querySelector('.history-amount-btn').addEventListener('click', () => {
       const existing = state.usages[key];

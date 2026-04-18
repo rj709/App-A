@@ -365,3 +365,5 @@ dialog label.checkbox input {
   color: var(--muted);
 }
 .history-amount-btn:hover { color: var(--text); }
+
+.history-row.future .history-period { color: var(--muted); }
