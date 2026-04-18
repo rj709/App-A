@@ -214,7 +214,7 @@ function render() {
       if (state.ui.hidePartial && dc.used) {
         const ytd = yearlyCaptured(dc.credit);
         const annual = annualValue(dc.credit);
-        if (annual > 0 && ytd < annual) return false;
+        if (annual > 0 && ytd >= annual) return false;
       }
       return true;
     });
@@ -491,7 +491,7 @@ const togglePartialBtn = document.getElementById('toggle-partial');
 function updateFilterButtons() {
   toggleUsedBtn.textContent = state.ui.hideUsed ? 'Show used' : 'Hide used';
   toggleUsedBtn.classList.toggle('active', state.ui.hideUsed);
-  togglePartialBtn.textContent = state.ui.hidePartial ? 'Show in-progress' : 'Hide in-progress';
+  togglePartialBtn.textContent = state.ui.hidePartial ? 'Show completed' : 'Hide completed';
   togglePartialBtn.classList.toggle('active', state.ui.hidePartial);
 }
 toggleUsedBtn.addEventListener('click', () => {
