@@ -1,8 +1,9 @@
 const STORAGE_KEY = 'credit-tracker-v1';
 
 const state = load() || { cards: [], credits: [], usages: {} };
-if (!state.ui) state.ui = { hideUsed: false, hidePartial: false };
+if (!state.ui) state.ui = { hideUsed: false, hidePartial: false, hideIgnored: false };
 if (state.ui.hidePartial === undefined) state.ui.hidePartial = false;
+if (state.ui.hideIgnored === undefined) state.ui.hideIgnored = false;
 
 function load() {
   try {
@@ -210,6 +211,7 @@ function render() {
     credList.className = 'credits';
 
     const visibleCredits = cardCredits.filter((dc) => {
+      if (state.ui.hideIgnored && dc.credit.ignored) return false;
       if (state.ui.hideUsed && dc.used) return false;
       if (state.ui.hidePartial && dc.used) {
         const ytd = yearlyCaptured(dc.credit);
@@ -488,11 +490,14 @@ document.querySelectorAll('[data-close]').forEach((b) =>
 
 const toggleUsedBtn = document.getElementById('toggle-used');
 const togglePartialBtn = document.getElementById('toggle-partial');
+const toggleIgnoredBtn = document.getElementById('toggle-ignored');
 function updateFilterButtons() {
   toggleUsedBtn.textContent = state.ui.hideUsed ? 'Show used' : 'Hide used';
   toggleUsedBtn.classList.toggle('active', state.ui.hideUsed);
   togglePartialBtn.textContent = state.ui.hidePartial ? 'Show completed' : 'Hide completed';
   togglePartialBtn.classList.toggle('active', state.ui.hidePartial);
+  toggleIgnoredBtn.textContent = state.ui.hideIgnored ? 'Show ignored' : 'Hide ignored';
+  toggleIgnoredBtn.classList.toggle('active', state.ui.hideIgnored);
 }
 toggleUsedBtn.addEventListener('click', () => {
   state.ui.hideUsed = !state.ui.hideUsed;
@@ -502,6 +507,12 @@ toggleUsedBtn.addEventListener('click', () => {
 });
 togglePartialBtn.addEventListener('click', () => {
   state.ui.hidePartial = !state.ui.hidePartial;
+  save();
+  updateFilterButtons();
+  render();
+});
+toggleIgnoredBtn.addEventListener('click', () => {
+  state.ui.hideIgnored = !state.ui.hideIgnored;
   save();
   updateFilterButtons();
   render();
