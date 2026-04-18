@@ -59,9 +59,24 @@ body {
 }
 
 main {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+#cards-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  #cards-list { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  #cards-list { grid-template-columns: 1fr; }
 }
 
 .toolbar {
@@ -94,7 +109,6 @@ button.danger:hover { background: #dc2626; }
   background: var(--surface);
   border-radius: var(--radius);
   padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
   border-left: 4px solid var(--accent);
 }
 
