@@ -169,7 +169,9 @@ function render() {
     cardEl.className = 'card';
     cardEl.style.borderLeftColor = card.color || '#6366f1';
 
+    const fee = Number(card.annualFee) || 0;
     const subParts = [card.issuer, card.last4 ? `•••• ${card.last4}` : null].filter(Boolean);
+    if (fee > 0) subParts.push(`${fmtMoney(fee)} fee`);
     const sub = subParts.join(' · ');
 
     const head = document.createElement('div');
@@ -189,9 +191,12 @@ function render() {
     `;
     head.querySelector('.card-title').textContent = card.name;
     head.querySelector('.card-sub').textContent = sub;
-    if (cardAnnual > 0) {
-      head.querySelector('.card-ytd').textContent =
-        `${fmtMoney(cardYtd)} / ${fmtMoney(cardAnnual)} YTD`;
+    const ytdEl = head.querySelector('.card-ytd');
+    if (cardAnnual > 0 || fee > 0) {
+      const net = cardYtd - fee;
+      const netLabel = fee > 0 ? ` · Net ${net >= 0 ? '+' : '−'}${fmtMoney(Math.abs(net))}` : '';
+      ytdEl.textContent = `${fmtMoney(cardYtd)} / ${fmtMoney(cardAnnual)} YTD${netLabel}`;
+      ytdEl.classList.toggle('card-ytd-neg', fee > 0 && net < 0);
     }
     cardEl.appendChild(head);
 
@@ -345,6 +350,7 @@ function openCardDialog(card = null) {
   cardForm.elements.name.value = card?.name || '';
   cardForm.elements.issuer.value = card?.issuer || '';
   cardForm.elements.last4.value = card?.last4 || '';
+  cardForm.elements.annualFee.value = card?.annualFee ?? '';
   cardForm.elements.color.value = card?.color || '#6366f1';
   cardDialog.showModal();
 }
@@ -379,15 +385,23 @@ function escapeHtml(s) {
 cardForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(cardForm));
+  const fee = data.annualFee === '' ? 0 : parseFloat(data.annualFee) || 0;
   if (data.id) {
     const card = state.cards.find((c) => c.id === data.id);
-    Object.assign(card, { name: data.name, issuer: data.issuer, last4: data.last4, color: data.color });
+    Object.assign(card, {
+      name: data.name,
+      issuer: data.issuer,
+      last4: data.last4,
+      annualFee: fee,
+      color: data.color,
+    });
   } else {
     state.cards.push({
       id: uid(),
       name: data.name,
       issuer: data.issuer,
       last4: data.last4,
+      annualFee: fee,
       color: data.color,
     });
   }

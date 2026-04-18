@@ -137,6 +137,8 @@ button.danger:hover { background: #dc2626; }
   margin-top: 0.15rem;
 }
 
+.card-ytd.card-ytd-neg { color: var(--bad); }
+
 .card-actions button {
   background: transparent;
   color: var(--muted);
