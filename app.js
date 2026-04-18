@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'credit-tracker-v1';
 
 const state = load() || { cards: [], credits: [], usages: {} };
+if (!state.ui) state.ui = { hideUsed: false };
 
 function load() {
   try {
@@ -207,20 +208,29 @@ function render() {
     const credList = document.createElement('div');
     credList.className = 'credits';
 
+    const visibleCredits = state.ui.hideUsed
+      ? cardCredits.filter((dc) => !dc.used)
+      : cardCredits;
+
     if (cardCredits.length === 0) {
       const p = document.createElement('p');
       p.className = 'card-sub';
       p.textContent = 'No credits tracked yet.';
+      credList.appendChild(p);
+    } else if (visibleCredits.length === 0) {
+      const p = document.createElement('p');
+      p.className = 'card-sub';
+      p.textContent = 'All credits used this period.';
       credList.appendChild(p);
     }
 
     ytdTotal += cardYtd;
     annualTotal += cardAnnual;
 
-    for (let i = 0; i < cardCredits.length; i++) {
-      const dc = cardCredits[i];
+    for (let i = 0; i < visibleCredits.length; i++) {
+      const dc = visibleCredits[i];
       const isFirst = i === 0;
-      const isLast = i === cardCredits.length - 1;
+      const isLast = i === visibleCredits.length - 1;
       const { credit, period, used, daysLeft } = dc;
       const usageKey = period.end ? periodKey(credit, period) : credit.id + '::one-time';
       const currentUsage = state.usages[usageKey];
@@ -468,6 +478,19 @@ creditDeleteBtn.addEventListener('click', () => {
 document.querySelectorAll('[data-close]').forEach((b) =>
   b.addEventListener('click', () => b.closest('dialog').close())
 );
+
+const toggleUsedBtn = document.getElementById('toggle-used');
+function updateToggleUsedBtn() {
+  toggleUsedBtn.textContent = state.ui.hideUsed ? 'Show used' : 'Hide used';
+  toggleUsedBtn.classList.toggle('active', state.ui.hideUsed);
+}
+toggleUsedBtn.addEventListener('click', () => {
+  state.ui.hideUsed = !state.ui.hideUsed;
+  save();
+  updateToggleUsedBtn();
+  render();
+});
+updateToggleUsedBtn();
 
 document.getElementById('add-card-btn').addEventListener('click', () => openCardDialog());
 document.getElementById('add-credit-btn').addEventListener('click', () => {

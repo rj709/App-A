@@ -102,6 +102,11 @@ button:hover { background: #475569; }
 button.primary { background: var(--accent); }
 button.primary:hover { background: #4f46e5; }
 button.ghost { background: transparent; border-color: var(--surface-2); }
+button.ghost.active {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--accent);
+}
 button.danger { background: var(--bad); }
 button.danger:hover { background: #dc2626; }
 
