@@ -97,7 +97,7 @@ body {
 .breakdown-header,
 .breakdown-row {
   display: grid;
-  grid-template-columns: 2fr 3fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
   gap: 1rem;
   align-items: center;
   padding: 0.5rem 0.75rem;
@@ -126,24 +126,31 @@ body {
   color: var(--text);
 }
 
-.breakdown-math {
-  color: var(--good);
+.breakdown-ytd,
+.breakdown-annual,
+.breakdown-net,
+.breakdown-fee {
   font-size: 0.9rem;
   font-weight: 500;
-}
-
-.breakdown-math.breakdown-net-neg { color: var(--bad); }
-
-.breakdown-fee {
-  color: var(--muted);
   text-align: right;
-  font-size: 0.9rem;
 }
+
+.breakdown-ytd { color: var(--good); }
+.breakdown-annual { color: var(--text); }
+.breakdown-net { color: var(--good); }
+.breakdown-net.breakdown-net-neg { color: var(--bad); }
+.breakdown-fee { color: var(--muted); }
+
+.breakdown-header span:not(:first-child) { text-align: right; }
 
 @media (max-width: 900px) {
   .summary-stats { grid-template-columns: repeat(2, 1fr); }
   .breakdown-header,
-  .breakdown-row { grid-template-columns: 2fr 2fr 1fr; }
+  .breakdown-row {
+    grid-template-columns: 2fr repeat(4, 1fr);
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
 }
 
 main {

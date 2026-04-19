@@ -323,30 +323,33 @@ function renderBreakdown(rows) {
   header.className = 'breakdown-header';
   header.innerHTML = `
     <span>Card</span>
-    <span>YTD · Net</span>
+    <span>Captured YTD</span>
+    <span>Annual potential</span>
+    <span>Net</span>
     <span>Annual fee</span>
   `;
   container.appendChild(header);
 
   for (const { card, fee, cardYtd, cardAnnual } of rows) {
     const net = cardYtd - fee;
+    const netClass = fee > 0 && net < 0 ? ' breakdown-net-neg' : '';
     const row = document.createElement('div');
     row.className = 'breakdown-row';
     row.style.borderLeftColor = card.color || '#737373';
-    const mathText = cardAnnual > 0
-      ? `${fmtMoney(cardYtd)} / ${fmtMoney(cardAnnual)}`
-      : fmtMoney(cardYtd);
-    const netText = fee > 0
-      ? ` · Net ${net >= 0 ? '+' : '−'}${fmtMoney(Math.abs(net))}`
-      : '';
-    const netClass = fee > 0 && net < 0 ? ' breakdown-net-neg' : '';
     row.innerHTML = `
       <span class="breakdown-name"></span>
-      <span class="breakdown-math${netClass}"></span>
+      <span class="breakdown-ytd"></span>
+      <span class="breakdown-annual"></span>
+      <span class="breakdown-net${netClass}"></span>
       <span class="breakdown-fee"></span>
     `;
     row.querySelector('.breakdown-name').textContent = card.name;
-    row.querySelector('.breakdown-math').textContent = mathText + netText;
+    row.querySelector('.breakdown-ytd').textContent = fmtMoney(cardYtd);
+    row.querySelector('.breakdown-annual').textContent =
+      cardAnnual > 0 ? fmtMoney(cardAnnual) : '—';
+    row.querySelector('.breakdown-net').textContent = fee > 0
+      ? `${net >= 0 ? '+' : '−'}${fmtMoney(Math.abs(net))}`
+      : '—';
     row.querySelector('.breakdown-fee').textContent = fee > 0 ? fmtMoney(fee) : '—';
     container.appendChild(row);
   }
