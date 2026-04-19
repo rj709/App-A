@@ -4,12 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Credit Card Credits Tracker</title>
-  <link rel="stylesheet" href="styles.css?v=25" />
+  <link rel="stylesheet" href="styles.css?v=26" />
 </head>
 <body>
   <header class="topbar">
     <h1>Credit Tracker</h1>
-    <div class="summary">
+  </header>
+
+  <main>
+    <section class="summary">
       <div class="stat">
         <span class="stat-label">Captured YTD</span>
         <span class="stat-value" id="stat-ytd">$0</span>
@@ -26,10 +29,8 @@
         <span class="stat-label">Expiring &lt; 30 days</span>
         <span class="stat-value" id="stat-expiring">0</span>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <main>
     <section id="expiring-section" class="card-list hidden">
       <h2>Use these soon</h2>
       <div id="expiring-list"></div>
@@ -47,6 +48,7 @@
     </section>
 
     <section id="cards-section">
+      <h2>Cards</h2>
       <div id="cards-list"></div>
       <p id="empty-state" class="empty">No cards yet. Add your first card to get started.</p>
     </section>
@@ -136,6 +138,6 @@
     </menu>
   </dialog>
 
-  <script src="app.js?v=25"></script>
+  <script src="app.js?v=26"></script>
 </body>
 </html>
