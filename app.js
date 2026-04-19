@@ -307,8 +307,8 @@ function render() {
 
   document.getElementById('stat-unused').textContent = fmtMoney(unusedTotal);
   document.getElementById('stat-expiring').textContent = expiringCount;
-  document.getElementById('stat-ytd').textContent =
-    annualTotal > 0 ? `${fmtMoney(ytdTotal)} / ${fmtMoney(annualTotal)}` : fmtMoney(ytdTotal);
+  document.getElementById('stat-ytd').textContent = fmtMoney(ytdTotal);
+  document.getElementById('stat-annual').textContent = fmtMoney(annualTotal);
   document.getElementById('stat-fees').textContent = fmtMoney(feesTotal);
 
   renderBreakdown(breakdownRows);
