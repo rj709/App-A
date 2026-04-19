@@ -159,6 +159,7 @@ function render() {
   let ytdTotal = 0;
   let annualTotal = 0;
   const expiringItems = [];
+  const breakdownRows = [];
 
   for (let ci = 0; ci < state.cards.length; ci++) {
     const card = state.cards[ci];
@@ -178,7 +179,6 @@ function render() {
 
     const fee = Number(card.annualFee) || 0;
     const subParts = [card.issuer, card.last4 ? `•••• ${card.last4}` : null].filter(Boolean);
-    if (fee > 0) subParts.push(`${fmtMoney(fee)} fee`);
     const sub = subParts.join(' · ');
 
     const head = document.createElement('div');
@@ -187,7 +187,6 @@ function render() {
       <div>
         <div class="card-title"></div>
         <div class="card-sub"></div>
-        <div class="card-ytd"></div>
       </div>
       <div class="card-actions">
         <button class="row-btn" data-move-card="${card.id}" data-dir="up" title="Move earlier" ${isFirstCard ? 'disabled' : ''}>▲</button>
@@ -198,13 +197,6 @@ function render() {
     `;
     head.querySelector('.card-title').textContent = card.name;
     head.querySelector('.card-sub').textContent = sub;
-    const ytdEl = head.querySelector('.card-ytd');
-    if (cardAnnual > 0 || fee > 0) {
-      const net = cardYtd - fee;
-      const netLabel = fee > 0 ? ` · Net ${net >= 0 ? '+' : '−'}${fmtMoney(Math.abs(net))}` : '';
-      ytdEl.textContent = `${fmtMoney(cardYtd)} / ${fmtMoney(cardAnnual)} YTD${netLabel}`;
-      ytdEl.classList.toggle('card-ytd-neg', fee > 0 && net < 0);
-    }
     cardEl.appendChild(head);
 
     const credList = document.createElement('div');
@@ -235,6 +227,7 @@ function render() {
 
     ytdTotal += cardYtd;
     annualTotal += cardAnnual;
+    breakdownRows.push({ card, fee, cardYtd, cardAnnual });
 
     for (let i = 0; i < visibleCredits.length; i++) {
       const dc = visibleCredits[i];
@@ -317,7 +310,46 @@ function render() {
     annualTotal > 0 ? `${fmtMoney(ytdTotal)} / ${fmtMoney(annualTotal)}` : fmtMoney(ytdTotal);
   document.getElementById('stat-fees').textContent = fmtMoney(feesTotal);
 
+  renderBreakdown(breakdownRows);
   renderExpiring(expiringItems);
+}
+
+function renderBreakdown(rows) {
+  const container = document.getElementById('summary-breakdown');
+  container.innerHTML = '';
+  if (rows.length === 0) return;
+
+  const header = document.createElement('div');
+  header.className = 'breakdown-header';
+  header.innerHTML = `
+    <span>Card</span>
+    <span>YTD · Net</span>
+    <span>Annual fee</span>
+  `;
+  container.appendChild(header);
+
+  for (const { card, fee, cardYtd, cardAnnual } of rows) {
+    const net = cardYtd - fee;
+    const row = document.createElement('div');
+    row.className = 'breakdown-row';
+    row.style.borderLeftColor = card.color || '#737373';
+    const mathText = cardAnnual > 0
+      ? `${fmtMoney(cardYtd)} / ${fmtMoney(cardAnnual)}`
+      : fmtMoney(cardYtd);
+    const netText = fee > 0
+      ? ` · Net ${net >= 0 ? '+' : '−'}${fmtMoney(Math.abs(net))}`
+      : '';
+    const netClass = fee > 0 && net < 0 ? ' breakdown-net-neg' : '';
+    row.innerHTML = `
+      <span class="breakdown-name"></span>
+      <span class="breakdown-math${netClass}"></span>
+      <span class="breakdown-fee"></span>
+    `;
+    row.querySelector('.breakdown-name').textContent = card.name;
+    row.querySelector('.breakdown-math').textContent = mathText + netText;
+    row.querySelector('.breakdown-fee').textContent = fee > 0 ? fmtMoney(fee) : '—';
+    container.appendChild(row);
+  }
 }
 
 function renderExpiring(items) {

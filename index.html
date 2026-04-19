@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Credit Card Credits Tracker</title>
-  <link rel="stylesheet" href="styles.css?v=26" />
+  <link rel="stylesheet" href="styles.css?v=27" />
 </head>
 <body>
   <header class="topbar">
@@ -13,22 +13,25 @@
 
   <main>
     <section class="summary">
-      <div class="stat">
-        <span class="stat-label">Captured YTD</span>
-        <span class="stat-value" id="stat-ytd">$0</span>
+      <div class="summary-stats">
+        <div class="stat">
+          <span class="stat-label">Captured YTD</span>
+          <span class="stat-value" id="stat-ytd">$0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Annual fees</span>
+          <span class="stat-value" id="stat-fees">$0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Unused this period</span>
+          <span class="stat-value" id="stat-unused">$0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Expiring &lt; 30 days</span>
+          <span class="stat-value" id="stat-expiring">0</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-label">Annual fees</span>
-        <span class="stat-value" id="stat-fees">$0</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Unused this period</span>
-        <span class="stat-value" id="stat-unused">$0</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Expiring &lt; 30 days</span>
-        <span class="stat-value" id="stat-expiring">0</span>
-      </div>
+      <div class="summary-breakdown" id="summary-breakdown"></div>
     </section>
 
     <section id="expiring-section" class="card-list hidden">
@@ -138,6 +141,6 @@
     </menu>
   </dialog>
 
-  <script src="app.js?v=26"></script>
+  <script src="app.js?v=27"></script>
 </body>
 </html>
