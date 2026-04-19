@@ -27,7 +27,7 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   gap: 2rem;
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 2rem 1.5rem 0.5rem;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -199,7 +199,7 @@ body {
 main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 0.5rem 1.5rem 1.5rem;
 }
 
 #cards-list {
