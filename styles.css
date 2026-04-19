@@ -196,6 +196,45 @@ body {
   }
 }
 
+@media (max-width: 640px) {
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1.25rem 1rem 0;
+  }
+  .topbar h1 { font-size: 1.75rem; }
+  .topbar-sub { font-size: 0.9rem; }
+  .topbar-right { align-items: flex-start; }
+  .last-updated { align-items: flex-start; }
+  #last-updated-value { font-size: 0.95rem; }
+
+  main { padding: 0 1rem 1rem; }
+
+  .summary { padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .stat-value { font-size: 1.5rem; }
+  .stat-label { font-size: 0.62rem; letter-spacing: 0.08em; }
+
+  .summary-breakdown {
+    overflow-x: auto;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+  }
+  .breakdown-header,
+  .breakdown-row {
+    min-width: 560px;
+    font-size: 0.75rem;
+  }
+
+  .toolbar { flex-wrap: wrap; }
+
+  dialog { width: min(95vw, 420px); padding: 1rem; }
+}
+
 main {
   max-width: 1400px;
   margin: 0 auto;
