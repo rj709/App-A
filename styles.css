@@ -158,10 +158,8 @@ body {
 }
 
 .breakdown-row {
-  border-left: 3px solid var(--accent);
   background: rgba(255, 255, 255, 0.02);
   border-radius: 6px;
-  padding-left: 0.9rem;
 }
 
 .breakdown-name {
@@ -292,7 +290,6 @@ button.danger:hover { background: #dc2626; }
   border-radius: var(--radius);
   padding: 1rem 1.25rem;
   border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
 }
 
 .card-head {

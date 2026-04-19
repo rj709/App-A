@@ -191,7 +191,6 @@ function render() {
 
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
-    cardEl.style.borderLeftColor = card.color || '#737373';
 
     const fee = Number(card.annualFee) || 0;
     const subParts = [card.issuer, card.last4 ? `•••• ${card.last4}` : null].filter(Boolean);
@@ -351,7 +350,6 @@ function renderBreakdown(rows) {
     const netClass = fee > 0 && net < 0 ? ' breakdown-net-neg' : '';
     const row = document.createElement('div');
     row.className = 'breakdown-row';
-    row.style.borderLeftColor = card.color || '#737373';
     row.innerHTML = `
       <span class="breakdown-name"></span>
       <span class="breakdown-ytd"></span>
