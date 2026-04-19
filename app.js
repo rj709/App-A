@@ -1,9 +1,10 @@
 const STORAGE_KEY = 'credit-tracker-v1';
 
 const state = load() || { cards: [], credits: [], usages: {} };
-if (!state.ui) state.ui = { hideUsed: false, hidePartial: false, hideIgnored: false };
+if (!state.ui) state.ui = { hideUsed: false, hidePartial: false, hideIgnored: false, hideCards: false };
 if (state.ui.hidePartial === undefined) state.ui.hidePartial = false;
 if (state.ui.hideIgnored === undefined) state.ui.hideIgnored = false;
+if (state.ui.hideCards === undefined) state.ui.hideCards = false;
 
 function load() {
   try {
@@ -554,6 +555,19 @@ toggleIgnoredBtn.addEventListener('click', () => {
   render();
 });
 updateFilterButtons();
+
+const toggleCardsBtn = document.getElementById('toggle-cards');
+function applyCardsVisibility() {
+  const section = document.getElementById('cards-section');
+  section.classList.toggle('collapsed', state.ui.hideCards);
+  toggleCardsBtn.textContent = state.ui.hideCards ? 'Show' : 'Hide';
+}
+toggleCardsBtn.addEventListener('click', () => {
+  state.ui.hideCards = !state.ui.hideCards;
+  save();
+  applyCardsVisibility();
+});
+applyCardsVisibility();
 
 document.getElementById('add-card-btn').addEventListener('click', () => openCardDialog());
 document.getElementById('add-credit-btn').addEventListener('click', () => {

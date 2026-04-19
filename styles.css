@@ -364,6 +364,34 @@ h2 {
   margin: 0 0 1rem;
 }
 
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-head h2 { margin: 0; }
+
+.link-btn {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 0 0.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  background: transparent;
+  color: var(--text);
+}
+
+#cards-section.collapsed #cards-list,
+#cards-section.collapsed #empty-state { display: none; }
+
 dialog {
   border: none;
   border-radius: var(--radius);

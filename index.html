@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Credit Card Credits Tracker</title>
-  <link rel="stylesheet" href="styles.css?v=28" />
+  <link rel="stylesheet" href="styles.css?v=29" />
 </head>
 <body>
   <header class="topbar">
@@ -51,7 +51,10 @@
     </section>
 
     <section id="cards-section">
-      <h2>Cards</h2>
+      <div class="section-head">
+        <h2>Cards</h2>
+        <button id="toggle-cards" class="link-btn">Hide</button>
+      </div>
       <div id="cards-list"></div>
       <p id="empty-state" class="empty">No cards yet. Add your first card to get started.</p>
     </section>
@@ -141,6 +144,6 @@
     </menu>
   </dialog>
 
-  <script src="app.js?v=28"></script>
+  <script src="app.js?v=29"></script>
 </body>
 </html>
