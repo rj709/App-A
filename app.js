@@ -16,7 +16,22 @@ function load() {
 }
 
 function save() {
+  state.lastUpdated = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  renderLastUpdated();
+}
+
+function renderLastUpdated() {
+  const el = document.getElementById('last-updated-value');
+  if (!el) return;
+  if (!state.lastUpdated) {
+    el.textContent = '—';
+    return;
+  }
+  const d = new Date(state.lastUpdated);
+  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  el.textContent = `${date} at ${time}`;
 }
 
 function uid() {
@@ -835,3 +850,4 @@ document.getElementById('import-file').addEventListener('change', async (e) => {
 });
 
 render();
+renderLastUpdated();

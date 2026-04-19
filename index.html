@@ -4,11 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Credit Card Credits Tracker</title>
-  <link rel="stylesheet" href="styles.css?v=30" />
+  <link rel="stylesheet" href="styles.css?v=31" />
 </head>
 <body>
   <header class="topbar">
-    <h1>Credit Tracker</h1>
+    <div class="topbar-left">
+      <h1>Credit Tracker</h1>
+      <p class="topbar-sub">Track recurring credits, fees, and deadlines across all your cards.</p>
+    </div>
+    <div class="topbar-right">
+      <div class="last-updated">
+        <span class="stat-label">Last updated</span>
+        <span id="last-updated-value">—</span>
+      </div>
+      <div class="topbar-actions">
+        <button id="export-btn" class="ghost">Export</button>
+        <button id="import-btn" class="ghost">Import</button>
+        <input type="file" id="import-file" accept="application/json" hidden />
+      </div>
+    </div>
   </header>
 
   <main>
@@ -49,9 +63,6 @@
       <button id="toggle-used" class="ghost">Hide used</button>
       <button id="toggle-partial" class="ghost" title="Hide credits that are fully done for the year; keep ones still in-progress visible">Hide completed</button>
       <button id="toggle-ignored" class="ghost" title="Hide credits marked 'I'm never using this'">Hide ignored</button>
-      <button id="export-btn" class="ghost">Export</button>
-      <button id="import-btn" class="ghost">Import</button>
-      <input type="file" id="import-file" accept="application/json" hidden />
     </section>
 
     <section id="cards-section">
@@ -148,6 +159,6 @@
     </menu>
   </dialog>
 
-  <script src="app.js?v=30"></script>
+  <script src="app.js?v=31"></script>
 </body>
 </html>
