@@ -174,7 +174,7 @@ function render() {
 
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
-    cardEl.style.borderLeftColor = card.color || '#6366f1';
+    cardEl.style.borderLeftColor = card.color || '#737373';
 
     const fee = Number(card.annualFee) || 0;
     const subParts = [card.issuer, card.last4 ? `•••• ${card.last4}` : null].filter(Boolean);
@@ -383,7 +383,7 @@ function openCardDialog(card = null) {
   cardForm.elements.issuer.value = card?.issuer || '';
   cardForm.elements.last4.value = card?.last4 || '';
   cardForm.elements.annualFee.value = card?.annualFee ?? '';
-  cardForm.elements.color.value = card?.color || '#6366f1';
+  cardForm.elements.color.value = card?.color || '#737373';
   cardDialog.showModal();
 }
 

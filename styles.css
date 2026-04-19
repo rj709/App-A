@@ -1,10 +1,10 @@
 :root {
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --surface-2: #334155;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --accent: #6366f1;
+  --bg: #171717;
+  --surface: #262626;
+  --surface-2: #404040;
+  --text: #e5e5e5;
+  --muted: #a3a3a3;
+  --accent: #737373;
   --good: #10b981;
   --warn: #f59e0b;
   --bad: #ef4444;
@@ -97,10 +97,10 @@ button {
   font-weight: 500;
 }
 
-button:hover { background: #475569; }
+button:hover { background: var(--surface-2); }
 
 button.primary { background: var(--accent); }
-button.primary:hover { background: #4f46e5; }
+button.primary:hover { background: #525252; }
 button.ghost { background: transparent; border-color: var(--surface-2); }
 button.ghost.active {
   background: var(--surface-2);
