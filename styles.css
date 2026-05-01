@@ -312,7 +312,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1.3fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
