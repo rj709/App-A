@@ -308,13 +308,11 @@ function renderStats() {
   el.innerHTML = `
     <div class="stat" style="--accent-stripe: hsl(220, 14%, 60%)">
       <div class="stat-label">Total cards</div>
+      <div class="stat-count">${s.count}</div>
       <div class="stat-value-row stat-value-row-sm">
-        <span class="stat-value stat-count">${s.count}</span>
+        <span class="stat-value">${s.personal} personal</span>
         <span class="stat-value-divider"></span>
-        <span class="stat-value-stack">
-          <span class="stat-value">${s.personal} personal</span>
-          <span class="stat-value">${s.business} business</span>
-        </span>
+        <span class="stat-value">${s.business} business</span>
       </div>
     </div>
     <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
