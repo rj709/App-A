@@ -295,10 +295,11 @@ main { padding: 20px 28px 60px; }
 
 /* --- Middle: rewards info --- */
 .detail-rewards {
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 20px;
+  line-height: 1.4;
   color: var(--ink);
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 .detail-source {
   color: var(--accent-soft);
