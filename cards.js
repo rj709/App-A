@@ -80,7 +80,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Gold', type: 'Personal', retention: 'Maybe', annualFee: 325, opened: '02/08/2026',
     network: 'Amex',
-    earns: ['4x dining (worldwide)', '4x US groceries ($25K cap)', '3x flights (direct or Amex Travel)', '1x on everything'],
+    earns: ['4x restaurants ($50K cap)', '4x US groceries ($25K cap)', '5x prepaid hotels (Amex Travel)', '3x flights (direct or Amex Travel)', '2x prepaid car rentals (Amex Travel)', '1x on everything'],
     perks: ['$120 dining credit ($10/mo)', '$120 Uber Cash', '$100 resort credit', 'No foreign tx fee'],
   },
   {
