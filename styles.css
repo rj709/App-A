@@ -290,6 +290,12 @@ main { padding: 20px 28px 60px; }
   letter-spacing: 0;
   line-height: 1.2;
 }
+.stat-value-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
 .stat-value-divider {
   width: 1px;
   align-self: stretch;

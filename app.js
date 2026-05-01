@@ -311,7 +311,10 @@ function renderStats() {
       <div class="stat-value-row stat-value-row-sm">
         <span class="stat-value">${s.count}</span>
         <span class="stat-value-divider"></span>
-        <span class="stat-value">${s.personal} personal · ${s.business} business</span>
+        <span class="stat-value-stack">
+          <span class="stat-value">${s.personal} personal</span>
+          <span class="stat-value">${s.business} business</span>
+        </span>
       </div>
     </div>
     <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
