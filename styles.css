@@ -373,7 +373,6 @@ main { padding: 20px 28px 60px; }
   align-items: center;
   text-align: center;
   position: relative;
-  transform: translateX(5%);
 }
 .detail-section.identity::after {
   content: '';
