@@ -63,15 +63,37 @@ function formatFee(n) {
 // ----- Color logic (derived) -----
 
 const STYLE = {
-  green: 'background:var(--green-bg);color:var(--green-fg);',
-  amber: 'background:var(--amber-bg);color:var(--amber-fg);',
-  rose:  'background:var(--rose-bg);color:var(--rose-fg);',
-  blue:  'background:var(--blue-bg);color:var(--blue-fg);',
+  green:  'background:var(--green-bg);color:var(--green-fg);',
+  amber:  'background:var(--amber-bg);color:var(--amber-fg);',
+  rose:   'background:var(--rose-bg);color:var(--rose-fg);',
+  purple: 'background:var(--purple-bg);color:var(--purple-fg);',
+  slate:  'background:var(--slate-bg);color:var(--slate-fg);',
 };
 
-function typeStyle(t)      { return t === 'Business' ? STYLE.blue : STYLE.green; }
+// Type is a category, not a value — use neutral, non-scale colors
+// so it doesn't collide with the green/amber/rose meaning used for Fee/Retention.
+function typeStyle(t)      { return t === 'Business' ? STYLE.slate : STYLE.purple; }
 function retentionStyle(r) { return r === 'No' ? STYLE.rose : r === 'Maybe' ? STYLE.amber : STYLE.green; }
-function feeStyle(fee)     { return fee === 0 ? STYLE.green : fee <= 300 ? STYLE.amber : STYLE.rose; }
+
+// Continuous fee gradient: free → green, mid → amber, premium → rose.
+// Anchors at $0 / $300 / $700 with smooth HSL interpolation between.
+function feeStyle(fee) {
+  const stops = [
+    { v: 0,   h: 135 },
+    { v: 300, h: 42  },
+    { v: 700, h: 6   },
+  ];
+  const v = Math.max(0, Math.min(stops[stops.length - 1].v, Number(fee) || 0));
+  let h = stops[0].h;
+  for (let i = 0; i < stops.length - 1; i++) {
+    const a = stops[i], b = stops[i + 1];
+    if (v >= a.v && v <= b.v) {
+      h = a.h + (b.h - a.h) * ((v - a.v) / (b.v - a.v));
+      break;
+    }
+  }
+  return `background:hsl(${h.toFixed(1)}, 55%, 88%);color:hsl(${h.toFixed(1)}, 50%, 28%);`;
+}
 
 function dateGradient(t) {
   const stops = [

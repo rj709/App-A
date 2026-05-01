@@ -12,15 +12,20 @@
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.18);
 
-  /* Cohesive muted palette */
+  /* Cohesive muted palette — green/amber/rose reserved for value semantics
+     (good → bad), purple/slate are neutral category colors for Type. */
   --green-bg: hsl(135, 32%, 88%);
   --green-fg: hsl(135, 38%, 24%);
   --amber-bg: hsl(42, 60%, 88%);
   --amber-fg: hsl(32, 55%, 26%);
   --rose-bg:  hsl(6, 55%, 90%);
   --rose-fg:  hsl(6, 50%, 30%);
-  --blue-bg:  hsl(208, 38%, 88%);
-  --blue-fg:  hsl(210, 42%, 26%);
+
+  /* Categorical (Type) — distinct from value-scale colors */
+  --purple-bg: hsl(275, 32%, 88%);
+  --purple-fg: hsl(275, 40%, 32%);
+  --slate-bg:  hsl(220, 10%, 86%);
+  --slate-fg:  hsl(220, 14%, 30%);
 }
 
 * { box-sizing: border-box; }
