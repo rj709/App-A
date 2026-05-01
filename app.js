@@ -330,12 +330,10 @@ function renderStats() {
     ? formatShortDate(s.nextRenewal.date)
     : 'No fee-bearing cards';
 
-  const renewalStripe = s.nextRenewal
-    ? renewalAccent(s.renewalDays)
-    : 'var(--line-strong)';
+  const renewalStripe = 'hsl(95, 22%, 55%)';
 
   el.innerHTML = `
-    <div class="stat" style="--accent-stripe: hsl(220, 14%, 60%)">
+    <div class="stat" style="--accent-stripe: hsl(0, 70%, 55%)">
       <div class="stat-label">Total cards</div>
       <div class="stat-count">${s.count}</div>
       <div class="stat-value-row stat-value-row-sm">
@@ -344,7 +342,7 @@ function renderStats() {
         <span class="stat-value">${s.business} business</span>
       </div>
     </div>
-    <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
+    <div class="stat" style="--accent-stripe: hsl(275, 50%, 58%)">
       <div class="stat-header-row">
         <div class="stat-label">Annual fees</div>
         <span class="stat-value-divider"></span>
