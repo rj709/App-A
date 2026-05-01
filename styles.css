@@ -377,7 +377,7 @@ main { padding: 20px 28px 60px; }
 
 /* --- Left: identity --- */
 .detail-section.identity {
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   position: relative;
@@ -394,7 +394,7 @@ main { padding: 20px 28px 60px; }
 }
 
 .detail-section.rewards {
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
 }
