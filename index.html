@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Wallet</title>
-  <link rel="stylesheet" href="styles.css?v=140">
+  <link rel="stylesheet" href="styles.css?v=141">
 </head>
 <body>
   <header class="app-header">
@@ -71,6 +71,15 @@
         </label>
         <label><span>Annual Fee ($)</span><input name="annualFee" type="number" min="0" step="1" required></label>
         <label><span>Opened</span><input name="opened" type="date" required></label>
+        <label><span>Network</span>
+          <select name="network">
+            <option value="Amex">Amex</option>
+            <option value="Visa">Visa</option>
+            <option value="Mastercard">Mastercard</option>
+            <option value="Discover">Discover</option>
+          </select>
+        </label>
+        <label class="full-row"><span>Earns (one per line)</span><textarea name="earns" rows="5" placeholder="5x Chase Travel&#10;3% Dining&#10;1% On Everything"></textarea></label>
         <div class="modal-footer">
           <button type="button" class="btn-danger" id="delete-card" hidden>Delete</button>
           <div class="spacer"></div>
@@ -81,7 +90,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=140"></script>
-  <script src="app.js?v=140"></script>
+  <script src="cards.js?v=141"></script>
+  <script src="app.js?v=141"></script>
 </body>
 </html>

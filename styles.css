@@ -812,7 +812,8 @@ main { padding: 20px 28px 60px; }
   text-transform: uppercase;
 }
 .modal-body input,
-.modal-body select {
+.modal-body select,
+.modal-body textarea {
   font: inherit;
   font-weight: 500;
   text-transform: none;
@@ -823,8 +824,14 @@ main { padding: 20px 28px 60px; }
   border-radius: 8px;
   background: var(--surface);
 }
+.modal-body textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
 .modal-body input:focus,
-.modal-body select:focus {
+.modal-body select:focus,
+.modal-body textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);

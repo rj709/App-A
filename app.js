@@ -574,6 +574,8 @@ function openModal(id) {
   f.retention.value = card?.retention ?? 'Yes';
   f.annualFee.value = card?.annualFee ?? 0;
   f.opened.value    = card ? toInputDate(card.opened) : new Date().toISOString().slice(0, 10);
+  f.network.value   = card?.network   ?? 'Visa';
+  f.earns.value     = (card?.earns ?? []).join('\n');
 
   modalBackdrop().hidden = false;
   setTimeout(() => f.issuer.focus(), 50);
@@ -594,6 +596,8 @@ function handleSubmit(e) {
     retention: f.retention.value,
     annualFee: Number(f.annualFee.value) || 0,
     opened: toDisplayDate(f.opened.value),
+    network: f.network.value,
+    earns: f.earns.value.split('\n').map(s => s.trim()).filter(Boolean),
   };
   if (state.editingId) {
     const i = state.cards.findIndex(c => c.id === state.editingId);
