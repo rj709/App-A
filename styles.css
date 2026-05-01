@@ -499,7 +499,7 @@ main { padding: 20px 28px 60px; }
 .detail-stat {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   gap: 6px;
