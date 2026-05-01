@@ -50,13 +50,13 @@ const CARDS = [
   {
     issuer: 'US Bank', card: 'Shopper Cash', type: 'Personal', retention: 'No', annualFee: 95, opened: '07/17/2025',
     network: 'Visa',
-    earns: ['6% on 2 chosen categories ($1.5K/qtr)', '3% on 1 chosen category', '5.5% travel via US Bank', '1.5% else'],
+    earns: ['6% Amazon / Walmart', '3% warehouses', '5.5% travel via US Bank', '1.5% on everything'],
     perks: ['Customizable bonus categories', 'Quarterly bonus cap'],
   },
   {
     issuer: 'US Bank', card: 'Cash+', type: 'Personal', retention: 'No', annualFee: 0, opened: '07/17/2025',
     network: 'Visa',
-    earns: ['5% on 2 chosen categories ($2K/qtr)', '2% on 1 everyday', '1% on everything'],
+    earns: ['5% cell phone plans / streaming', '2% gas', '1% on everything'],
     perks: ['Customizable categories', 'No annual fee'],
   },
   {
@@ -86,7 +86,7 @@ const CARDS = [
   {
     issuer: 'TD Bank', card: 'Cash', type: 'Personal', retention: 'Yes', annualFee: 0, opened: '04/01/2026',
     network: 'Visa',
-    earns: ['3% dining', '2% groceries', '1% on everything'],
+    earns: ['3% entertainment', '2% dining', '1% on everything'],
     perks: ['No annual fee', 'Choose your top categories'],
   },
   {
