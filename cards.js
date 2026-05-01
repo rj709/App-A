@@ -38,7 +38,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Hilton Honors Business', type: 'Business', retention: 'Yes', annualFee: 195, opened: '04/26/2025',
     network: 'Amex',
-    earns: ['12x Hilton', '6x US restaurants / gas / wireless / shipping', '4x flights / car rentals booked direct', '3x other purchases'],
+    earns: ['12x Hilton', '5x on everything'],
     perks: ['Hilton Gold status', 'Free weekend night ($15K spend)', '10 Priority Pass visits/yr'],
   },
   {
