@@ -360,14 +360,7 @@ function renderDetail() {
   const renewal = nextAnniversary(c.opened);
   const renewalDays = renewal ? daysBetween(today, renewal) : null;
 
-  const feeSub = c.annualFee === 0 ? 'No annual fee' : 'Yearly';
-  let renewalValue, renewalSub;
-  if (renewalDays === null) {
-    renewalValue = '—'; renewalSub = '';
-  } else {
-    renewalValue = renewalDays <= 0 ? 'today' : renewalDays === 1 ? 'tomorrow' : `${renewalDays} days`;
-    renewalSub = formatShortDate(renewal);
-  }
+  const renewalValue = renewal ? formatShortDate(renewal) : '—';
 
   const sameIssuerNetwork = c.network && c.issuer && c.issuer.toLowerCase() === c.network.toLowerCase();
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
@@ -425,27 +418,22 @@ function renderDetail() {
       <div class="detail-stat">
         <span class="detail-stat-label">Type</span>
         <span class="detail-stat-value">${c.type}</span>
-        <span class="detail-stat-sub">&nbsp;</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Plan</span>
         <span class="detail-stat-value">${RETENTION_LABEL[c.retention] || c.retention}</span>
-        <span class="detail-stat-sub">&nbsp;</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Held</span>
         <span class="detail-stat-value">${ageText(c.opened)}</span>
-        <span class="detail-stat-sub">${formatShortDate(parseDate(c.opened))}</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Annual fee</span>
         <span class="detail-stat-value">${formatFee(c.annualFee)}</span>
-        <span class="detail-stat-sub">${feeSub}</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Next renewal</span>
         <span class="detail-stat-value">${renewalValue}</span>
-        <span class="detail-stat-sub">${renewalSub}</span>
       </div>
     </div>
   `;
