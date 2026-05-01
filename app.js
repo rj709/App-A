@@ -323,7 +323,7 @@ function renderDetail() {
     renewalValue = '—'; renewalSub = '';
   } else {
     renewalValue = renewalDays <= 0 ? 'today' : renewalDays === 1 ? 'tomorrow' : `${renewalDays} days`;
-    renewalSub = `${formatShortDate(renewal)} · ${formatFee(c.annualFee)}/yr`;
+    renewalSub = formatShortDate(renewal);
   }
 
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
