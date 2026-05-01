@@ -278,7 +278,13 @@ function computeStats(cards) {
     const today = new Date(); today.setHours(0,0,0,0);
     renewalDays = daysBetween(today, nextRenewal.date);
   }
-  return { count: cards.length, personal, business, totalFees, avg, paying, nextRenewal, renewalDays };
+  const feesByIssuer = {};
+  for (const c of cards) {
+    if (!c.annualFee) continue;
+    feesByIssuer[c.issuer] = (feesByIssuer[c.issuer] || 0) + Number(c.annualFee);
+  }
+  const issuerFees = Object.entries(feesByIssuer).sort((a, b) => b[1] - a[1]);
+  return { count: cards.length, personal, business, totalFees, avg, paying, nextRenewal, renewalDays, issuerFees };
 }
 
 function renderStats() {
@@ -308,9 +314,11 @@ function renderStats() {
       <div class="stat-value">${s.count}</div>
     </div>
     <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
-      <div class="stat-label">Annual fees</div>
+      <div class="stat-header">
+        <div class="stat-label">Annual fees</div>
+        <div class="stat-sub stat-sub-inline">${s.issuerFees.map(([i, f]) => `${escapeHtml(i)} ${formatFee(f)}`).join(' · ')}</div>
+      </div>
       <div class="stat-value">${formatFee(s.totalFees)}</div>
-      <div class="stat-sub"></div>
     </div>
     <div class="stat" style="--accent-stripe: ${renewalStripe}">
       <div class="stat-header">

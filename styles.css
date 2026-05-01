@@ -169,9 +169,8 @@ main { padding: 20px 28px 60px; }
 
 /* ----- Stats ----- */
 .stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-bottom: 16px;
 }
@@ -181,11 +180,10 @@ main { padding: 20px 28px 60px; }
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 14px 22px 14px 26px;
+  padding: 14px 18px 14px 22px;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   text-align: center;
-  flex: 0 0 auto;
 }
 .stat::before {
   content: '';
@@ -217,9 +215,9 @@ main { padding: 20px 28px 60px; }
 }
 .stat-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: baseline;
-  gap: 28px;
+  gap: 12px;
   margin-bottom: 6px;
 }
 .stat-header .stat-label {
