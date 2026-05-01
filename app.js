@@ -366,7 +366,7 @@ function renderDetail() {
   const renewalValue = renewal ? formatShortDate(renewal) : '—';
 
   const sameIssuerNetwork = c.network && c.issuer && c.issuer.toLowerCase() === c.network.toLowerCase();
-  const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
+  const issuerLine = `${escapeHtml(c.issuer)}`;
 
   const earnsToRender = (c.earns || []).map(raw =>
     raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim()
