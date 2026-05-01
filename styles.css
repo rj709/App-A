@@ -229,6 +229,17 @@ main { padding: 20px 28px 60px; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.stat-value-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.stat-value-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin: 4px 0;
+}
 
 /* ----- Detail panel (selected card) ----- */
 .detail-panel {

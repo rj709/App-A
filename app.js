@@ -290,8 +290,9 @@ function renderStats() {
     : s.renewalDays === 1 ? 'tomorrow'
     : `${s.renewalDays} days`;
 
+  const renewalCardName = s.nextRenewal ? escapeHtml(s.nextRenewal.card.card) : '';
   const renewalSub = s.nextRenewal
-    ? `${escapeHtml(s.nextRenewal.card.card)} · ${formatShortDate(s.nextRenewal.date)} · ${formatFee(s.nextRenewal.card.annualFee)}`
+    ? `${formatShortDate(s.nextRenewal.date)} · ${formatFee(s.nextRenewal.card.annualFee)}`
     : 'No fee-bearing cards';
 
   const renewalStripe = s.nextRenewal
@@ -316,7 +317,10 @@ function renderStats() {
         <div class="stat-label">Next renewal</div>
         <div class="stat-sub stat-sub-inline">${renewalSub}</div>
       </div>
-      <div class="stat-value">${countdown === '—' ? '—' : `in ${countdown}`}</div>
+      <div class="stat-value-row">
+        ${renewalCardName ? `<span class="stat-value">${renewalCardName}</span><span class="stat-value-divider"></span>` : ''}
+        <span class="stat-value">${countdown === '—' ? '—' : `in ${countdown}`}</span>
+      </div>
     </div>
   `;
 }
