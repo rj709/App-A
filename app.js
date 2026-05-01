@@ -68,7 +68,7 @@ function comparator(key, dir) {
   const isEmpty = v => v === '-' || v === '' || v == null;
 
   const numericKeys = new Set(['annualFee']);
-  const dateKeys = new Set(['opened', 'pc']);
+  const dateKeys = new Set(['opened']);
 
   return (a, b) => {
     const av = a[key], bv = b[key];
@@ -109,8 +109,6 @@ function render() {
 
     const opened = parseDate(c.opened);
     const t = opened ? (opened.getTime() - minT) / span : 0;
-    const pcDate = parseDate(c.pc);
-    const pcT = pcDate ? (pcDate.getTime() - minT) / span : null;
 
     tr.innerHTML = `
       <td class="cell-issuer">${c.issuer}</td>
@@ -119,8 +117,6 @@ function render() {
       <td class="chip" style="${retentionStyle(c.retention)}">${c.retention}</td>
       <td class="chip" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}</td>
       <td class="chip" style="${dateGradient(t)}">${c.opened}</td>
-      <td class="${pcDate ? 'chip' : 'cell-neutral'}" style="${pcDate ? dateGradient(pcT) : ''}">${c.pc}</td>
-      <td class="${c.from === '-' ? 'cell-neutral' : ''}">${c.from}</td>
     `;
     tbody.appendChild(tr);
   }
