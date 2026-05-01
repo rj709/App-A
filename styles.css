@@ -258,7 +258,14 @@ main { padding: 20px 28px 60px; }
 }
 
 /* --- Left: identity --- */
-.detail-section.identity { padding-left: 24px; }
+.detail-section.identity {
+  padding-left: 24px;
+  justify-content: center;
+}
+
+.detail-section.rewards {
+  justify-content: center;
+}
 
 .detail-eyebrow {
   font-size: 11px;
@@ -283,35 +290,12 @@ main { padding: 20px 28px 60px; }
   gap: 6px;
 }
 
-.detail-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 8px;
-}
-
 /* --- Middle: rewards info --- */
 .detail-rewards {
   font-size: 16px;
   line-height: 1.5;
   color: var(--ink);
   font-weight: 600;
-}
-.detail-rewards-perks {
-  margin-top: auto;
-  padding-top: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  line-height: 1.5;
-}
-.detail-rewards-perks .perks-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  margin-right: 6px;
 }
 .detail-source {
   color: var(--accent-soft);

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Wallet</title>
-  <link rel="stylesheet" href="styles.css?v=28">
+  <link rel="stylesheet" href="styles.css?v=29">
 </head>
 <body>
   <header class="app-header">
@@ -17,6 +17,8 @@
       <div class="app-actions">
         <button class="btn-ghost" id="import-cards">Import</button>
         <button class="btn-ghost" id="export-cards">Export</button>
+        <button class="btn-ghost" id="header-edit" disabled title="Select a card first">Edit</button>
+        <button class="btn-danger-ghost" id="header-delete" disabled title="Select a card first">Delete</button>
         <button class="btn-primary" id="add-card">+ Add card</button>
         <input type="file" id="import-file" accept="application/json,.json" hidden>
       </div>
@@ -86,7 +88,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=28"></script>
-  <script src="app.js?v=28"></script>
+  <script src="cards.js?v=29"></script>
+  <script src="app.js?v=29"></script>
 </body>
 </html>

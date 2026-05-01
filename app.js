@@ -332,10 +332,6 @@ function renderDetail() {
     ? `${c.earns.map(escapeHtml).join(' · ')}<a class="detail-source" href="${sourceUrl(c)}" target="_blank" rel="noopener">Source</a>`
     : `<span style="color:var(--ink-mute)">No earn data</span>`;
 
-  const perksHtml = c.perks?.length
-    ? `<div class="detail-rewards-perks"><span class="perks-label">Perks</span>${c.perks.map(escapeHtml).join(' · ')}</div>`
-    : '';
-
   panel.innerHTML = `
     <div class="detail-section identity">
       <div class="detail-eyebrow">${issuerLine}${c.network ? ` · ${escapeHtml(c.network)}` : ''}</div>
@@ -345,15 +341,10 @@ function renderDetail() {
         <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
         <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
       </div>
-      <div class="detail-actions">
-        <button class="btn-ghost" id="detail-edit">Edit</button>
-        <button class="btn-danger-ghost" id="detail-delete">Delete</button>
-      </div>
     </div>
     <div class="detail-section rewards">
       <div class="detail-section-label">Earns</div>
       <div class="detail-rewards">${earnsHtml}</div>
-      ${perksHtml}
     </div>
     <div class="detail-section stats-section">
       <div class="detail-stat">
@@ -373,15 +364,31 @@ function renderDetail() {
       </div>
     </div>
   `;
+}
 
-  panel.querySelector('#detail-edit').addEventListener('click', () => openModal(c.id));
-  panel.querySelector('#detail-delete').addEventListener('click', () => {
-    if (!confirm(`Delete ${c.card}?`)) return;
-    state.cards = state.cards.filter(x => x.id !== c.id);
-    state.selectedId = null;
-    saveCards();
-    renderAll();
-  });
+function updateHeaderActions() {
+  const hasSelection = !!state.selectedId;
+  const edit = document.getElementById('header-edit');
+  const del = document.getElementById('header-delete');
+  if (edit) {
+    edit.disabled = !hasSelection;
+    edit.title = hasSelection ? 'Edit selected card' : 'Select a card first';
+  }
+  if (del) {
+    del.disabled = !hasSelection;
+    del.title = hasSelection ? 'Delete selected card' : 'Select a card first';
+  }
+}
+
+function deleteSelected() {
+  if (!state.selectedId) return;
+  const c = state.cards.find(x => x.id === state.selectedId);
+  if (!c) return;
+  if (!confirm(`Delete ${c.card}?`)) return;
+  state.cards = state.cards.filter(x => x.id !== state.selectedId);
+  state.selectedId = null;
+  saveCards();
+  renderAll();
 }
 
 // ---------- Grid render ----------
@@ -425,6 +432,7 @@ function selectCard(id) {
   state.selectedId = (state.selectedId === id) ? null : id;
   renderGrid();
   renderDetail();
+  updateHeaderActions();
 }
 
 // ---------- Last-saved ----------
@@ -442,6 +450,7 @@ function renderAll() {
   renderDetail();
   renderGrid();
   renderLastSaved();
+  updateHeaderActions();
 }
 
 // ---------- Modal ----------
@@ -585,6 +594,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('export-cards').addEventListener('click', handleExport);
   document.getElementById('import-cards').addEventListener('click', () => document.getElementById('import-file').click());
   document.getElementById('import-file').addEventListener('change', handleImportFile);
+  document.getElementById('header-edit').addEventListener('click', () => {
+    if (state.selectedId) openModal(state.selectedId);
+  });
+  document.getElementById('header-delete').addEventListener('click', deleteSelected);
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('cancel-card').addEventListener('click', closeModal);
