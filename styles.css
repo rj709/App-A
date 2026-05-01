@@ -260,7 +260,6 @@ main { padding: 20px 28px 60px; }
 
 /* --- Left: identity --- */
 .detail-section.identity {
-  padding-left: 24px;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -298,23 +297,24 @@ main { padding: 20px 28px 60px; }
 .detail-badges {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
 }
 
 /* --- Middle: rewards info --- */
 .detail-rewards {
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--ink);
   font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
-.detail-source {
-  color: var(--accent-soft);
-  font-weight: 600;
-  text-decoration: none;
-  margin-left: 6px;
+.earn-line {
+  white-space: normal;
 }
-.detail-source:hover { text-decoration: underline; }
 
 /* --- Right: stats grouped together, vertically filling the section --- */
 .detail-section.stats-section {

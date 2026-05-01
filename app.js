@@ -329,7 +329,7 @@ function renderDetail() {
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
 
   const earnsHtml = c.earns?.length
-    ? `${c.earns.map(escapeHtml).join(' · ')}<a class="detail-source" href="${sourceUrl(c)}" target="_blank" rel="noopener">Source</a>`
+    ? c.earns.map(e => `<div class="earn-line">${escapeHtml(e)}</div>`).join('')
     : `<span style="color:var(--ink-mute)">No earn data</span>`;
 
   panel.innerHTML = `
@@ -350,7 +350,7 @@ function renderDetail() {
       <div class="detail-stat">
         <span class="detail-stat-label">Held</span>
         <span class="detail-stat-value">${ageText(c.opened)}</span>
-        <span class="detail-stat-sub">Opened ${formatShortDate(parseDate(c.opened))}</span>
+        <span class="detail-stat-sub">${formatShortDate(parseDate(c.opened))}</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Annual fee</span>
