@@ -307,7 +307,7 @@ function renderStats() {
     <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
       <div class="stat-label">Annual fees</div>
       <div class="stat-value">${formatFee(s.totalFees)}</div>
-      <div class="stat-sub">${formatFee(s.avg)} avg across ${s.paying} paying card${s.paying === 1 ? '' : 's'}</div>
+      <div class="stat-sub"></div>
     </div>
     <div class="stat" style="--accent-stripe: ${renewalStripe}">
       <div class="stat-label">Next renewal</div>
