@@ -142,8 +142,16 @@ function nextAnniversary(opened) {
   return candidate;
 }
 
+function daysBetween(a, b) {
+  return Math.round((b - a) / (1000 * 60 * 60 * 24));
+}
+
 function computeStats(cards) {
   const totalFees = cards.reduce((s, c) => s + (Number(c.annualFee) || 0), 0);
+  const personal = cards.filter(c => c.type === 'Personal').length;
+  const business = cards.filter(c => c.type === 'Business').length;
+  const paying = cards.filter(c => c.annualFee > 0).length;
+  const avg = paying ? Math.round(totalFees / paying) : 0;
 
   let nextRenewal = null;
   for (const c of cards) {
@@ -155,29 +163,49 @@ function computeStats(cards) {
     }
   }
 
-  return { count: cards.length, totalFees, nextRenewal };
+  let renewalDays = null;
+  if (nextRenewal) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    renewalDays = daysBetween(today, nextRenewal.date);
+  }
+
+  return { count: cards.length, personal, business, totalFees, avg, paying, nextRenewal, renewalDays };
 }
 
 function renderStats() {
   const el = document.getElementById('stats');
-  const { count, totalFees, nextRenewal } = computeStats(state.cards);
+  const s = computeStats(state.cards);
 
-  const renewalValue = nextRenewal
-    ? `${escapeHtml(nextRenewal.card.card)} · ${formatShortDate(nextRenewal.date)} · ${formatFee(nextRenewal.card.annualFee)}/yr`
-    : '<span class="muted">No upcoming renewals</span>';
+  const countdown = s.renewalDays === null ? '—'
+    : s.renewalDays === 0 ? 'today'
+    : s.renewalDays === 1 ? 'tomorrow'
+    : `${s.renewalDays} days`;
+
+  const renewalSub = s.nextRenewal
+    ? `${escapeHtml(s.nextRenewal.card.card)} · ${formatShortDate(s.nextRenewal.date)} · ${formatFee(s.nextRenewal.card.annualFee)}/yr`
+    : 'No fee-bearing cards';
+
+  // Age tier color for the renewal accent stripe
+  const renewalAccent = s.nextRenewal
+    ? `hsl(${AGE_TIERS.find(t => 0 >= t.minMonths).h}, 60%, 55%)` // newest tier (urgent)
+    : 'var(--line-strong)';
 
   el.innerHTML = `
-    <div class="stat">
-      <div class="stat-label">Cards</div>
-      <div class="stat-value">${count}</div>
+    <div class="stat" style="--accent-stripe: hsl(220, 14%, 60%)">
+      <div class="stat-label">Total cards</div>
+      <div class="stat-value">${s.count}</div>
+      <div class="stat-sub">${s.personal} personal · ${s.business} business</div>
     </div>
-    <div class="stat">
-      <div class="stat-label">Annual Fees</div>
-      <div class="stat-value">${formatFee(totalFees)}</div>
+    <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
+      <div class="stat-label">Annual fees</div>
+      <div class="stat-value">${formatFee(s.totalFees)}</div>
+      <div class="stat-sub">${formatFee(s.avg)} avg across ${s.paying} paying card${s.paying === 1 ? '' : 's'}</div>
     </div>
-    <div class="stat">
-      <div class="stat-label">Next Renewal</div>
-      <div class="stat-value">${renewalValue}</div>
+    <div class="stat" style="--accent-stripe: ${renewalAccent}">
+      <div class="stat-label">Next renewal</div>
+      <div class="stat-value">${countdown === '—' ? '—' : `in ${countdown}`}</div>
+      <div class="stat-sub">${renewalSub}</div>
     </div>
   `;
 }
