@@ -26,7 +26,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'BBP', type: 'Business', retention: 'Yes', annualFee: 0, opened: '06/07/2024',
     network: 'Amex',
-    earns: ['2x on everything (up to $50K/yr)', '1x after cap'],
+    earns: ['2x on everything (up to $50K/yr)'],
     perks: ['No annual fee', 'Membership Rewards points', 'Pay over time'],
   },
   {

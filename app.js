@@ -346,18 +346,30 @@ function renderDetail() {
   );
   const earnsLabelHtml = 'Earns';
   const allOtherRe = /^(on\s+everything|everything\s+else|everywhere\s+else|all\s+others?|else|after\s+cap)$/i;
-  const earnsHtml = earnsToRender.length
-    ? `<div class="earn-list">${earnsToRender.map(e => {
-        const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
-        const rate = m ? m[1].replace(/\s+/g, '') : '';
-        const labelText = m ? m[2] : e;
-        const normalized = allOtherRe.test(labelText.trim()) ? 'all other' : labelText;
-        const cats = normalized.split(/\s*\/\s*/).map(c => c.trim()).filter(Boolean);
-        const catsHtml = cats.map(c =>
+  const groups = [];
+  const groupByRate = new Map();
+  for (const e of earnsToRender) {
+    const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
+    const rate = m ? m[1].replace(/\s+/g, '') : '';
+    const labelText = m ? m[2] : e;
+    const normalized = allOtherRe.test(labelText.trim()) ? 'all other' : labelText;
+    const cats = normalized.split(/\s*\/\s*/).map(c => c.trim()).filter(Boolean);
+    const key = rate || `__plain_${groups.length}`;
+    let g = groupByRate.get(key);
+    if (!g) {
+      g = { rate, cats: [] };
+      groupByRate.set(key, g);
+      groups.push(g);
+    }
+    for (const c of cats) if (!g.cats.includes(c)) g.cats.push(c);
+  }
+  const earnsHtml = groups.length
+    ? `<div class="earn-list">${groups.map(g => {
+        const catsHtml = g.cats.map(c =>
           `<div class="earn-cat">${escapeHtml(titleCase(c))}</div>`
         ).join('');
         return `<div class="earn-group">${
-          rate ? `<div class="earn-rate-heading">${escapeHtml(rate)}</div><hr class="earn-divider">` : ''
+          g.rate ? `<div class="earn-rate-heading">${escapeHtml(g.rate)}</div><hr class="earn-divider">` : ''
         }<div class="earn-cats">${catsHtml}</div></div>`;
       }).join('')}</div>`
     : `<span style="color:var(--ink-mute)">No earn data</span>`;
