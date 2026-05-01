@@ -34,8 +34,8 @@
   --bg: #050505;
   --surface: #121212;
   --ink: #e7e7e7;
-  --ink-soft: #9c9c9c;
-  --ink-mute: #6c6c6c;
+  --ink-soft: #b8b8b8;
+  --ink-mute: #8e8e8e;
   --line: #3a3a3a;
   --line-strong: #525252;
   --accent: #c8c8c8;
@@ -47,7 +47,24 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.65);
 
   --tier-l: 22%;
-  --tier-fg-l: 80%;
+  --tier-fg-l: 82%;
+  --earn-rate-color: #e0e0e0;
+
+  --green-bg: hsl(135, 32%, 22%);
+  --green-fg: hsl(135, 50%, 82%);
+  --amber-bg: hsl(42, 50%, 22%);
+  --amber-fg: hsl(42, 70%, 82%);
+  --rose-bg:  hsl(6, 45%, 22%);
+  --rose-fg:  hsl(6, 70%, 82%);
+  --purple-bg: hsl(275, 30%, 22%);
+  --purple-fg: hsl(275, 50%, 84%);
+  --slate-bg:  hsl(220, 10%, 22%);
+  --slate-fg:  hsl(220, 14%, 84%);
+
+  --danger-ghost-fg: hsl(6, 60%, 70%);
+  --danger-ghost-border: hsl(6, 35%, 35%);
+  --danger-ghost-hover-bg: hsl(6, 35%, 18%);
+  --danger-ghost-hover-border: hsl(6, 50%, 50%);
 }
 
 * { box-sizing: border-box; }
@@ -180,15 +197,15 @@ main { padding: 20px 28px 60px; }
 
 .btn-danger-ghost {
   background: transparent;
-  color: hsl(6, 55%, 42%);
-  border: 1px solid hsl(6, 50%, 80%);
+  color: var(--danger-ghost-fg, hsl(6, 55%, 42%));
+  border: 1px solid var(--danger-ghost-border, hsl(6, 50%, 80%));
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
 }
-.btn-danger-ghost:hover { background: hsl(6, 60%, 96%); border-color: hsl(6, 55%, 65%); }
+.btn-danger-ghost:hover { background: var(--danger-ghost-hover-bg, hsl(6, 60%, 96%)); border-color: var(--danger-ghost-hover-border, hsl(6, 55%, 65%)); }
 
 .icon-btn {
   background: transparent;
@@ -494,7 +511,7 @@ main { padding: 20px 28px 60px; }
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.015em;
-  color: hsl(220, 14%, 28%);
+  color: var(--earn-rate-color, hsl(220, 14%, 28%));
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
   text-align: center;
