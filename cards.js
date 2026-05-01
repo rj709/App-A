@@ -20,7 +20,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Platinum', type: 'Personal', retention: 'Yes', annualFee: 895, opened: '04/02/2024',
     network: 'Amex',
-    earns: ['5x flights (direct or Amex Travel)', '5x prepaid hotels (Amex Travel)'],
+    earns: ['5x flights (direct or Amex Travel)', '5x prepaid hotels (Amex Travel)', '1x on everything'],
     perks: ['Centurion + Priority Pass lounges', '$200 hotel credit', '$200 airline incidental', '$200 Uber', '$189 Clear', 'Hotel elite status'],
   },
   {
@@ -50,7 +50,7 @@ const CARDS = [
   {
     issuer: 'US Bank', card: 'Shopper Cash', type: 'Personal', retention: 'No', annualFee: 95, opened: '07/17/2025',
     network: 'Visa',
-    earns: ['6% Amazon / Walmart', '3% warehouses', '5.5% travel via US Bank', '1.5% on everything'],
+    earns: ['6% Amazon / Walmart', '3% warehouses', '1.5% on everything'],
     perks: ['Customizable bonus categories', 'Quarterly bonus cap'],
   },
   {
@@ -62,7 +62,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Green', type: 'Personal', retention: 'Yes', annualFee: 150, opened: '09/18/2025',
     network: 'Amex',
-    earns: ['3x travel', '3x transit', '3x dining (worldwide)'],
+    earns: ['3x travel', '3x transit', '3x dining (worldwide)', '1x on everything'],
     perks: ['$189 Clear credit', '$100 LoungeBuddy credit', 'No foreign tx fee'],
   },
   {
@@ -80,7 +80,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Gold', type: 'Personal', retention: 'Maybe', annualFee: 325, opened: '02/08/2026',
     network: 'Amex',
-    earns: ['4x dining (worldwide)', '4x US groceries ($25K cap)', '3x flights (direct or Amex Travel)'],
+    earns: ['4x dining (worldwide)', '4x US groceries ($25K cap)', '3x flights (direct or Amex Travel)', '1x on everything'],
     perks: ['$120 dining credit ($10/mo)', '$120 Uber Cash', '$100 resort credit', 'No foreign tx fee'],
   },
   {

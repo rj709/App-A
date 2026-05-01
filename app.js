@@ -345,12 +345,14 @@ function renderDetail() {
     raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim()
   );
   const earnsLabelHtml = 'Earns';
+  const allOtherRe = /^(on\s+everything|everything\s+else|everywhere\s+else|all\s+others?|else|after\s+cap)$/i;
   const earnsHtml = earnsToRender.length
     ? `<div class="earn-list">${earnsToRender.map(e => {
         const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
         const rate = m ? m[1].replace(/\s+/g, '') : '';
         const labelText = m ? m[2] : e;
-        const cats = labelText.split(/\s*\/\s*/).map(c => c.trim()).filter(Boolean);
+        const normalized = allOtherRe.test(labelText.trim()) ? 'all other' : labelText;
+        const cats = normalized.split(/\s*\/\s*/).map(c => c.trim()).filter(Boolean);
         const catsHtml = cats.map(c =>
           `<div class="earn-cat">${escapeHtml(titleCase(c))}</div>`
         ).join('');
