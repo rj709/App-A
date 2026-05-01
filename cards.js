@@ -32,7 +32,7 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Delta Business Reserve', type: 'Business', retention: 'Yes', annualFee: 650, opened: '06/24/2024',
     network: 'Amex',
-    earns: ['3x Delta', '1.5x on $5K+ purchases', '1x on everything'],
+    earns: ['3x Delta', '1.5x transit / office supply / shipping', '1x on everything'],
     perks: ['Sky Club access', 'Companion certificate', 'MQM accelerator', 'Status boost'],
   },
   {
