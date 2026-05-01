@@ -75,24 +75,26 @@ const STYLE = {
 function typeStyle(t)      { return t === 'Business' ? STYLE.slate : STYLE.purple; }
 function retentionStyle(r) { return r === 'No' ? STYLE.rose : r === 'Maybe' ? STYLE.amber : STYLE.green; }
 
-// Continuous fee gradient: free → green, mid → amber, premium → rose.
-// Anchors at $0 / $300 / $700 with smooth HSL interpolation between.
+// Discrete fee tiers — 6 levels from free → ultra-premium.
+// Thresholds chosen so each tier reads as a meaningful price band, not a
+// smooth gradient that all looks the same.
+const FEE_TIERS = [
+  { max: 0,        label: 'Free',     h: 140 }, // $0
+  { max: 99,       label: 'Low',      h: 100 }, // < $100
+  { max: 249,      label: 'Mid-low',  h: 62  }, // $100–$249
+  { max: 499,      label: 'Mid',      h: 35  }, // $250–$499
+  { max: 699,      label: 'High',     h: 15  }, // $500–$699
+  { max: Infinity, label: 'Premium',  h: 0   }, // $700+
+];
+
+function feeTier(fee) {
+  const v = Number(fee) || 0;
+  return FEE_TIERS.find(t => v <= t.max);
+}
+
 function feeStyle(fee) {
-  const stops = [
-    { v: 0,   h: 135 },
-    { v: 300, h: 42  },
-    { v: 700, h: 6   },
-  ];
-  const v = Math.max(0, Math.min(stops[stops.length - 1].v, Number(fee) || 0));
-  let h = stops[0].h;
-  for (let i = 0; i < stops.length - 1; i++) {
-    const a = stops[i], b = stops[i + 1];
-    if (v >= a.v && v <= b.v) {
-      h = a.h + (b.h - a.h) * ((v - a.v) / (b.v - a.v));
-      break;
-    }
-  }
-  return `background:hsl(${h.toFixed(1)}, 55%, 88%);color:hsl(${h.toFixed(1)}, 50%, 28%);`;
+  const { h } = feeTier(fee);
+  return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
 }
 
 function dateGradient(t) {
