@@ -422,13 +422,13 @@ function renderDetail() {
     </div>
     <div class="detail-section stats-section">
       <div class="detail-stat">
-        <span class="detail-stat-label">Held</span>
-        <span class="detail-stat-value">${ageText(c.opened)}</span>
+        <span class="detail-stat-label">Annual fee</span>
+        <span class="detail-stat-value">${formatFee(c.annualFee)}</span>
       </div>
       <span class="stat-value-divider"></span>
       <div class="detail-stat">
-        <span class="detail-stat-label">Annual fee</span>
-        <span class="detail-stat-value">${formatFee(c.annualFee)}</span>
+        <span class="detail-stat-label">Held</span>
+        <span class="detail-stat-value">${ageText(c.opened)}</span>
       </div>
       <span class="stat-value-divider"></span>
       <div class="detail-stat">
