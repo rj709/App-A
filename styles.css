@@ -159,8 +159,15 @@ main { padding: 20px 24px 60px; }
 /* Card grid */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .cards-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .cards-grid { grid-template-columns: 1fr; }
 }
 
 .card-tile {
