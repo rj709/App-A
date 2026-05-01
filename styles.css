@@ -217,7 +217,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(360px, 1.1fr) minmax(0, 1fr) minmax(380px, 1.4fr);
+  grid-template-columns: minmax(360px, 1fr) minmax(0, 2fr) minmax(380px, 1fr);
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -295,11 +295,10 @@ main { padding: 20px 28px 60px; }
 
 /* --- Middle: rewards info --- */
 .detail-rewards {
-  font-size: 20px;
-  line-height: 1.4;
+  font-size: 16px;
+  line-height: 1.5;
   color: var(--ink);
   font-weight: 600;
-  letter-spacing: -0.005em;
 }
 .detail-source {
   color: var(--accent-soft);
