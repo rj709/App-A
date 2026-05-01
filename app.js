@@ -341,21 +341,10 @@ function renderDetail() {
 
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
 
-  const cleaned = (c.earns || []).map(raw =>
+  const earnsToRender = (c.earns || []).map(raw =>
     raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim()
   );
-  const baseRe = /^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+on\s+everything\s*$/i;
-  let baseRate = null;
-  const others = [];
-  for (const e of cleaned) {
-    const bm = e.match(baseRe);
-    if (bm && !baseRate) baseRate = bm[1].replace(/\s+/g, '');
-    else if (!bm) others.push(e);
-  }
-  const earnsToRender = others.length ? others : cleaned;
-  const earnsLabelHtml = baseRate && others.length
-    ? `Earns <span class="earn-base">${escapeHtml(baseRate)} base</span>`
-    : 'Earns';
+  const earnsLabelHtml = 'Earns';
   const earnsHtml = earnsToRender.length
     ? `<div class="earn-list">${earnsToRender.map(e => {
         const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
