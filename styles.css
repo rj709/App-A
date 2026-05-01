@@ -232,6 +232,7 @@ main { padding: 20px 28px 60px; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 700;
 }
 .stat-header-row {
   display: flex;
