@@ -224,14 +224,15 @@ main { padding: 20px 28px 60px; }
   display: block;
   margin-bottom: 16px;
 }
-.stat-combined {
+.stat.stat-combined {
   display: grid;
   grid-template-columns: 1.8fr auto 0.9fr auto 1.6fr;
   align-items: stretch;
   gap: 0;
   padding: 18px 26px;
+  flex-direction: row;
 }
-.stat-combined .stat-cell {
+.stat.stat-combined .stat-cell {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -239,7 +240,7 @@ main { padding: 20px 28px 60px; }
   padding: 0 22px;
   min-width: 0;
 }
-.stat-combined > .stat-value-divider {
+.stat.stat-combined > .stat-value-divider {
   align-self: stretch;
   margin: 6px 0;
 }
