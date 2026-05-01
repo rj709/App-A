@@ -231,13 +231,43 @@ main { padding: 20px 24px 60px; }
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 16px 16px 14px;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.card-tile.collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+}
+
+.card-tile.expanded {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 16px 16px 14px;
+}
+
+.tile-edit {
+  align-self: flex-end;
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line-strong);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tile-edit:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 .card-tile:hover {
   transform: translateY(-2px);

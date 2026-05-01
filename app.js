@@ -233,6 +233,7 @@ const state = {
   cards: [],
   sortKey: localStorage.getItem(SORT_KEY) || 'opened-desc',
   editingId: null,
+  expanded: new Set(), // tile ids currently expanded
 };
 
 // ----- Render -----
@@ -254,31 +255,63 @@ function renderCards() {
 
   for (const c of sorted) {
     const tile = document.createElement('div');
-    tile.className = 'card-tile';
+    const isExpanded = state.expanded.has(c.id);
+    tile.className = 'card-tile ' + (isExpanded ? 'expanded' : 'collapsed');
     tile.tabIndex = 0;
     tile.dataset.id = c.id;
-    tile.innerHTML = `
-      <div>
-        <div class="card-top">
-          <div class="card-issuer">${escapeHtml(c.issuer)}</div>
-          <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
-            ${toDisplayDate(c.opened)}
-          </span>
+
+    if (isExpanded) {
+      tile.innerHTML = `
+        <div>
+          <div class="card-top">
+            <div class="card-issuer">${escapeHtml(c.issuer)}</div>
+            <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
+              ${toDisplayDate(c.opened)}
+            </span>
+          </div>
+          <div class="card-name">${escapeHtml(c.card)}</div>
         </div>
+        <div class="card-badges">
+          <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
+          <span class="badge" style="${retentionStyle(c.retention)}">Keep: ${c.retention}</span>
+          <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
+        </div>
+        <button class="tile-edit" type="button" aria-label="Edit card">Edit</button>
+      `;
+      tile.querySelector('.tile-edit').addEventListener('click', e => {
+        e.stopPropagation();
+        openModal(c.id);
+      });
+    } else {
+      tile.innerHTML = `
         <div class="card-name">${escapeHtml(c.card)}</div>
-      </div>
-      <div class="card-badges">
-        <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
-        <span class="badge" style="${retentionStyle(c.retention)}">Keep: ${c.retention}</span>
-        <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
-      </div>
-    `;
-    tile.addEventListener('click', () => openModal(c.id));
+        <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
+          ${toDisplayDate(c.opened)}
+        </span>
+      `;
+    }
+
+    tile.addEventListener('click', () => toggleExpand(c.id));
     tile.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(c.id); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(c.id); }
     });
     grid.appendChild(tile);
   }
+
+  updateExpandToggleLabel();
+}
+
+function toggleExpand(id) {
+  if (state.expanded.has(id)) state.expanded.delete(id);
+  else state.expanded.add(id);
+  renderCards();
+}
+
+function updateExpandToggleLabel() {
+  const btn = document.getElementById('toggle-expand');
+  if (!btn) return;
+  const allExpanded = state.cards.length > 0 && state.expanded.size === state.cards.length;
+  btn.textContent = allExpanded ? 'Collapse all' : 'Expand all';
 }
 
 function escapeHtml(s) {
@@ -362,6 +395,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCards();
   });
 
+  document.getElementById('toggle-expand').addEventListener('click', () => {
+    const allExpanded = state.cards.length > 0 && state.expanded.size === state.cards.length;
+    if (allExpanded) state.expanded.clear();
+    else state.cards.forEach(c => state.expanded.add(c.id));
+    renderCards();
+  });
   document.getElementById('add-card').addEventListener('click', () => openModal(null));
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('cancel-card').addEventListener('click', closeModal);
