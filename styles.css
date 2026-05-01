@@ -234,11 +234,17 @@ main { padding: 20px 28px 60px; }
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 14px;
+  gap: 10px;
   margin-bottom: 10px;
 }
 .stat-header-row .stat-label {
   margin-bottom: 0;
+}
+.stat-header-row .stat-value {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 .fee-breakdown {
   display: flex;
