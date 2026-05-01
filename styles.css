@@ -242,33 +242,37 @@ main { padding: 20px 28px 60px; }
 }
 .fee-breakdown {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: flex-start;
-  gap: 10px 22px;
+  gap: 10px 12px;
   width: 100%;
 }
 .fee-group {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 5px;
-  min-width: 70px;
+  gap: 4px;
+  flex: 1 1 0;
+  min-width: 0;
 }
 .fee-issuer {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--ink);
   text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   letter-spacing: -0.01em;
 }
 .fee-amount {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--ink-soft);
   text-align: center;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .stat-value-row {
   display: flex;
