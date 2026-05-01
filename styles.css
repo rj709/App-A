@@ -312,7 +312,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.8fr) minmax(0, 1.5fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1.3fr);
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -403,7 +403,7 @@ main { padding: 20px 28px 60px; }
 
 .detail-name {
   margin: 0;
-  font-size: 28px;
+  font-size: clamp(20px, 1.9vw, 26px);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -411,6 +411,8 @@ main { padding: 20px 28px 60px; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .detail-badges {
