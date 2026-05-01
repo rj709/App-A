@@ -312,7 +312,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 2.4fr) minmax(420px, 0.95fr);
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.7fr) auto;
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -478,7 +478,12 @@ main { padding: 20px 28px 60px; }
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
-  gap: 28px;
+  gap: 24px;
+  flex-wrap: nowrap;
+}
+.detail-stat {
+  flex: 0 0 auto;
+  min-width: 0;
 }
 .detail-stat {
   display: flex;
