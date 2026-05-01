@@ -342,7 +342,7 @@ function renderStats() {
         <span class="stat-value">${s.business} business</span>
       </div>
     </div>
-    <div class="stat" style="--accent-stripe: hsl(275, 50%, 58%)">
+    <div class="stat" style="--accent-stripe: hsl(220, 10%, 60%)">
       <div class="stat-header-row">
         <div class="stat-label">Annual fees</div>
         <span class="stat-value-divider"></span>
