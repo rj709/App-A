@@ -233,13 +233,19 @@ main { padding: 20px 28px 60px; }
   flex-direction: row;
 }
 .stat.stat-combined .stat-cell {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
   text-align: center;
   padding: 0 22px;
   min-width: 0;
-  gap: 10px;
+  row-gap: 10px;
+}
+.stat.stat-combined .stat-cell > * {
+  align-self: center;
+}
+.stat.stat-combined .stat-cell > :first-child {
+  align-self: start;
 }
 .stat.stat-combined > .stat-value-divider {
   align-self: stretch;
