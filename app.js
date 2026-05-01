@@ -298,6 +298,11 @@ function renderStats() {
 
 // ---------- Detail panel ----------
 
+function sourceUrl(c) {
+  const q = encodeURIComponent(`${c.issuer} ${c.card} credit card`);
+  return `https://www.google.com/search?q=${q}`;
+}
+
 function renderDetail() {
   const panel = document.getElementById('detail-panel');
   if (!state.selectedId) { panel.hidden = true; panel.innerHTML = ''; return; }
@@ -308,7 +313,6 @@ function renderDetail() {
   panel.hidden = false;
   panel.style.setProperty('--detail-accent', ageAccent(c.opened));
 
-  // Right-column stats
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const renewal = nextAnniversary(c.opened);
   const renewalDays = renewal ? daysBetween(today, renewal) : null;
@@ -316,37 +320,42 @@ function renderDetail() {
   const feeSub = c.annualFee === 0 ? 'No annual fee' : 'Yearly';
   let renewalValue, renewalSub;
   if (renewalDays === null) {
-    renewalValue = '—';
-    renewalSub = '';
+    renewalValue = '—'; renewalSub = '';
   } else {
-    renewalValue = renewalDays <= 0 ? 'today' : renewalDays === 1 ? 'tomorrow' : `in ${renewalDays}d`;
-    renewalSub = formatShortDate(renewal);
+    renewalValue = renewalDays <= 0 ? 'today' : renewalDays === 1 ? 'tomorrow' : `${renewalDays} days`;
+    renewalSub = `${formatShortDate(renewal)} · ${formatFee(c.annualFee)}/yr`;
   }
 
-  const issuerLine = c.network
-    ? `${escapeHtml(c.issuer)} · ${escapeHtml(c.network)}`
-    : escapeHtml(c.issuer);
+  const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
 
-  const detailRows = [];
-  if (c.earns?.length) detailRows.push(`<dt>Earns</dt><dd>${c.earns.map(escapeHtml).join(' · ')}</dd>`);
-  if (c.perks?.length) detailRows.push(`<dt>Perks</dt><dd>${c.perks.map(escapeHtml).join(' · ')}</dd>`);
+  const earnsHtml = c.earns?.length
+    ? `${c.earns.map(escapeHtml).join(' · ')}<a class="detail-source" href="${sourceUrl(c)}" target="_blank" rel="noopener">Source</a>`
+    : `<span style="color:var(--ink-mute)">No earn data</span>`;
+
+  const perksHtml = c.perks?.length
+    ? `<div class="detail-rewards-perks"><span class="perks-label">Perks</span>${c.perks.map(escapeHtml).join(' · ')}</div>`
+    : '';
 
   panel.innerHTML = `
-    <div class="detail-main">
-      <div class="detail-eyebrow">${issuerLine}</div>
+    <div class="detail-section identity">
+      <div class="detail-eyebrow">${issuerLine}${c.network ? ` · ${escapeHtml(c.network)}` : ''}</div>
       <h2 class="detail-name">${escapeHtml(c.card)}</h2>
       <div class="detail-badges">
         <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
         <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
         <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
       </div>
-      ${detailRows.length ? `<dl class="detail-info">${detailRows.join('')}</dl>` : ''}
       <div class="detail-actions">
         <button class="btn-ghost" id="detail-edit">Edit</button>
         <button class="btn-danger-ghost" id="detail-delete">Delete</button>
       </div>
     </div>
-    <aside class="detail-aside">
+    <div class="detail-section rewards">
+      <div class="detail-section-label">Earns</div>
+      <div class="detail-rewards">${earnsHtml}</div>
+      ${perksHtml}
+    </div>
+    <div class="detail-section stats-section">
       <div class="detail-stat">
         <span class="detail-stat-label">Held</span>
         <span class="detail-stat-value">${ageText(c.opened)}</span>
@@ -362,7 +371,7 @@ function renderDetail() {
         <span class="detail-stat-value">${renewalValue}</span>
         <span class="detail-stat-sub">${renewalSub}</span>
       </div>
-    </aside>
+    </div>
   `;
 
   panel.querySelector('#detail-edit').addEventListener('click', () => openModal(c.id));
