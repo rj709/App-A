@@ -332,7 +332,7 @@ function renderStats() {
         <div class="stat-sub stat-sub-inline">${renewalSub}</div>
       </div>
       <div class="stat-value-row">
-        ${renewalCardName ? `<span class="stat-value">${renewalCardName}${renewalCardFee ? ` ${renewalCardFee}` : ''}</span><span class="stat-value-divider"></span>` : ''}
+        ${renewalCardName ? `<span class="stat-value">${renewalCardName}</span>${renewalCardFee ? `<span class="stat-value-divider"></span><span class="stat-value">${renewalCardFee}</span>` : ''}<span class="stat-value-divider"></span>` : ''}
         <span class="stat-value">${countdown}</span>
       </div>
     </div>
@@ -416,17 +416,20 @@ function renderDetail() {
     <div class="detail-section identity">
       <div class="detail-eyebrow">${issuerLine}${c.network && !sameIssuerNetwork ? ` · ${escapeHtml(c.network)}` : ''}</div>
       <h2 class="detail-name">${escapeHtml(c.card)}</h2>
-      <div class="detail-badges">
-        <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
-        <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
-        <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
-      </div>
     </div>
     <div class="detail-section rewards">
       <div class="detail-section-label">${earnsLabelHtml}</div>
       <div class="detail-rewards">${earnsHtml}</div>
     </div>
     <div class="detail-section stats-section">
+      <div class="detail-stat">
+        <span class="detail-stat-label">Type</span>
+        <span class="detail-stat-value">${c.type}</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-label">Plan</span>
+        <span class="detail-stat-value">${RETENTION_LABEL[c.retention] || c.retention}</span>
+      </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Held</span>
         <span class="detail-stat-value">${ageText(c.opened)}</span>

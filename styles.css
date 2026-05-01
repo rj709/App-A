@@ -184,6 +184,9 @@ main { padding: 20px 28px 60px; }
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .stat::before {
   content: '';
@@ -475,7 +478,7 @@ main { padding: 20px 28px 60px; }
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
-  gap: 44px;
+  gap: 28px;
 }
 .detail-stat {
   display: flex;
