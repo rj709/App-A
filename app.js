@@ -575,7 +575,22 @@ function openModal(id) {
   f.annualFee.value = card?.annualFee ?? 0;
   f.opened.value    = card ? toInputDate(card.opened) : new Date().toISOString().slice(0, 10);
   f.network.value   = card?.network   ?? 'Visa';
-  f.earns.value     = (card?.earns ?? []).join('\n');
+  const baseRe = /^\s*([0-9]+(?:\.[0-9]+)?)\s*([x%])\s+(?:on\s+everything|everything\s+else|everywhere\s+else|all\s+others?|else)\s*$/i;
+  let baseValue = '', baseUnit = 'x';
+  const otherEarns = [];
+  for (const e of (card?.earns ?? [])) {
+    const cleaned = e.replace(/\s*\([^)]*\)/g, '').trim();
+    const m = cleaned.match(baseRe);
+    if (m && !baseValue) {
+      baseValue = m[1];
+      baseUnit = m[2].toLowerCase();
+    } else {
+      otherEarns.push(e);
+    }
+  }
+  f.earns.value = otherEarns.join('\n');
+  f.baseRateValue.value = baseValue;
+  f.baseRateUnit.value = baseUnit;
 
   modalBackdrop().hidden = false;
   setTimeout(() => f.issuer.focus(), 50);
@@ -597,7 +612,12 @@ function handleSubmit(e) {
     annualFee: Number(f.annualFee.value) || 0,
     opened: toDisplayDate(f.opened.value),
     network: f.network.value,
-    earns: f.earns.value.split('\n').map(s => s.trim()).filter(Boolean),
+    earns: (() => {
+      const lines = f.earns.value.split('\n').map(s => s.trim()).filter(Boolean);
+      const base = f.baseRateValue.value.trim();
+      if (base) lines.push(`${base}${f.baseRateUnit.value} on everything`);
+      return lines;
+    })(),
   };
   if (state.editingId) {
     const i = state.cards.findIndex(c => c.id === state.editingId);

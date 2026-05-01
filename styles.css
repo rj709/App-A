@@ -829,6 +829,12 @@ main { padding: 20px 28px 60px; }
   min-height: 100px;
   font-family: inherit;
 }
+.modal-body .inline-fields {
+  display: flex;
+  gap: 8px;
+}
+.modal-body .inline-fields input { flex: 1; }
+.modal-body .inline-fields select { flex: 0 0 80px; }
 .modal-body input:focus,
 .modal-body select:focus,
 .modal-body textarea:focus {
