@@ -425,10 +425,12 @@ function renderDetail() {
       <div class="detail-stat">
         <span class="detail-stat-label">Type</span>
         <span class="detail-stat-value">${c.type}</span>
+        <span class="detail-stat-sub">&nbsp;</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Plan</span>
         <span class="detail-stat-value">${RETENTION_LABEL[c.retention] || c.retention}</span>
+        <span class="detail-stat-sub">&nbsp;</span>
       </div>
       <div class="detail-stat">
         <span class="detail-stat-label">Held</span>
