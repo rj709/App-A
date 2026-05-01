@@ -217,7 +217,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(360px, 1fr) minmax(0, 2fr) minmax(380px, 1fr);
+  grid-template-columns: minmax(360px, 1fr) minmax(0, 1.8fr) minmax(440px, 1fr);
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -314,7 +314,7 @@ main { padding: 20px 28px 60px; }
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
-  gap: 28px;
+  gap: 44px;
 }
 .detail-stat {
   display: flex;
