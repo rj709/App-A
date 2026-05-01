@@ -319,13 +319,16 @@ main { padding: 20px 28px 60px; }
 }
 .detail-source:hover { text-decoration: underline; }
 
-/* --- Right: stats laid horizontally so panel doesn't get tall --- */
+/* --- Right: stats spread across full width of the section --- */
 .detail-section.stats-section {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  align-items: start;
-  align-content: start;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.detail-section.stats-section .detail-stat:last-child {
+  text-align: right;
 }
 .detail-stat {
   display: flex;
