@@ -232,6 +232,7 @@ main { padding: 20px 28px 60px; }
 .stat-value-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 14px;
 }
 .stat-value-divider {
