@@ -341,9 +341,23 @@ function renderDetail() {
 
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
 
-  const earnsHtml = c.earns?.length
-    ? `<ul class="earn-list">${c.earns.map(raw => {
-        const e = raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+  const cleaned = (c.earns || []).map(raw =>
+    raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim()
+  );
+  const baseRe = /^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+on\s+everything\s*$/i;
+  let baseRate = null;
+  const others = [];
+  for (const e of cleaned) {
+    const bm = e.match(baseRe);
+    if (bm && !baseRate) baseRate = bm[1].replace(/\s+/g, '');
+    else if (!bm) others.push(e);
+  }
+  const earnsToRender = others.length ? others : cleaned;
+  const earnsLabelHtml = baseRate && others.length
+    ? `Earns <span class="earn-base">${escapeHtml(baseRate)} base</span>`
+    : 'Earns';
+  const earnsHtml = earnsToRender.length
+    ? `<ul class="earn-list">${earnsToRender.map(e => {
         const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
         if (m) {
           return `<li class="earn-row"><span class="earn-rate">${escapeHtml(m[1].replace(/\s+/g, ''))}</span><span class="earn-label">${escapeHtml(titleCase(m[2]))}</span></li>`;
@@ -363,7 +377,7 @@ function renderDetail() {
       </div>
     </div>
     <div class="detail-section rewards">
-      <div class="detail-section-label">Earns</div>
+      <div class="detail-section-label">${earnsLabelHtml}</div>
       <div class="detail-rewards">${earnsHtml}</div>
     </div>
     <div class="detail-section stats-section">

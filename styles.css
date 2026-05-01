@@ -257,6 +257,11 @@ main { padding: 20px 28px 60px; }
   color: var(--ink-mute);
   white-space: nowrap;
 }
+.earn-base {
+  margin-left: 6px;
+  color: var(--detail-accent, var(--ink));
+  font-weight: 800;
+}
 
 /* --- Left: identity --- */
 .detail-section.identity {
