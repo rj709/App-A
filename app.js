@@ -1,7 +1,13 @@
 const STORAGE_KEY = 'cardTracker.cards.v1';
-const SORT_KEY = 'cardTracker.sort.v1';
+const SORT_KEY    = 'cardTracker.sort.v1';
+const META_KEY    = 'cardTracker.meta.v1';
 
-// ----- Data layer -----
+// ---------- Data ----------
+
+function cryptoId() {
+  if (window.crypto?.randomUUID) return crypto.randomUUID();
+  return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
 
 function loadCards() {
   let stored = null;
@@ -13,17 +19,13 @@ function loadCards() {
   if (!stored) {
     return CARDS.map(c => ({ id: cryptoId(), ...c }));
   }
-  // Backfill lookup-style fields (network/earns/perks) from seed when missing,
-  // matching by issuer+card name. User-edited core fields are preserved.
+  // Backfill (or refresh) seed-managed lookup fields by issuer+card match.
   return stored.map(c => {
     const seed = CARDS.find(s =>
       s.issuer.toLowerCase() === (c.issuer || '').toLowerCase() &&
       s.card.toLowerCase()   === (c.card   || '').toLowerCase()
     );
     if (!seed) return c;
-    // Seed-managed fields (not user-editable) always reflect the latest seed
-    // so corrections to lookup data propagate without wiping user edits to
-    // core fields (issuer, card, type, retention, fee, opened).
     return {
       ...c,
       network: seed.network ?? c.network,
@@ -33,20 +35,25 @@ function loadCards() {
   });
 }
 
+function loadMeta() {
+  try {
+    const raw = localStorage.getItem(META_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { lastSaved: null };
+}
+
 function saveCards() {
+  state.lastSaved = Date.now();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards));
+  localStorage.setItem(META_KEY, JSON.stringify({ lastSaved: state.lastSaved }));
 }
 
-function cryptoId() {
-  if (window.crypto?.randomUUID) return crypto.randomUUID();
-  return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
-
-// ----- Date helpers -----
+// ---------- Date helpers ----------
 
 function parseDate(s) {
   if (!s || s === '-') return null;
-  if (s.includes('-')) { // YYYY-MM-DD from <input type=date>
+  if (s.includes('-')) {
     const [y, m, d] = s.split('-').map(Number);
     return new Date(y, m - 1, d);
   }
@@ -70,48 +77,13 @@ function toInputDate(s) {
   return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
-function formatFee(n) {
-  return '$' + Number(n).toLocaleString();
+const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function formatShortDate(d) {
+  return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-// ----- Color logic (derived) -----
+function formatFee(n) { return '$' + Number(n).toLocaleString(); }
 
-const STYLE = {
-  green:  'background:var(--green-bg);color:var(--green-fg);',
-  amber:  'background:var(--amber-bg);color:var(--amber-fg);',
-  rose:   'background:var(--rose-bg);color:var(--rose-fg);',
-  purple: 'background:var(--purple-bg);color:var(--purple-fg);',
-  slate:  'background:var(--slate-bg);color:var(--slate-fg);',
-};
-
-// Type is a category, not a value — use neutral, non-scale colors
-// so it doesn't collide with the green/amber/rose meaning used for Fee/Retention.
-function typeStyle(t)      { return t === 'Business' ? STYLE.slate : STYLE.purple; }
-function retentionStyle(r) { return r === 'No' ? STYLE.rose : r === 'Maybe' ? STYLE.amber : STYLE.green; }
-
-// Discrete fee tiers — 6 levels from free → ultra-premium.
-// Thresholds chosen so each tier reads as a meaningful price band, not a
-// smooth gradient that all looks the same.
-const FEE_TIERS = [
-  { max: 0,        label: 'Free',     h: 140 }, // $0
-  { max: 99,       label: 'Low',      h: 100 }, // < $100
-  { max: 249,      label: 'Mid-low',  h: 62  }, // $100–$249
-  { max: 499,      label: 'Mid',      h: 35  }, // $250–$499
-  { max: 699,      label: 'High',     h: 15  }, // $500–$699
-  { max: Infinity, label: 'Premium',  h: 0   }, // $700+
-];
-
-function feeTier(fee) {
-  const v = Number(fee) || 0;
-  return FEE_TIERS.find(t => v <= t.max);
-}
-
-function feeStyle(fee) {
-  const { h } = feeTier(fee);
-  return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
-}
-
-// Months elapsed since the given MM/DD/YYYY date (not negative).
 function monthsSince(dateStr) {
   const d = parseDate(dateStr);
   if (!d) return null;
@@ -121,16 +93,6 @@ function monthsSince(dateStr) {
   return Math.max(0, m);
 }
 
-// Age tiers — older is "safer" (green), newer is "fresher" (red).
-const AGE_TIERS = [
-  { minMonths: 24, h: 140 }, // 24+
-  { minMonths: 12, h: 95  }, // 12–23
-  { minMonths: 6,  h: 55  }, // 6–11
-  { minMonths: 3,  h: 25  }, // 3–5
-  { minMonths: 0,  h: 5   }, // 0–2
-];
-
-// Compact age string: "7 mo", "1 yr", "2y 3m"
 function ageText(dateStr) {
   const m = monthsSince(dateStr);
   if (m === null) return '';
@@ -140,40 +102,6 @@ function ageText(dateStr) {
   return rem === 0 ? `${y} yr` : `${y}y ${rem}m`;
 }
 
-// "Renews Jun 2 · in 32 days" (only for fee-bearing cards)
-function renewalText(c) {
-  if (!c.annualFee) return null;
-  const date = nextAnniversary(c.opened);
-  if (!date) return null;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const days = daysBetween(today, date);
-  let when;
-  if (days <= 0) when = 'today';
-  else if (days === 1) when = 'tomorrow';
-  else if (days <= 60) when = `in ${days}d`;
-  else when = `in ~${Math.round(days / 30)} mo`;
-  return `Renews ${formatShortDate(date)} · ${when}`;
-}
-
-// Display label for retention values
-const RETENTION_LABEL = { Yes: 'Keep', No: 'No', Maybe: 'Maybe' };
-
-function ageStyle(dateStr) {
-  const m = monthsSince(dateStr);
-  if (m === null) return 'background:hsl(0, 0%, 92%);color:hsl(0, 0%, 35%);';
-  const tier = AGE_TIERS.find(t => m >= t.minMonths);
-  return `background:hsl(${tier.h}, 55%, 88%);color:hsl(${tier.h}, 55%, 26%);`;
-}
-
-// ----- Stats -----
-
-const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-function formatShortDate(d) {
-  return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-}
-
-// Next yearly anniversary of an open date that is on/after today.
 function nextAnniversary(opened) {
   const d = parseDate(opened);
   if (!d) return null;
@@ -185,8 +113,130 @@ function nextAnniversary(opened) {
 }
 
 function daysBetween(a, b) {
-  return Math.round((b - a) / (1000 * 60 * 60 * 24));
+  return Math.round((b - a) / 86400000);
 }
+
+function relativeTime(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m} min ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} hr ago`;
+  const d = new Date(ts);
+  return d.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+// ---------- Color logic ----------
+
+const STYLE = {
+  green:  'background:var(--green-bg);color:var(--green-fg);',
+  amber:  'background:var(--amber-bg);color:var(--amber-fg);',
+  rose:   'background:var(--rose-bg);color:var(--rose-fg);',
+  purple: 'background:var(--purple-bg);color:var(--purple-fg);',
+  slate:  'background:var(--slate-bg);color:var(--slate-fg);',
+};
+
+function typeStyle(t)      { return t === 'Business' ? STYLE.slate : STYLE.purple; }
+function retentionStyle(r) { return r === 'No' ? STYLE.rose : r === 'Maybe' ? STYLE.amber : STYLE.green; }
+
+const FEE_TIERS = [
+  { max: 0,        h: 140 },
+  { max: 99,       h: 100 },
+  { max: 249,      h: 62  },
+  { max: 499,      h: 35  },
+  { max: 699,      h: 15  },
+  { max: Infinity, h: 0   },
+];
+function feeTier(fee) {
+  const v = Number(fee) || 0;
+  return FEE_TIERS.find(t => v <= t.max);
+}
+function feeStyle(fee) {
+  const { h } = feeTier(fee);
+  return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
+}
+
+const AGE_TIERS = [
+  { minMonths: 24, h: 140 },
+  { minMonths: 12, h: 95  },
+  { minMonths: 6,  h: 55  },
+  { minMonths: 3,  h: 25  },
+  { minMonths: 0,  h: 5   },
+];
+function ageTier(dateStr) {
+  const m = monthsSince(dateStr);
+  if (m === null) return AGE_TIERS[0];
+  return AGE_TIERS.find(t => m >= t.minMonths);
+}
+function ageStyle(dateStr) {
+  const { h } = ageTier(dateStr);
+  return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
+}
+function ageAccent(dateStr) {
+  const { h } = ageTier(dateStr);
+  return `hsl(${h}, 60%, 55%)`;
+}
+
+const RETENTION_LABEL = { Yes: 'Keep', No: 'No', Maybe: 'Maybe' };
+
+// ---------- HTML escape ----------
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
+// ---------- Sorting ----------
+
+function sortCards(cards, sortKey) {
+  const [key, dir] = sortKey.split('-');
+  const sign = dir === 'asc' ? 1 : -1;
+  const numeric = key === 'annualFee';
+  const dateField = key === 'opened';
+
+  return [...cards].sort((a, b) => {
+    let cmp;
+    if (numeric) cmp = a[key] - b[key];
+    else if (dateField) cmp = (parseDate(a[key])?.getTime() || 0) - (parseDate(b[key])?.getTime() || 0);
+    else cmp = String(a[key]).localeCompare(String(b[key]));
+    return cmp * sign;
+  });
+}
+
+// ---------- Filtering ----------
+
+function filterCards(cards) {
+  let out = cards;
+  if (state.typeFilter !== 'all') {
+    out = out.filter(c => c.type === state.typeFilter);
+  }
+  if (state.search.trim()) {
+    const q = state.search.trim().toLowerCase();
+    out = out.filter(c =>
+      c.card.toLowerCase().includes(q) ||
+      c.issuer.toLowerCase().includes(q)
+    );
+  }
+  return out;
+}
+
+// ---------- State ----------
+
+const meta = loadMeta();
+const state = {
+  cards: [],
+  sortKey: localStorage.getItem(SORT_KEY) || 'opened-desc',
+  editingId: null,
+  selectedId: null,
+  search: '',
+  typeFilter: 'all',
+  lastSaved: meta.lastSaved,
+};
+
+// ---------- Stats render ----------
 
 function computeStats(cards) {
   const totalFees = cards.reduce((s, c) => s + (Number(c.annualFee) || 0), 0);
@@ -200,18 +250,13 @@ function computeStats(cards) {
     if (!c.annualFee) continue;
     const date = nextAnniversary(c.opened);
     if (!date) continue;
-    if (!nextRenewal || date < nextRenewal.date) {
-      nextRenewal = { card: c, date };
-    }
+    if (!nextRenewal || date < nextRenewal.date) nextRenewal = { card: c, date };
   }
-
   let renewalDays = null;
   if (nextRenewal) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0,0,0,0);
     renewalDays = daysBetween(today, nextRenewal.date);
   }
-
   return { count: cards.length, personal, business, totalFees, avg, paying, nextRenewal, renewalDays };
 }
 
@@ -220,7 +265,7 @@ function renderStats() {
   const s = computeStats(state.cards);
 
   const countdown = s.renewalDays === null ? '—'
-    : s.renewalDays === 0 ? 'today'
+    : s.renewalDays <= 0 ? 'today'
     : s.renewalDays === 1 ? 'tomorrow'
     : `${s.renewalDays} days`;
 
@@ -228,9 +273,8 @@ function renderStats() {
     ? `${escapeHtml(s.nextRenewal.card.card)} · ${formatShortDate(s.nextRenewal.date)} · ${formatFee(s.nextRenewal.card.annualFee)}/yr`
     : 'No fee-bearing cards';
 
-  // Age tier color for the renewal accent stripe
   const renewalAccent = s.nextRenewal
-    ? `hsl(${AGE_TIERS.find(t => 0 >= t.minMonths).h}, 60%, 55%)` // newest tier (urgent)
+    ? ageAccent(s.nextRenewal.card.opened)
     : 'var(--line-strong)';
 
   el.innerHTML = `
@@ -252,138 +296,148 @@ function renderStats() {
   `;
 }
 
-// ----- Sorting -----
+// ---------- Detail panel ----------
 
-function sortCards(cards, sortKey) {
-  const [key, dir] = sortKey.split('-');
-  const sign = dir === 'asc' ? 1 : -1;
-  const numeric = key === 'annualFee';
-  const dateField = key === 'opened';
+function renderDetail() {
+  const panel = document.getElementById('detail-panel');
+  if (!state.selectedId) { panel.hidden = true; panel.innerHTML = ''; return; }
 
-  return [...cards].sort((a, b) => {
-    let cmp;
-    if (numeric) cmp = a[key] - b[key];
-    else if (dateField) cmp = (parseDate(a[key])?.getTime() || 0) - (parseDate(b[key])?.getTime() || 0);
-    else cmp = String(a[key]).localeCompare(String(b[key]));
-    return cmp * sign;
+  const c = state.cards.find(x => x.id === state.selectedId);
+  if (!c) { state.selectedId = null; panel.hidden = true; panel.innerHTML = ''; return; }
+
+  panel.hidden = false;
+  panel.style.setProperty('--detail-accent', ageAccent(c.opened));
+
+  // Right-column stats
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const renewal = nextAnniversary(c.opened);
+  const renewalDays = renewal ? daysBetween(today, renewal) : null;
+
+  const feeSub = c.annualFee === 0 ? 'No annual fee' : 'Yearly';
+  let renewalValue, renewalSub;
+  if (!c.annualFee) {
+    renewalValue = '—';
+    renewalSub = 'No annual fee';
+  } else if (renewalDays === null) {
+    renewalValue = '—'; renewalSub = '';
+  } else {
+    renewalValue = renewalDays <= 0 ? 'today' : renewalDays === 1 ? 'tomorrow' : `in ${renewalDays}d`;
+    renewalSub = formatShortDate(renewal);
+  }
+
+  const issuerLine = c.network
+    ? `${escapeHtml(c.issuer)} · ${escapeHtml(c.network)}`
+    : escapeHtml(c.issuer);
+
+  const detailRows = [];
+  if (c.earns?.length) detailRows.push(`<dt>Earns</dt><dd>${c.earns.map(escapeHtml).join(' · ')}</dd>`);
+  if (c.perks?.length) detailRows.push(`<dt>Perks</dt><dd>${c.perks.map(escapeHtml).join(' · ')}</dd>`);
+
+  panel.innerHTML = `
+    <div class="detail-main">
+      <div class="detail-eyebrow">${issuerLine}</div>
+      <h2 class="detail-name">${escapeHtml(c.card)}</h2>
+      <div class="detail-badges">
+        <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
+        <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
+        <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
+      </div>
+      ${detailRows.length ? `<dl class="detail-info">${detailRows.join('')}</dl>` : ''}
+      <div class="detail-actions">
+        <button class="btn-ghost" id="detail-edit">Edit</button>
+        <button class="btn-danger-ghost" id="detail-delete">Delete</button>
+      </div>
+    </div>
+    <aside class="detail-aside">
+      <div class="detail-stat">
+        <span class="detail-stat-label">Held</span>
+        <span class="detail-stat-value">${ageText(c.opened)}</span>
+        <span class="detail-stat-sub">Opened ${formatShortDate(parseDate(c.opened))}</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-label">Annual fee</span>
+        <span class="detail-stat-value">${formatFee(c.annualFee)}</span>
+        <span class="detail-stat-sub">${feeSub}</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-label">Next renewal</span>
+        <span class="detail-stat-value">${renewalValue}</span>
+        <span class="detail-stat-sub">${renewalSub}</span>
+      </div>
+    </aside>
+  `;
+
+  panel.querySelector('#detail-edit').addEventListener('click', () => openModal(c.id));
+  panel.querySelector('#detail-delete').addEventListener('click', () => {
+    if (!confirm(`Delete ${c.card}?`)) return;
+    state.cards = state.cards.filter(x => x.id !== c.id);
+    state.selectedId = null;
+    saveCards();
+    renderAll();
   });
 }
 
-// ----- State -----
+// ---------- Grid render ----------
 
-const state = {
-  cards: [],
-  sortKey: localStorage.getItem(SORT_KEY) || 'opened-desc',
-  editingId: null,
-  expanded: new Set(), // tile ids currently expanded
-};
-
-// ----- Render -----
-
-function renderCards() {
-  renderStats();
+function renderGrid() {
   const grid = document.getElementById('cards-grid');
+  const empty = document.getElementById('grid-empty');
   grid.innerHTML = '';
 
-  if (state.cards.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.textContent = 'No cards yet. Click "+ Add card" to get started.';
-    grid.appendChild(empty);
+  const visible = sortCards(filterCards(state.cards), state.sortKey);
+
+  if (visible.length === 0) {
+    empty.hidden = false;
+    empty.textContent = state.cards.length === 0
+      ? 'No cards yet. Click "+ Add card" to get started.'
+      : 'No cards match your filters.';
     return;
   }
+  empty.hidden = true;
 
-  const sorted = sortCards(state.cards, state.sortKey);
-
-  for (const c of sorted) {
+  for (const c of visible) {
     const tile = document.createElement('div');
-    const isExpanded = state.expanded.has(c.id);
-    tile.className = 'card-tile ' + (isExpanded ? 'expanded' : 'collapsed');
+    tile.className = 'card-tile' + (c.id === state.selectedId ? ' selected' : '');
     tile.tabIndex = 0;
     tile.dataset.id = c.id;
-
-    if (isExpanded) {
-      const renewal = renewalText(c);
-      const metaParts = [`Held ${ageText(c.opened)}`];
-      if (renewal) metaParts.push(renewal);
-
-      const issuerLine = c.network
-        ? `${escapeHtml(c.issuer)} <span class="card-network">· ${escapeHtml(c.network)}</span>`
-        : escapeHtml(c.issuer);
-
-      const detailRows = [];
-      if (c.earns?.length) {
-        detailRows.push(`<dt>Earns</dt><dd>${c.earns.map(escapeHtml).join(' · ')}</dd>`);
-      }
-      if (c.perks?.length) {
-        detailRows.push(`<dt>Perks</dt><dd>${c.perks.map(escapeHtml).join(' · ')}</dd>`);
-      }
-      const detailHtml = detailRows.length
-        ? `<dl class="tile-detail">${detailRows.join('')}</dl>`
-        : '';
-
-      tile.innerHTML = `
-        <div class="card-top">
-          <div class="card-issuer">${issuerLine}</div>
-          <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
-            ${toDisplayDate(c.opened)}
-          </span>
-        </div>
-        <div class="card-name">${escapeHtml(c.card)}</div>
-        <div class="card-badges">
-          <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
-          <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
-          <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
-        </div>
-        ${detailHtml}
-        <div class="tile-foot">
-          <span class="tile-meta">${metaParts.join(' · ')}</span>
-          <button class="tile-edit" type="button" aria-label="Edit card">Edit</button>
-        </div>
-      `;
-      tile.querySelector('.tile-edit').addEventListener('click', e => {
-        e.stopPropagation();
-        openModal(c.id);
-      });
-    } else {
-      tile.innerHTML = `
-        <div class="card-name">${escapeHtml(c.card)}</div>
-        <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
-          ${toDisplayDate(c.opened)}
-        </span>
-      `;
-    }
-
-    tile.addEventListener('click', () => toggleExpand(c.id));
+    tile.innerHTML = `
+      <div class="card-name">${escapeHtml(c.card)}</div>
+      <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
+        ${toDisplayDate(c.opened)}
+      </span>
+    `;
+    tile.addEventListener('click', () => selectCard(c.id));
     tile.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(c.id); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(c.id); }
     });
     grid.appendChild(tile);
   }
-
-  updateExpandToggleLabel();
 }
 
-function toggleExpand(id) {
-  if (state.expanded.has(id)) state.expanded.delete(id);
-  else state.expanded.add(id);
-  renderCards();
+function selectCard(id) {
+  state.selectedId = (state.selectedId === id) ? null : id;
+  renderGrid();
+  renderDetail();
 }
 
-function updateExpandToggleLabel() {
-  const btn = document.getElementById('toggle-expand');
-  if (!btn) return;
-  const allExpanded = state.cards.length > 0 && state.expanded.size === state.cards.length;
-  btn.textContent = allExpanded ? 'Collapse all' : 'Expand all';
+// ---------- Last-saved ----------
+
+function renderLastSaved() {
+  const el = document.getElementById('last-saved');
+  if (!state.lastSaved) { el.textContent = 'New session — no edits yet'; return; }
+  el.textContent = `Last edited: ${relativeTime(state.lastSaved)}`;
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, ch => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[ch]));
+// ---------- Aggregate render ----------
+
+function renderAll() {
+  renderStats();
+  renderDetail();
+  renderGrid();
+  renderLastSaved();
 }
 
-// ----- Modal -----
+// ---------- Modal ----------
 
 const modalBackdrop = () => document.getElementById('modal-backdrop');
 const form = () => document.getElementById('card-form');
@@ -402,7 +456,7 @@ function openModal(id) {
   f.type.value      = card?.type      ?? 'Personal';
   f.retention.value = card?.retention ?? 'Yes';
   f.annualFee.value = card?.annualFee ?? 0;
-  f.opened.value    = card ? toInputDate(card.opened) : toInputDate(new Date().toISOString().slice(0, 10));
+  f.opened.value    = card ? toInputDate(card.opened) : new Date().toISOString().slice(0, 10);
 
   modalBackdrop().hidden = false;
   setTimeout(() => f.issuer.focus(), 50);
@@ -424,28 +478,84 @@ function handleSubmit(e) {
     annualFee: Number(f.annualFee.value) || 0,
     opened: toDisplayDate(f.opened.value),
   };
-
   if (state.editingId) {
     const i = state.cards.findIndex(c => c.id === state.editingId);
     if (i >= 0) state.cards[i] = { ...state.cards[i], ...data };
   } else {
-    state.cards.push({ id: cryptoId(), ...data });
+    const newCard = { id: cryptoId(), ...data };
+    state.cards.push(newCard);
+    state.selectedId = newCard.id;
   }
   saveCards();
-  renderCards();
+  renderAll();
   closeModal();
 }
 
-function handleDelete() {
+function handleDeleteFromModal() {
   if (!state.editingId) return;
   if (!confirm('Delete this card?')) return;
   state.cards = state.cards.filter(c => c.id !== state.editingId);
+  if (state.selectedId === state.editingId) state.selectedId = null;
   saveCards();
-  renderCards();
+  renderAll();
   closeModal();
 }
 
-// ----- Wire up -----
+// ---------- Import / Export ----------
+
+function handleExport() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    cards: state.cards,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `card-wallet-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function handleImportFile(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const incoming = Array.isArray(parsed) ? parsed : parsed.cards;
+      if (!Array.isArray(incoming)) throw new Error('No cards array in file');
+      if (!confirm(`Import ${incoming.length} cards? This replaces your current list.`)) return;
+      state.cards = incoming.map(c => ({
+        id: c.id || cryptoId(),
+        issuer: c.issuer || '',
+        card: c.card || '',
+        type: c.type || 'Personal',
+        retention: c.retention || 'Yes',
+        annualFee: Number(c.annualFee) || 0,
+        opened: c.opened || '',
+        network: c.network,
+        earns: c.earns,
+        perks: c.perks,
+      }));
+      state.selectedId = null;
+      saveCards();
+      renderAll();
+    } catch (err) {
+      alert('Import failed: ' + err.message);
+    } finally {
+      e.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ---------- Wire-up ----------
 
 document.addEventListener('DOMContentLoaded', () => {
   state.cards = loadCards();
@@ -455,27 +565,36 @@ document.addEventListener('DOMContentLoaded', () => {
   sortSel.addEventListener('change', () => {
     state.sortKey = sortSel.value;
     localStorage.setItem(SORT_KEY, state.sortKey);
-    renderCards();
+    renderGrid();
   });
 
-  document.getElementById('toggle-expand').addEventListener('click', () => {
-    const allExpanded = state.cards.length > 0 && state.expanded.size === state.cards.length;
-    if (allExpanded) state.expanded.clear();
-    else state.cards.forEach(c => state.expanded.add(c.id));
-    renderCards();
-  });
+  const search = document.getElementById('search');
+  search.addEventListener('input', () => { state.search = search.value; renderGrid(); });
+
+  const typeFilter = document.getElementById('type-filter');
+  typeFilter.addEventListener('change', () => { state.typeFilter = typeFilter.value; renderGrid(); });
+
   document.getElementById('add-card').addEventListener('click', () => openModal(null));
+  document.getElementById('export-cards').addEventListener('click', handleExport);
+  document.getElementById('import-cards').addEventListener('click', () => document.getElementById('import-file').click());
+  document.getElementById('import-file').addEventListener('change', handleImportFile);
+
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('cancel-card').addEventListener('click', closeModal);
-  document.getElementById('delete-card').addEventListener('click', handleDelete);
+  document.getElementById('delete-card').addEventListener('click', handleDeleteFromModal);
   form().addEventListener('submit', handleSubmit);
 
   modalBackdrop().addEventListener('click', e => {
     if (e.target === modalBackdrop()) closeModal();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !modalBackdrop().hidden) closeModal();
+    if (e.key === 'Escape') {
+      if (!modalBackdrop().hidden) closeModal();
+      else if (state.selectedId) { state.selectedId = null; renderGrid(); renderDetail(); }
+    }
   });
 
-  renderCards();
+  renderAll();
+  // Refresh "last edited" relative timestamp every minute
+  setInterval(renderLastSaved, 60_000);
 });

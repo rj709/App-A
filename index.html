@@ -3,37 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Tracker</title>
-  <link rel="stylesheet" href="styles.css?v=19">
+  <title>Card Wallet</title>
+  <link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
   <header class="app-header">
-    <h1>Card Tracker</h1>
+    <div class="app-header-row">
+      <div class="app-header-text">
+        <h1>Card Wallet</h1>
+        <p class="subtitle">Track fees, retention, and renewal countdowns.</p>
+        <p class="last-saved" id="last-saved"></p>
+      </div>
+      <div class="app-actions">
+        <button class="btn-ghost" id="import-cards">Import</button>
+        <button class="btn-ghost" id="export-cards">Export</button>
+        <button class="btn-primary" id="add-card">+ Add card</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="cards">Cards</button>
+    </nav>
   </header>
-  <nav class="tabs" id="tabs">
-    <button class="tab active" data-tab="cards">Cards</button>
-  </nav>
   <main>
     <section class="tab-panel active" id="panel-cards">
       <div class="stats" id="stats"></div>
+      <div class="detail-panel" id="detail-panel" hidden></div>
       <div class="toolbar">
-        <label class="sort-control">
-          <span>Sort by</span>
-          <select id="sort-key">
-            <option value="opened-desc">Newest first</option>
-            <option value="opened-asc">Oldest first</option>
-            <option value="issuer-asc">Issuer (A–Z)</option>
-            <option value="card-asc">Card (A–Z)</option>
-            <option value="annualFee-desc">Annual fee (high → low)</option>
-            <option value="annualFee-asc">Annual fee (low → high)</option>
-            <option value="type-asc">Type</option>
-            <option value="retention-asc">Retention</option>
-          </select>
-        </label>
-        <button class="btn-ghost" id="toggle-expand">Expand all</button>
-        <button class="btn-primary" id="add-card">+ Add card</button>
+        <input type="search" id="search" class="search-input" placeholder="Search cards or issuers" autocomplete="off">
+        <select id="type-filter" class="filter-select" aria-label="Filter by type">
+          <option value="all">All types</option>
+          <option value="Personal">Personal only</option>
+          <option value="Business">Business only</option>
+        </select>
+        <select id="sort-key" class="filter-select" aria-label="Sort">
+          <option value="opened-desc">Newest first</option>
+          <option value="opened-asc">Oldest first</option>
+          <option value="issuer-asc">Issuer (A–Z)</option>
+          <option value="card-asc">Card (A–Z)</option>
+          <option value="annualFee-desc">Annual fee (high → low)</option>
+          <option value="annualFee-asc">Annual fee (low → high)</option>
+          <option value="type-asc">Type</option>
+          <option value="retention-asc">Retention</option>
+        </select>
       </div>
       <div class="cards-grid" id="cards-grid"></div>
+      <p class="grid-empty" id="grid-empty" hidden>No cards match your filters.</p>
     </section>
   </main>
 
@@ -44,37 +59,23 @@
         <button class="icon-btn" id="modal-close" aria-label="Close">×</button>
       </div>
       <form id="card-form" class="modal-body">
-        <label>
-          <span>Issuer</span>
-          <input name="issuer" type="text" required>
-        </label>
-        <label>
-          <span>Card</span>
-          <input name="card" type="text" required>
-        </label>
-        <label>
-          <span>Type</span>
+        <label><span>Issuer</span><input name="issuer" type="text" required></label>
+        <label><span>Card</span><input name="card" type="text" required></label>
+        <label><span>Type</span>
           <select name="type">
             <option value="Personal">Personal</option>
             <option value="Business">Business</option>
           </select>
         </label>
-        <label>
-          <span>Retention</span>
+        <label><span>Retention</span>
           <select name="retention">
-            <option value="Yes">Yes</option>
+            <option value="Yes">Keep</option>
             <option value="No">No</option>
             <option value="Maybe">Maybe</option>
           </select>
         </label>
-        <label>
-          <span>Annual fee ($)</span>
-          <input name="annualFee" type="number" min="0" step="1" required>
-        </label>
-        <label>
-          <span>Opened</span>
-          <input name="opened" type="date" required>
-        </label>
+        <label><span>Annual fee ($)</span><input name="annualFee" type="number" min="0" step="1" required></label>
+        <label><span>Opened</span><input name="opened" type="date" required></label>
         <div class="modal-footer">
           <button type="button" class="btn-danger" id="delete-card" hidden>Delete</button>
           <div class="spacer"></div>
@@ -85,7 +86,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=19"></script>
-  <script src="app.js?v=19"></script>
+  <script src="cards.js?v=20"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>
