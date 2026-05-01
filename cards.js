@@ -1,5 +1,5 @@
 const CARDS = [
-  { issuer: 'Apple',   card: 'Apple',                  type: 'Personal', retention: 'Yes',   annualFee: 0,   opened: '08/12/2019', pc: '-',          from: '-' },
+  { issuer: 'Goldman Sachs', card: 'Apple',            type: 'Personal', retention: 'Yes',   annualFee: 0,   opened: '08/12/2019', pc: '-',          from: '-' },
   { issuer: 'Chase',   card: 'Freedom Unlimited',      type: 'Personal', retention: 'Yes',   annualFee: 0,   opened: '03/16/2024', pc: '01/19/2026', from: 'Sapphire' },
   { issuer: 'Amex',    card: 'Delta Reserve',          type: 'Personal', retention: 'Yes',   annualFee: 650, opened: '03/24/2024', pc: '03/09/2025', from: 'Delta Blue' },
   { issuer: 'Amex',    card: 'Platinum',               type: 'Personal', retention: 'Yes',   annualFee: 895, opened: '04/02/2024', pc: '-',          from: '-' },
