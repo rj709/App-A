@@ -38,7 +38,6 @@ function feeStyle(fee) {
 // Opened date: smooth HSL gradient from green (oldest) -> amber -> rose (newest).
 // All anchors share saturation/lightness for cohesion with the rest of the palette.
 function dateGradient(t) {
-  // t in [0, 1]; interpolate hue 135 (green) -> 42 (amber) -> 6 (rose)
   const stops = [
     { t: 0.0, h: 135 },
     { t: 0.5, h: 42  },
@@ -62,16 +61,50 @@ function styleVars(bgVar, fgVar) {
   return `background:var(${bgVar});color:var(${fgVar});`;
 }
 
+// Sort comparator per column. Returns a function(a, b) -> number.
+// "-" / empty values always sort to the end regardless of direction.
+function comparator(key, dir) {
+  const sign = dir === 'asc' ? 1 : -1;
+  const isEmpty = v => v === '-' || v === '' || v == null;
+
+  const numericKeys = new Set(['annualFee']);
+  const dateKeys = new Set(['opened', 'pc']);
+
+  return (a, b) => {
+    const av = a[key], bv = b[key];
+    const ae = isEmpty(av), be = isEmpty(bv);
+    if (ae && be) return 0;
+    if (ae) return 1;
+    if (be) return -1;
+
+    let cmp;
+    if (numericKeys.has(key)) {
+      cmp = av - bv;
+    } else if (dateKeys.has(key)) {
+      cmp = parseDate(av).getTime() - parseDate(bv).getTime();
+    } else {
+      cmp = String(av).localeCompare(String(bv));
+    }
+    return cmp * sign;
+  };
+}
+
+let sortState = { key: null, dir: 'asc' };
+
 function render() {
   const dates = CARDS.map(c => parseDate(c.opened)).filter(Boolean);
   const minT = Math.min(...dates.map(d => d.getTime()));
   const maxT = Math.max(...dates.map(d => d.getTime()));
   const span = maxT - minT || 1;
 
+  const rows = sortState.key
+    ? [...CARDS].sort(comparator(sortState.key, sortState.dir))
+    : CARDS;
+
   const tbody = document.querySelector('#cards-table tbody');
   tbody.innerHTML = '';
 
-  for (const c of CARDS) {
+  for (const c of rows) {
     const tr = document.createElement('tr');
 
     const opened = parseDate(c.opened);
@@ -91,6 +124,32 @@ function render() {
     `;
     tbody.appendChild(tr);
   }
+
+  // Update header sort indicators
+  document.querySelectorAll('#cards-table thead th').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.key === sortState.key) {
+      th.classList.add(sortState.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+  });
 }
 
-document.addEventListener('DOMContentLoaded', render);
+function initSorting() {
+  document.querySelectorAll('#cards-table thead th').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if (!key) return;
+      if (sortState.key === key) {
+        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState = { key, dir: 'asc' };
+      }
+      render();
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSorting();
+  render();
+});

@@ -100,6 +100,34 @@ thead th {
   font-size: 13px;
   letter-spacing: 0.02em;
   white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: background 0.15s ease;
+}
+
+thead th:hover {
+  background: hsl(213, 51%, 30%);
+}
+
+thead th::after {
+  content: '';
+  display: inline-block;
+  width: 0.7em;
+  margin-left: 6px;
+  opacity: 0.4;
+  font-size: 0.85em;
+  vertical-align: baseline;
+}
+
+thead th.sort-asc::after {
+  content: '▲';
+  opacity: 1;
+}
+
+thead th.sort-desc::after {
+  content: '▼';
+  opacity: 1;
 }
 
 tbody td {
