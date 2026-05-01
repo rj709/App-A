@@ -284,6 +284,12 @@ main { padding: 20px 28px 60px; }
   justify-content: center;
   gap: 14px;
 }
+.stat-value-row .stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
 .stat-value-divider {
   width: 1px;
   align-self: stretch;
