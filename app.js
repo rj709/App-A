@@ -338,9 +338,9 @@ function renderStats() {
         <div class="stat-label">Total cards</div>
         <div class="stat-count">${s.count}</div>
         <div class="stat-value-row stat-value-row-sm">
-          <span class="stat-value">${s.personal} personal</span>
+          <span class="stat-value">${s.personal} Personal</span>
           <span class="stat-value-divider"></span>
-          <span class="stat-value">${s.business} business</span>
+          <span class="stat-value">${s.business} Business</span>
         </div>
       </div>
       <span class="stat-value-divider"></span>
