@@ -81,6 +81,9 @@ const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct
 function formatShortDate(d) {
   return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
+function formatShortDateNoYear(d) {
+  return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}`;
+}
 
 function formatFee(n) { return '$' + Number(n).toLocaleString(); }
 
@@ -363,7 +366,7 @@ function renderDetail() {
   const renewal = nextAnniversary(c.opened);
   const renewalDays = renewal ? daysBetween(today, renewal) : null;
 
-  const renewalValue = renewal ? formatShortDate(renewal) : '—';
+  const renewalValue = renewal ? formatShortDateNoYear(renewal) : '—';
 
   const sameIssuerNetwork = c.network && c.issuer && c.issuer.toLowerCase() === c.network.toLowerCase();
   const issuerLine = `${escapeHtml(c.issuer)}`;
@@ -429,7 +432,7 @@ function renderDetail() {
       </div>
       <span class="stat-value-divider"></span>
       <div class="detail-stat">
-        <span class="detail-stat-label">Next renewal</span>
+        <span class="detail-stat-label">Renewal</span>
         <span class="detail-stat-value">${renewalValue}</span>
       </div>
       <span class="stat-value-divider"></span>
