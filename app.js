@@ -309,7 +309,7 @@ function renderStats() {
     <div class="stat" style="--accent-stripe: hsl(220, 14%, 60%)">
       <div class="stat-label">Total cards</div>
       <div class="stat-value-row stat-value-row-sm">
-        <span class="stat-value">${s.count}</span>
+        <span class="stat-value stat-count">${s.count}</span>
         <span class="stat-value-divider"></span>
         <span class="stat-value-stack">
           <span class="stat-value">${s.personal} personal</span>
