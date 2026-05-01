@@ -422,14 +422,17 @@ function renderDetail() {
         <span class="detail-stat-label">Held</span>
         <span class="detail-stat-value">${ageText(c.opened)}</span>
       </div>
+      <span class="stat-value-divider"></span>
       <div class="detail-stat">
         <span class="detail-stat-label">Annual fee</span>
         <span class="detail-stat-value">${formatFee(c.annualFee)}</span>
       </div>
+      <span class="stat-value-divider"></span>
       <div class="detail-stat">
         <span class="detail-stat-label">Next renewal</span>
         <span class="detail-stat-value">${renewalValue}</span>
       </div>
+      <span class="stat-value-divider"></span>
       <div class="detail-stat">
         <span class="detail-stat-label">Plan</span>
         <span class="detail-stat-value">${RETENTION_LABEL[c.retention] || c.retention}</span>
