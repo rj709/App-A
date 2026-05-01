@@ -94,9 +94,12 @@ function monthsSince(dateStr) {
 }
 
 function ageText(dateStr) {
+  const d = parseDate(dateStr);
+  if (!d) return '';
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Math.max(0, Math.floor((today - d) / 86400000));
+  if (days < 365) return `${days} ${days === 1 ? 'day' : 'days'}`;
   const m = monthsSince(dateStr);
-  if (m === null) return '';
-  if (m < 12) return `${m} mo`;
   const y = Math.floor(m / 12);
   const rem = m % 12;
   return rem === 0 ? `${y} yr` : `${y}y ${rem}m`;
