@@ -189,6 +189,19 @@ function escapeHtml(s) {
   }[ch]));
 }
 
+const TITLE_SMALL = new Set(['a','an','and','as','at','but','by','for','if','in','of','on','or','the','to','up','via','vs','with']);
+function titleCase(str) {
+  let i = 0;
+  return str.replace(/[A-Za-z][A-Za-z'.]*/g, (word) => {
+    const idx = i++;
+    if (word.includes('.')) return word;
+    if (/^[A-Z]{2,}$/.test(word)) return word;
+    const lower = word.toLowerCase();
+    if (idx > 0 && TITLE_SMALL.has(lower)) return lower;
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+}
+
 // ---------- Sorting ----------
 
 function sortCards(cards, sortKey) {
@@ -333,9 +346,9 @@ function renderDetail() {
         const e = raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
         const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
         if (m) {
-          return `<li class="earn-row"><span class="earn-rate">${escapeHtml(m[1].replace(/\s+/g, ''))}</span><span class="earn-label">${escapeHtml(m[2])}</span></li>`;
+          return `<li class="earn-row"><span class="earn-rate">${escapeHtml(m[1].replace(/\s+/g, ''))}</span><span class="earn-label">${escapeHtml(titleCase(m[2]))}</span></li>`;
         }
-        return `<li class="earn-row earn-row-plain"><span class="earn-label">${escapeHtml(e)}</span></li>`;
+        return `<li class="earn-row earn-row-plain"><span class="earn-label">${escapeHtml(titleCase(e))}</span></li>`;
       }).join('')}</ul>`
     : `<span style="color:var(--ink-mute)">No earn data</span>`;
 
