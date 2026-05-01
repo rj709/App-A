@@ -381,6 +381,7 @@ main { padding: 20px 28px 60px; }
   align-items: center;
   text-align: center;
   position: relative;
+  min-width: 200px;
 }
 .detail-section.identity::after {
   content: '';
