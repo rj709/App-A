@@ -97,21 +97,30 @@ function feeStyle(fee) {
   return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
 }
 
-function dateGradient(t) {
-  const stops = [
-    { t: 0.0, h: 135 },
-    { t: 0.5, h: 42  },
-    { t: 1.0, h: 6   },
-  ];
-  let h = stops[0].h;
-  for (let i = 0; i < stops.length - 1; i++) {
-    const a = stops[i], b = stops[i + 1];
-    if (t >= a.t && t <= b.t) {
-      h = a.h + (b.h - a.h) * ((t - a.t) / (b.t - a.t));
-      break;
-    }
-  }
-  return `hsl(${h.toFixed(1)}, 55%, 60%)`;
+// Months elapsed since the given MM/DD/YYYY date (not negative).
+function monthsSince(dateStr) {
+  const d = parseDate(dateStr);
+  if (!d) return null;
+  const now = new Date();
+  let m = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+  if (now.getDate() < d.getDate()) m -= 1;
+  return Math.max(0, m);
+}
+
+// Age tiers — older is "safer" (green), newer is "fresher" (red).
+const AGE_TIERS = [
+  { minMonths: 24, h: 140 }, // 24+
+  { minMonths: 12, h: 95  }, // 12–23
+  { minMonths: 6,  h: 55  }, // 6–11
+  { minMonths: 3,  h: 25  }, // 3–5
+  { minMonths: 0,  h: 5   }, // 0–2
+];
+
+function ageDotColor(dateStr) {
+  const m = monthsSince(dateStr);
+  if (m === null) return 'hsl(0, 0%, 80%)';
+  const tier = AGE_TIERS.find(t => m >= t.minMonths);
+  return `hsl(${tier.h}, 60%, 55%)`;
 }
 
 // ----- Sorting -----
@@ -153,17 +162,9 @@ function renderCards() {
     return;
   }
 
-  const dates = state.cards.map(c => parseDate(c.opened)).filter(Boolean);
-  const minT = Math.min(...dates.map(d => d.getTime()));
-  const maxT = Math.max(...dates.map(d => d.getTime()));
-  const span = maxT - minT || 1;
-
   const sorted = sortCards(state.cards, state.sortKey);
 
   for (const c of sorted) {
-    const opened = parseDate(c.opened);
-    const t = opened ? (opened.getTime() - minT) / span : 0;
-
     const tile = document.createElement('div');
     tile.className = 'card-tile';
     tile.tabIndex = 0;
@@ -179,8 +180,8 @@ function renderCards() {
         <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
       </div>
       <div class="card-footer">
-        <span class="card-opened">
-          <span class="opened-dot" style="background:${dateGradient(t)}"></span>
+        <span class="card-opened" title="${monthsSince(c.opened)} months old">
+          <span class="opened-dot" style="background:${ageDotColor(c.opened)}"></span>
           Opened ${toDisplayDate(c.opened)}
         </span>
       </div>
