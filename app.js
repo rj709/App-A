@@ -438,6 +438,7 @@ function renderDetail() {
     <div class="detail-section identity">
       <div class="detail-eyebrow">${issuerLine}${c.network && !sameIssuerNetwork ? ` · ${escapeHtml(c.network)}` : ''}</div>
       <h2 class="detail-name">${escapeHtml(c.card)}</h2>
+      <div class="detail-currency">${c.pointCurrency ? escapeHtml(c.pointCurrency) : ''}</div>
     </div>
     <div class="detail-section rewards">
       <div class="detail-section-label">${earnsLabelHtml}</div>
