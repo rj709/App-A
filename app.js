@@ -363,6 +363,13 @@ function renderDetail() {
     }
     for (const c of cats) if (!g.cats.includes(c)) g.cats.push(c);
   }
+  groups.sort((a, b) => {
+    const av = parseFloat(a.rate); const bv = parseFloat(b.rate);
+    if (isNaN(av) && isNaN(bv)) return 0;
+    if (isNaN(av)) return 1;
+    if (isNaN(bv)) return -1;
+    return bv - av;
+  });
   const earnsHtml = groups.length
     ? `<div class="earn-list">${groups.map(g => {
         const catsHtml = g.cats.map(c =>
