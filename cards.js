@@ -74,8 +74,8 @@ const CARDS = [
   {
     issuer: 'Bilt', card: 'Palladium', type: 'Personal', retention: 'No', annualFee: 495, opened: '01/22/2026',
     network: 'Mastercard',
-    earns: ['Premium points on rent', '5x dining', '4x travel', '1x else'],
-    perks: ['Premium travel transfers', 'Lounge access', 'Status with hotel partners'],
+    earns: ['2x on everything'],
+    perks: [],
   },
   {
     issuer: 'Amex', card: 'Gold', type: 'Personal', retention: 'Maybe', annualFee: 325, opened: '02/08/2026',

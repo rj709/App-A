@@ -21,11 +21,14 @@ function loadCards() {
       s.card.toLowerCase()   === (c.card   || '').toLowerCase()
     );
     if (!seed) return c;
+    // Seed-managed fields (not user-editable) always reflect the latest seed
+    // so corrections to lookup data propagate without wiping user edits to
+    // core fields (issuer, card, type, retention, fee, opened).
     return {
       ...c,
-      network: c.network ?? seed.network,
-      earns:   c.earns   ?? seed.earns,
-      perks:   c.perks   ?? seed.perks,
+      network: seed.network ?? c.network,
+      earns:   seed.earns   ?? c.earns,
+      perks:   seed.perks   ?? c.perks,
     };
   });
 }
