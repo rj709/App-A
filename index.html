@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Wallet</title>
-  <link rel="stylesheet" href="styles.css?v=125">
+  <link rel="stylesheet" href="styles.css?v=126">
 </head>
 <body>
   <header class="app-header">
@@ -15,6 +15,16 @@
         <p class="last-saved" id="last-saved"></p>
       </div>
       <div class="app-actions">
+        <select id="sort-key" class="btn-ghost btn-select" aria-label="Sort">
+          <option value="opened-asc">Oldest first</option>
+          <option value="opened-desc">Newest first</option>
+          <option value="issuer-asc">Issuer (A–Z)</option>
+          <option value="card-asc">Card (A–Z)</option>
+          <option value="annualFee-desc">Annual fee (high → low)</option>
+          <option value="annualFee-asc">Annual fee (low → high)</option>
+          <option value="type-asc">Type</option>
+          <option value="retention-asc">Retention</option>
+        </select>
         <button class="btn-ghost" id="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">Dark</button>
         <button class="btn-ghost" id="import-cards">Import</button>
         <button class="btn-ghost" id="export-cards">Export</button>
@@ -36,20 +46,6 @@
       <p class="grid-empty" id="grid-empty" hidden>No cards match your filters.</p>
     </section>
   </main>
-  <footer class="page-footer">
-    <div class="toolbar toolbar-bottom">
-      <select id="sort-key" class="filter-select" aria-label="Sort">
-        <option value="opened-asc">Oldest first</option>
-        <option value="opened-desc">Newest first</option>
-        <option value="issuer-asc">Issuer (A–Z)</option>
-        <option value="card-asc">Card (A–Z)</option>
-        <option value="annualFee-desc">Annual fee (high → low)</option>
-        <option value="annualFee-asc">Annual fee (low → high)</option>
-        <option value="type-asc">Type</option>
-        <option value="retention-asc">Retention</option>
-      </select>
-    </div>
-  </footer>
 
   <div class="modal-backdrop" id="modal-backdrop" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -85,7 +81,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=125"></script>
-  <script src="app.js?v=125"></script>
+  <script src="cards.js?v=126"></script>
+  <script src="app.js?v=126"></script>
 </body>
 </html>
