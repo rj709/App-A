@@ -248,6 +248,14 @@ main { padding: 20px 28px 60px; }
   border-radius: 0 4px 4px 0;
   background: var(--accent-stripe, var(--line-strong));
 }
+.stat::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 14px; bottom: 14px;
+  width: 4px;
+  border-radius: 4px 0 0 4px;
+  background: var(--accent-stripe, var(--line-strong));
+}
 .stat-label {
   font-size: 16px;
   font-weight: 700;
