@@ -179,6 +179,14 @@ function ageAccent(dateStr) {
   return `hsl(${h}, 60%, 55%)`;
 }
 
+function renewalAccent(days) {
+  if (days === null || days === undefined) return 'hsl(140, 60%, 55%)';
+  if (days <= 7)   return 'hsl(355, 70%, 55%)';
+  if (days <= 30)  return 'hsl(25,  80%, 55%)';
+  if (days <= 180) return 'hsl(210, 70%, 55%)';
+  return 'hsl(140, 60%, 55%)';
+}
+
 const RETENTION_LABEL = { Yes: 'Keep', No: 'Cancel', Maybe: 'Undecided' };
 
 // ---------- HTML escape ----------
@@ -286,8 +294,8 @@ function renderStats() {
     ? `${escapeHtml(s.nextRenewal.card.card)} · ${formatShortDate(s.nextRenewal.date)} · ${formatFee(s.nextRenewal.card.annualFee)}/yr`
     : 'No fee-bearing cards';
 
-  const renewalAccent = s.nextRenewal
-    ? ageAccent(s.nextRenewal.card.opened)
+  const renewalStripe = s.nextRenewal
+    ? renewalAccent(s.renewalDays)
     : 'var(--line-strong)';
 
   el.innerHTML = `
@@ -301,7 +309,7 @@ function renderStats() {
       <div class="stat-value">${formatFee(s.totalFees)}</div>
       <div class="stat-sub">${formatFee(s.avg)} avg across ${s.paying} paying card${s.paying === 1 ? '' : 's'}</div>
     </div>
-    <div class="stat" style="--accent-stripe: ${renewalAccent}">
+    <div class="stat" style="--accent-stripe: ${renewalStripe}">
       <div class="stat-label">Next renewal</div>
       <div class="stat-value">${countdown === '—' ? '—' : `in ${countdown}`}</div>
       <div class="stat-sub">${renewalSub}</div>
