@@ -166,7 +166,7 @@ function feeStyle(fee) {
 
 const AGE_TIERS = [
   { minMonths: 24, h: 140 },
-  { minMonths: 12, h: 95  },
+  { minMonths: 12, h: 30  },
   { minMonths: 6,  h: 55  },
   { minMonths: 3,  h: 25  },
   { minMonths: 0,  h: 5   },
