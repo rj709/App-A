@@ -575,6 +575,7 @@ function openModal(id) {
   f.annualFee.value = card?.annualFee ?? 0;
   f.opened.value    = card ? toInputDate(card.opened) : new Date().toISOString().slice(0, 10);
   f.network.value   = card?.network   ?? 'Visa';
+  f.pointCurrency.value = card?.pointCurrency ?? '';
   const baseRe = /^\s*([0-9]+(?:\.[0-9]+)?)\s*([x%])\s+(?:on\s+everything|everything\s+else|everywhere\s+else|all\s+others?|else)\s*$/i;
   let baseValue = '', baseUnit = 'x';
   const otherEarns = [];
@@ -612,6 +613,7 @@ function handleSubmit(e) {
     annualFee: Number(f.annualFee.value) || 0,
     opened: toDisplayDate(f.opened.value),
     network: f.network.value,
+    pointCurrency: f.pointCurrency.value.trim(),
     earns: (() => {
       const lines = f.earns.value.split('\n').map(s => s.trim()).filter(Boolean);
       const base = f.baseRateValue.value.trim();
