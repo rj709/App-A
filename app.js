@@ -318,6 +318,7 @@ function renderStats() {
     <div class="stat" style="--accent-stripe: hsl(135, 45%, 50%)">
       <div class="stat-header-row">
         <div class="stat-label">Annual fees</div>
+        <span class="stat-value-divider"></span>
         <div class="stat-value">${formatFee(s.totalFees)}</div>
       </div>
       <div class="fee-breakdown">${s.issuerFees.map(([i, f]) => `<div class="fee-group"><div class="fee-issuer">${escapeHtml(i)}</div><hr class="earn-divider"><div class="fee-amount">${formatFee(f)}</div></div>`).join('')}</div>
