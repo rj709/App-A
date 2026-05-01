@@ -315,11 +315,9 @@ function renderDetail() {
 
   const feeSub = c.annualFee === 0 ? 'No annual fee' : 'Yearly';
   let renewalValue, renewalSub;
-  if (!c.annualFee) {
+  if (renewalDays === null) {
     renewalValue = '—';
-    renewalSub = 'No annual fee';
-  } else if (renewalDays === null) {
-    renewalValue = '—'; renewalSub = '';
+    renewalSub = '';
   } else {
     renewalValue = renewalDays <= 0 ? 'today' : renewalDays === 1 ? 'tomorrow' : `in ${renewalDays}d`;
     renewalSub = formatShortDate(renewal);
