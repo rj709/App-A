@@ -116,11 +116,11 @@ const AGE_TIERS = [
   { minMonths: 0,  h: 5   }, // 0–2
 ];
 
-function ageDotColor(dateStr) {
+function ageStyle(dateStr) {
   const m = monthsSince(dateStr);
-  if (m === null) return 'hsl(0, 0%, 80%)';
+  if (m === null) return 'background:hsl(0, 0%, 92%);color:hsl(0, 0%, 35%);';
   const tier = AGE_TIERS.find(t => m >= t.minMonths);
-  return `hsl(${tier.h}, 60%, 55%)`;
+  return `background:hsl(${tier.h}, 55%, 88%);color:hsl(${tier.h}, 55%, 26%);`;
 }
 
 // ----- Sorting -----
@@ -180,9 +180,9 @@ function renderCards() {
         <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
       </div>
       <div class="card-footer">
-        <span class="card-opened" title="${monthsSince(c.opened)} months old">
-          <span class="opened-dot" style="background:${ageDotColor(c.opened)}"></span>
-          Opened ${toDisplayDate(c.opened)}
+        <span class="footer-label">Opened</span>
+        <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
+          ${toDisplayDate(c.opened)}
         </span>
       </div>
     `;
