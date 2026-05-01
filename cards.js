@@ -2,19 +2,19 @@ const CARDS = [
   {
     issuer: 'Goldman Sachs', card: 'Apple', type: 'Personal', retention: 'Yes', annualFee: 0, opened: '08/12/2019',
     network: 'Mastercard',
-    earns: ['3% Apple purchases', '2% Apple Pay', '1% everywhere else'],
+    earns: ['3% Apple purchases', '2% Apple Pay', '1% on everything'],
     perks: ['Daily Cash', 'No fees of any kind', 'Family sharing'],
   },
   {
     issuer: 'Chase', card: 'Freedom Unlimited', type: 'Personal', retention: 'Yes', annualFee: 0, opened: '03/16/2024',
     network: 'Visa',
-    earns: ['5% Chase Travel', '3% dining', '3% drugstores', '1.5% everything else'],
+    earns: ['5% Chase Travel', '3% dining', '3% drugstores', '1.5% on everything'],
     perks: ['Transfer to Sapphire / Ink for UR value', 'No annual fee'],
   },
   {
     issuer: 'Amex', card: 'Delta Reserve', type: 'Personal', retention: 'Yes', annualFee: 650, opened: '03/24/2024',
     network: 'Amex',
-    earns: ['3x Delta', '1x everywhere else'],
+    earns: ['3x Delta', '1x on everything'],
     perks: ['Sky Club access', 'Companion certificate (FC/PE/MC)', 'Upgrade priority', 'MQD boost'],
   },
   {
@@ -32,19 +32,19 @@ const CARDS = [
   {
     issuer: 'Amex', card: 'Delta Business Reserve', type: 'Business', retention: 'Yes', annualFee: 650, opened: '06/24/2024',
     network: 'Amex',
-    earns: ['3x Delta', '1.5x on $5K+ purchases', '1x everywhere else'],
+    earns: ['3x Delta', '1.5x on $5K+ purchases', '1x on everything'],
     perks: ['Sky Club access', 'Companion certificate', 'MQM accelerator', 'Status boost'],
   },
   {
     issuer: 'Amex', card: 'Hilton Honors Business', type: 'Business', retention: 'Yes', annualFee: 195, opened: '04/26/2025',
     network: 'Amex',
-    earns: ['12x Hilton', '6x dining / gas / wireless / shipping', '3x everywhere else'],
+    earns: ['12x Hilton', '6x US restaurants / gas / wireless / shipping', '4x flights / car rentals booked direct', '3x other purchases'],
     perks: ['Hilton Gold status', 'Free weekend night ($15K spend)', '10 Priority Pass visits/yr'],
   },
   {
     issuer: 'Chase', card: 'IHG Premier', type: 'Personal', retention: 'Yes', annualFee: 99, opened: '06/02/2025',
     network: 'Mastercard',
-    earns: ['10x IHG', '5x travel / dining / gas', '3x everywhere else'],
+    earns: ['10x IHG', '5x travel / dining / gas', '3x on everything'],
     perks: ['Anniversary free night (≤40K)', 'IHG Platinum Elite', '4th night free on award stays'],
   },
   {
@@ -56,7 +56,7 @@ const CARDS = [
   {
     issuer: 'US Bank', card: 'Cash+', type: 'Personal', retention: 'No', annualFee: 0, opened: '07/17/2025',
     network: 'Visa',
-    earns: ['5% on 2 chosen categories ($2K/qtr)', '2% on 1 everyday', '1% everywhere else'],
+    earns: ['5% on 2 chosen categories ($2K/qtr)', '2% on 1 everyday', '1% on everything'],
     perks: ['Customizable categories', 'No annual fee'],
   },
   {
@@ -86,19 +86,19 @@ const CARDS = [
   {
     issuer: 'TD Bank', card: 'Cash', type: 'Personal', retention: 'Yes', annualFee: 0, opened: '04/01/2026',
     network: 'Visa',
-    earns: ['3% dining', '2% groceries', '1% everywhere else'],
+    earns: ['3% dining', '2% groceries', '1% on everything'],
     perks: ['No annual fee', 'Choose your top categories'],
   },
   {
     issuer: 'FNBO', card: 'Amtrak', type: 'Personal', retention: 'Yes', annualFee: 99, opened: '04/14/2026',
     network: 'Mastercard',
-    earns: ['3x Amtrak', '2x dining / transit / rideshare', '1x everywhere else'],
+    earns: ['3x Amtrak', '2x dining / transit / rideshare', '1x on everything'],
     perks: ['20K bonus points yearly', 'Status boost', 'Companion coupon', '$100 station lounge'],
   },
   {
     issuer: 'Bread', card: 'AAA Daily Advantage', type: 'Personal', retention: 'Maybe', annualFee: 0, opened: '04/21/2026',
     network: 'Mastercard',
-    earns: ['5% groceries (up to $10K/yr)', '3% gas / wholesale clubs', '1% everywhere else'],
+    earns: ['5% groceries (up to $10K/yr)', '3% gas / wholesale clubs', '1% on everything'],
     perks: ['No annual fee', 'AAA member benefits', 'No FTF'],
   },
   {
