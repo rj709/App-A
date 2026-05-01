@@ -265,6 +265,9 @@ main { padding: 20px 28px 60px; }
 .detail-section + .detail-section {
   border-left: 1px solid var(--line);
 }
+.detail-section.rewards {
+  border-left: none;
+}
 
 .detail-section-label {
   font-size: 11.5px;
@@ -285,7 +288,17 @@ main { padding: 20px 28px 60px; }
   justify-content: center;
   align-items: center;
   text-align: center;
+  position: relative;
   transform: translateX(5%);
+}
+.detail-section.identity::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  right: 0;
+  width: 1px;
+  background: var(--line);
 }
 
 .detail-section.rewards {
