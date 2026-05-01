@@ -4,20 +4,30 @@ const SORT_KEY = 'cardTracker.sort.v1';
 // ----- Data layer -----
 
 function loadCards() {
+  let stored = null;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) { /* fall through to seed */ }
-  // Seed from cards.js, dropping deprecated fields and adding stable ids
-  return CARDS.map(c => ({
-    id: cryptoId(),
-    issuer: c.issuer,
-    card: c.card,
-    type: c.type,
-    retention: c.retention,
-    annualFee: c.annualFee,
-    opened: c.opened,
-  }));
+    if (raw) stored = JSON.parse(raw);
+  } catch (e) { /* ignore */ }
+
+  if (!stored) {
+    return CARDS.map(c => ({ id: cryptoId(), ...c }));
+  }
+  // Backfill lookup-style fields (network/earns/perks) from seed when missing,
+  // matching by issuer+card name. User-edited core fields are preserved.
+  return stored.map(c => {
+    const seed = CARDS.find(s =>
+      s.issuer.toLowerCase() === (c.issuer || '').toLowerCase() &&
+      s.card.toLowerCase()   === (c.card   || '').toLowerCase()
+    );
+    if (!seed) return c;
+    return {
+      ...c,
+      network: c.network ?? seed.network,
+      earns:   c.earns   ?? seed.earns,
+      perks:   c.perks   ?? seed.perks,
+    };
+  });
 }
 
 function saveCards() {
@@ -294,9 +304,24 @@ function renderCards() {
       const metaParts = [`Held ${ageText(c.opened)}`];
       if (renewal) metaParts.push(renewal);
 
+      const issuerLine = c.network
+        ? `${escapeHtml(c.issuer)} <span class="card-network">· ${escapeHtml(c.network)}</span>`
+        : escapeHtml(c.issuer);
+
+      const detailRows = [];
+      if (c.earns?.length) {
+        detailRows.push(`<dt>Earns</dt><dd>${c.earns.map(escapeHtml).join(' · ')}</dd>`);
+      }
+      if (c.perks?.length) {
+        detailRows.push(`<dt>Perks</dt><dd>${c.perks.map(escapeHtml).join(' · ')}</dd>`);
+      }
+      const detailHtml = detailRows.length
+        ? `<dl class="tile-detail">${detailRows.join('')}</dl>`
+        : '';
+
       tile.innerHTML = `
         <div class="card-top">
-          <div class="card-issuer">${escapeHtml(c.issuer)}</div>
+          <div class="card-issuer">${issuerLine}</div>
           <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
             ${toDisplayDate(c.opened)}
           </span>
@@ -307,6 +332,7 @@ function renderCards() {
           <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
           <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
         </div>
+        ${detailHtml}
         <div class="tile-foot">
           <span class="tile-meta">${metaParts.join(' · ')}</span>
           <button class="tile-edit" type="button" aria-label="Edit card">Edit</button>
