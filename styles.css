@@ -217,7 +217,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(360px, 1fr) minmax(0, 1.8fr) minmax(440px, 1fr);
+  grid-template-columns: minmax(360px, 1fr) minmax(0, 1.8fr) minmax(480px, 1fr);
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -255,6 +255,7 @@ main { padding: 20px 28px 60px; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-mute);
+  white-space: nowrap;
 }
 
 /* --- Left: identity --- */
@@ -273,6 +274,9 @@ main { padding: 20px 28px 60px; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detail-name {
@@ -329,6 +333,7 @@ main { padding: 20px 28px 60px; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-mute);
+  white-space: nowrap;
 }
 .detail-stat-value {
   font-size: 26px;
