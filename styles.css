@@ -1,0 +1,132 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #1f2937;
+  --ink-soft: #6b7280;
+  --line: #e5e7eb;
+  --header: #1e3a5f;
+  --header-ink: #ffffff;
+
+  /* Cohesive muted palette: matched saturation/lightness */
+  --green-bg: hsl(135, 32%, 84%);
+  --green-fg: hsl(135, 38%, 24%);
+  --amber-bg: hsl(42, 60%, 84%);
+  --amber-fg: hsl(32, 55%, 26%);
+  --rose-bg:  hsl(6, 55%, 86%);
+  --rose-fg:  hsl(6, 50%, 30%);
+  --blue-bg:  hsl(208, 38%, 84%);
+  --blue-fg:  hsl(210, 42%, 26%);
+  --neutral-bg: hsl(220, 12%, 94%);
+  --neutral-fg: hsl(220, 10%, 40%);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+}
+
+.app-header {
+  padding: 20px 28px 12px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab:hover { color: var(--ink); }
+
+.tab.active {
+  color: var(--header);
+  border-bottom-color: var(--header);
+}
+
+main {
+  padding: 20px 24px 40px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+thead th {
+  background: var(--header);
+  color: var(--header-ink);
+  font-weight: 600;
+  text-align: center;
+  padding: 12px 14px;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 10px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr:nth-child(even) td {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+td.cell-neutral {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+td.cell-issuer,
+td.cell-card {
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+
+td.chip {
+  font-weight: 600;
+}
