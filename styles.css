@@ -312,7 +312,7 @@ main { padding: 20px 28px 60px; }
 .detail-panel {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.5fr) auto;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.8fr) minmax(0, 1.5fr);
   gap: 0;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -441,7 +441,8 @@ main { padding: 20px 28px 60px; }
   flex-direction: column;
   align-items: stretch;
   gap: 6px;
-  min-width: 78px;
+  min-width: 60px;
+  flex: 0 1 auto;
 }
 .earn-rate-heading {
   font-size: 26px;
@@ -488,10 +489,10 @@ main { padding: 20px 28px 60px; }
 .detail-stat {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
 }
 .detail-stat-label {
