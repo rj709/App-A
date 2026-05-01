@@ -179,7 +179,7 @@ function ageAccent(dateStr) {
   return `hsl(${h}, 60%, 55%)`;
 }
 
-const RETENTION_LABEL = { Yes: 'Keep', No: 'No', Maybe: 'Maybe' };
+const RETENTION_LABEL = { Yes: 'Keep', No: 'Cancel', Maybe: 'Maybe' };
 
 // ---------- HTML escape ----------
 
