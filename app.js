@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'cardTracker.cards.v1';
+const SORT_KEY = 'cardTracker.sort.v1';
 
 // ----- Data layer -----
 
@@ -144,7 +145,7 @@ function sortCards(cards, sortKey) {
 
 const state = {
   cards: [],
-  sortKey: 'opened-desc',
+  sortKey: localStorage.getItem(SORT_KEY) || 'opened-desc',
   editingId: null,
 };
 
@@ -270,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
   sortSel.value = state.sortKey;
   sortSel.addEventListener('change', () => {
     state.sortKey = sortSel.value;
+    localStorage.setItem(SORT_KEY, state.sortKey);
     renderCards();
   });
 
