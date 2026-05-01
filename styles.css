@@ -584,11 +584,19 @@ main { padding: 20px 28px 60px; }
 .detail-stat {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   text-align: center;
   gap: 6px;
   min-width: 0;
+  position: relative;
+  padding-top: 24px;
+}
+.detail-stat .detail-stat-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 .detail-stat-label {
   font-size: 16px;
