@@ -68,7 +68,7 @@ const CARDS = [
   {
     issuer: 'Imprint', card: 'Rakuten', type: 'Personal', retention: 'Yes', annualFee: 0, opened: '10/23/2025',
     network: 'Visa',
-    earns: ['10% Rakuten.com', '5% travel via Rakuten', '3% dining / groceries', '1% else'],
+    earns: ['4x Rakuten.com', '3% dining / groceries', '1% else'],
     perks: ['Cashback as Rakuten Cash', 'No annual fee', 'No foreign tx fee'],
   },
   {
