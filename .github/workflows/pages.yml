@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - claude/credit-card-tracker-mLFa8
+      - claude/delete-app-restart-i22ih
       - main
   workflow_dispatch:
 
