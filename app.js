@@ -416,14 +416,6 @@ function renderDetail() {
     </div>
     <div class="detail-section stats-section">
       <div class="detail-stat">
-        <span class="detail-stat-label">Type</span>
-        <span class="detail-stat-value">${c.type}</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-stat-label">Plan</span>
-        <span class="detail-stat-value">${RETENTION_LABEL[c.retention] || c.retention}</span>
-      </div>
-      <div class="detail-stat">
         <span class="detail-stat-label">Held</span>
         <span class="detail-stat-value">${ageText(c.opened)}</span>
       </div>
@@ -434,6 +426,10 @@ function renderDetail() {
       <div class="detail-stat">
         <span class="detail-stat-label">Next renewal</span>
         <span class="detail-stat-value">${renewalValue}</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-label">Plan</span>
+        <span class="detail-stat-value">${RETENTION_LABEL[c.retention] || c.retention}</span>
       </div>
     </div>
   `;
