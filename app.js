@@ -171,19 +171,18 @@ function renderCards() {
     tile.dataset.id = c.id;
     tile.innerHTML = `
       <div>
-        <div class="card-issuer">${escapeHtml(c.issuer)}</div>
+        <div class="card-top">
+          <div class="card-issuer">${escapeHtml(c.issuer)}</div>
+          <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
+            ${toDisplayDate(c.opened)}
+          </span>
+        </div>
         <div class="card-name">${escapeHtml(c.card)}</div>
       </div>
       <div class="card-badges">
         <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
         <span class="badge" style="${retentionStyle(c.retention)}">Keep: ${c.retention}</span>
         <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
-      </div>
-      <div class="card-footer">
-        <span class="footer-label">Opened</span>
-        <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
-          ${toDisplayDate(c.opened)}
-        </span>
       </div>
     `;
     tile.addEventListener('click', () => openModal(c.id));
