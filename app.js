@@ -319,7 +319,7 @@ function renderStats() {
       </div>
       <div class="stat-value-row">
         ${renewalCardName ? `<span class="stat-value">${renewalCardName}</span><span class="stat-value-divider"></span>` : ''}
-        <span class="stat-value">${countdown === '—' ? '—' : `in ${countdown}`}</span>
+        <span class="stat-value">${countdown}</span>
       </div>
     </div>
   `;
