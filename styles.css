@@ -170,7 +170,7 @@ main { padding: 20px 28px 60px; }
 /* ----- Stats ----- */
 .stats {
   display: grid;
-  grid-template-columns: 1fr 1.7fr 1.6fr;
+  grid-template-columns: 0.7fr 1.7fr 2fr;
   gap: 14px;
   margin-bottom: 16px;
 }
