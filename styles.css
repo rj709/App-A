@@ -230,6 +230,27 @@ main { padding: 20px 28px 60px; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.stat-breakdown {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.breakdown-item {
+  white-space: nowrap;
+}
+.breakdown-issuer {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.breakdown-fee {
+  color: var(--ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
 .stat-value-row {
   display: flex;
   align-items: center;
