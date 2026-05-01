@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Wallet</title>
-  <link rel="stylesheet" href="styles.css?v=122">
+  <link rel="stylesheet" href="styles.css?v=123">
 </head>
 <body>
   <header class="app-header">
@@ -33,20 +33,22 @@
       <div class="detail-panel" id="detail-panel" hidden></div>
       <div class="cards-grid" id="cards-grid"></div>
       <p class="grid-empty" id="grid-empty" hidden>No cards match your filters.</p>
-      <div class="toolbar toolbar-bottom">
-        <select id="sort-key" class="filter-select" aria-label="Sort">
-          <option value="opened-asc">Oldest first</option>
-          <option value="opened-desc">Newest first</option>
-          <option value="issuer-asc">Issuer (A–Z)</option>
-          <option value="card-asc">Card (A–Z)</option>
-          <option value="annualFee-desc">Annual fee (high → low)</option>
-          <option value="annualFee-asc">Annual fee (low → high)</option>
-          <option value="type-asc">Type</option>
-          <option value="retention-asc">Retention</option>
-        </select>
-      </div>
     </section>
   </main>
+  <footer class="page-footer">
+    <div class="toolbar toolbar-bottom">
+      <select id="sort-key" class="filter-select" aria-label="Sort">
+        <option value="opened-asc">Oldest first</option>
+        <option value="opened-desc">Newest first</option>
+        <option value="issuer-asc">Issuer (A–Z)</option>
+        <option value="card-asc">Card (A–Z)</option>
+        <option value="annualFee-desc">Annual fee (high → low)</option>
+        <option value="annualFee-asc">Annual fee (low → high)</option>
+        <option value="type-asc">Type</option>
+        <option value="retention-asc">Retention</option>
+      </select>
+    </div>
+  </footer>
 
   <div class="modal-backdrop" id="modal-backdrop" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -82,7 +84,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=122"></script>
-  <script src="app.js?v=122"></script>
+  <script src="cards.js?v=123"></script>
+  <script src="app.js?v=123"></script>
 </body>
 </html>
