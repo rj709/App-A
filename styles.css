@@ -456,11 +456,17 @@ main { padding: 20px 28px 60px; }
 
 /* --- Left: identity --- */
 .detail-section.identity {
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   text-align: center;
   position: relative;
   min-width: 200px;
+}
+.detail-section.identity .detail-eyebrow {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  right: 18px;
 }
 .detail-section.identity::after {
   content: '';
