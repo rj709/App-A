@@ -326,6 +326,7 @@ function renderStats() {
     <div class="stat" style="--accent-stripe: ${renewalStripe}">
       <div class="stat-header">
         <div class="stat-label">Next renewal</div>
+        <span class="stat-value-divider"></span>
         <div class="stat-sub stat-sub-inline">${renewalSub}</div>
       </div>
       <div class="stat-value-row">
