@@ -67,7 +67,7 @@ const CARDS = [
   },
   {
     issuer: 'Imprint', card: 'Rakuten', type: 'Personal', retention: 'Yes', annualFee: 0, opened: '10/23/2025',
-    network: 'Visa',
+    network: 'Amex',
     earns: ['4x Rakuten.com', '3% dining / groceries', '1% else'],
     perks: ['Cashback as Rakuten Cash', 'No annual fee', 'No foreign tx fee'],
   },
@@ -97,7 +97,7 @@ const CARDS = [
   },
   {
     issuer: 'Bread', card: 'AAA Daily Advantage', type: 'Personal', retention: 'Maybe', annualFee: 0, opened: '04/21/2026',
-    network: 'Mastercard',
+    network: 'Visa',
     earns: ['5% groceries (up to $10K/yr)', '3% gas / wholesale clubs', '1% on everything'],
     perks: ['No annual fee', 'AAA member benefits', 'No FTF'],
   },

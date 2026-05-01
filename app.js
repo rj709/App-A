@@ -347,6 +347,7 @@ function renderDetail() {
     renewalSub = formatShortDate(renewal);
   }
 
+  const sameIssuerNetwork = c.network && c.issuer && c.issuer.toLowerCase() === c.network.toLowerCase();
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
 
   const earnsToRender = (c.earns || []).map(raw =>
@@ -391,7 +392,7 @@ function renderDetail() {
 
   panel.innerHTML = `
     <div class="detail-section identity">
-      <div class="detail-eyebrow">${issuerLine}${c.network ? ` · ${escapeHtml(c.network)}` : ''}</div>
+      <div class="detail-eyebrow">${issuerLine}${c.network && !sameIssuerNetwork ? ` · ${escapeHtml(c.network)}` : ''}</div>
       <h2 class="detail-name">${escapeHtml(c.card)}</h2>
       <div class="detail-badges">
         <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
