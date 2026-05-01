@@ -332,6 +332,14 @@ main { padding: 20px 28px 60px; }
   border-radius: 0 5px 5px 0;
   background: var(--detail-accent, var(--line-strong));
 }
+.detail-panel::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 14px; bottom: 14px;
+  width: 5px;
+  border-radius: 5px 0 0 5px;
+  background: var(--detail-accent, var(--line-strong));
+}
 
 .detail-section {
   padding: 14px 18px;
