@@ -319,39 +319,42 @@ main { padding: 20px 28px 60px; }
 }
 .detail-source:hover { text-decoration: underline; }
 
-/* --- Right: stats spread across full width and centered vertically --- */
+/* --- Right: stats spread across full width and sized to fill the section --- */
 .detail-section.stats-section {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   gap: 16px;
 }
 .detail-section.stats-section .detail-stat:last-child {
   text-align: right;
+  align-items: flex-end;
 }
 .detail-stat {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  justify-content: space-between;
+  gap: 4px;
   min-width: 0;
 }
 .detail-stat-label {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-mute);
 }
 .detail-stat-value {
-  font-size: 18px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
-  line-height: 1.2;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
 }
 .detail-stat-sub {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--ink-soft);
   line-height: 1.35;
 }
