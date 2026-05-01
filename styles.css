@@ -262,10 +262,14 @@ main { padding: 20px 28px 60px; }
 .detail-section.identity {
   padding-left: 24px;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .detail-section.rewards {
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .detail-eyebrow {
@@ -324,6 +328,8 @@ main { padding: 20px 28px 60px; }
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+  text-align: center;
   gap: 4px;
   min-width: 0;
 }
