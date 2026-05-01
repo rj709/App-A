@@ -117,6 +117,35 @@ const AGE_TIERS = [
   { minMonths: 0,  h: 5   }, // 0–2
 ];
 
+// Compact age string: "7 mo", "1 yr", "2y 3m"
+function ageText(dateStr) {
+  const m = monthsSince(dateStr);
+  if (m === null) return '';
+  if (m < 12) return `${m} mo`;
+  const y = Math.floor(m / 12);
+  const rem = m % 12;
+  return rem === 0 ? `${y} yr` : `${y}y ${rem}m`;
+}
+
+// "Renews Jun 2 · in 32 days" (only for fee-bearing cards)
+function renewalText(c) {
+  if (!c.annualFee) return null;
+  const date = nextAnniversary(c.opened);
+  if (!date) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days = daysBetween(today, date);
+  let when;
+  if (days <= 0) when = 'today';
+  else if (days === 1) when = 'tomorrow';
+  else if (days <= 60) when = `in ${days}d`;
+  else when = `in ~${Math.round(days / 30)} mo`;
+  return `Renews ${formatShortDate(date)} · ${when}`;
+}
+
+// Display label for retention values
+const RETENTION_LABEL = { Yes: 'Keep', No: 'No', Maybe: 'Maybe' };
+
 function ageStyle(dateStr) {
   const m = monthsSince(dateStr);
   if (m === null) return 'background:hsl(0, 0%, 92%);color:hsl(0, 0%, 35%);';
@@ -261,22 +290,27 @@ function renderCards() {
     tile.dataset.id = c.id;
 
     if (isExpanded) {
+      const renewal = renewalText(c);
+      const metaParts = [`Held ${ageText(c.opened)}`];
+      if (renewal) metaParts.push(renewal);
+
       tile.innerHTML = `
-        <div>
-          <div class="card-top">
-            <div class="card-issuer">${escapeHtml(c.issuer)}</div>
-            <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
-              ${toDisplayDate(c.opened)}
-            </span>
-          </div>
-          <div class="card-name">${escapeHtml(c.card)}</div>
+        <div class="card-top">
+          <div class="card-issuer">${escapeHtml(c.issuer)}</div>
+          <span class="badge opened-badge" style="${ageStyle(c.opened)}" title="${monthsSince(c.opened)} months old">
+            ${toDisplayDate(c.opened)}
+          </span>
         </div>
+        <div class="card-name">${escapeHtml(c.card)}</div>
         <div class="card-badges">
           <span class="badge" style="${typeStyle(c.type)}">${c.type}</span>
-          <span class="badge" style="${retentionStyle(c.retention)}">Keep: ${c.retention}</span>
+          <span class="badge" style="${retentionStyle(c.retention)}">${RETENTION_LABEL[c.retention] || c.retention}</span>
           <span class="badge" style="${feeStyle(c.annualFee)}">${formatFee(c.annualFee)}/yr</span>
         </div>
-        <button class="tile-edit" type="button" aria-label="Edit card">Edit</button>
+        <div class="tile-foot">
+          <span class="tile-meta">${metaParts.join(' · ')}</span>
+          <button class="tile-edit" type="button" aria-label="Edit card">Edit</button>
+        </div>
       `;
       tile.querySelector('.tile-edit').addEventListener('click', e => {
         e.stopPropagation();
