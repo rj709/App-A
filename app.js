@@ -357,13 +357,18 @@ function renderDetail() {
     ? `Earns <span class="earn-base">${escapeHtml(baseRate)} base</span>`
     : 'Earns';
   const earnsHtml = earnsToRender.length
-    ? `<ul class="earn-list">${earnsToRender.map(e => {
+    ? `<div class="earn-list">${earnsToRender.map(e => {
         const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
-        if (m) {
-          return `<li class="earn-row"><span class="earn-rate">${escapeHtml(m[1].replace(/\s+/g, ''))}</span><span class="earn-label">${escapeHtml(titleCase(m[2]))}</span></li>`;
-        }
-        return `<li class="earn-row earn-row-plain"><span class="earn-label">${escapeHtml(titleCase(e))}</span></li>`;
-      }).join('')}</ul>`
+        const rate = m ? m[1].replace(/\s+/g, '') : '';
+        const labelText = m ? m[2] : e;
+        const cats = labelText.split(/\s*\/\s*/).map(c => c.trim()).filter(Boolean);
+        const catsHtml = cats.map(c =>
+          `<div class="earn-cat">${escapeHtml(titleCase(c))}</div>`
+        ).join('');
+        return `<div class="earn-group">${
+          rate ? `<div class="earn-rate-heading">${escapeHtml(rate)}</div><hr class="earn-divider">` : ''
+        }<div class="earn-cats">${catsHtml}</div></div>`;
+      }).join('')}</div>`
     : `<span style="color:var(--ink-mute)">No earn data</span>`;
 
   panel.innerHTML = `
