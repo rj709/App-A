@@ -124,6 +124,64 @@ function ageStyle(dateStr) {
   return `background:hsl(${tier.h}, 55%, 88%);color:hsl(${tier.h}, 55%, 26%);`;
 }
 
+// ----- Stats -----
+
+const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function formatShortDate(d) {
+  return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+// Next yearly anniversary of an open date that is on/after today.
+function nextAnniversary(opened) {
+  const d = parseDate(opened);
+  if (!d) return null;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const candidate = new Date(now.getFullYear(), d.getMonth(), d.getDate());
+  if (candidate < today) candidate.setFullYear(candidate.getFullYear() + 1);
+  return candidate;
+}
+
+function computeStats(cards) {
+  const totalFees = cards.reduce((s, c) => s + (Number(c.annualFee) || 0), 0);
+
+  let nextRenewal = null;
+  for (const c of cards) {
+    if (!c.annualFee) continue;
+    const date = nextAnniversary(c.opened);
+    if (!date) continue;
+    if (!nextRenewal || date < nextRenewal.date) {
+      nextRenewal = { card: c, date };
+    }
+  }
+
+  return { count: cards.length, totalFees, nextRenewal };
+}
+
+function renderStats() {
+  const el = document.getElementById('stats');
+  const { count, totalFees, nextRenewal } = computeStats(state.cards);
+
+  const renewalValue = nextRenewal
+    ? `${escapeHtml(nextRenewal.card.card)} · ${formatShortDate(nextRenewal.date)} · ${formatFee(nextRenewal.card.annualFee)}/yr`
+    : '<span class="muted">No upcoming renewals</span>';
+
+  el.innerHTML = `
+    <div class="stat">
+      <div class="stat-label">Cards</div>
+      <div class="stat-value">${count}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Annual Fees</div>
+      <div class="stat-value">${formatFee(totalFees)}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Next Renewal</div>
+      <div class="stat-value">${renewalValue}</div>
+    </div>
+  `;
+}
+
 // ----- Sorting -----
 
 function sortCards(cards, sortKey) {
@@ -152,6 +210,7 @@ const state = {
 // ----- Render -----
 
 function renderCards() {
+  renderStats();
   const grid = document.getElementById('cards-grid');
   grid.innerHTML = '';
 

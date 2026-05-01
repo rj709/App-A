@@ -79,6 +79,45 @@ main { padding: 20px 24px 60px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
+/* Stats bar */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.stat-value.muted {
+  color: var(--ink-mute);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  .stats { grid-template-columns: 1fr; }
+}
+
 /* Toolbar */
 .toolbar {
   display: flex;
