@@ -235,10 +235,11 @@ main { padding: 20px 28px 60px; }
 .stat.stat-combined .stat-cell {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   text-align: center;
   padding: 0 22px;
   min-width: 0;
+  gap: 10px;
 }
 .stat.stat-combined > .stat-value-divider {
   align-self: stretch;
