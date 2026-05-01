@@ -329,7 +329,8 @@ function renderDetail() {
   const issuerLine = `${escapeHtml(c.issuer)} · ${escapeHtml(c.type)}`;
 
   const earnsHtml = c.earns?.length
-    ? `<ul class="earn-list">${c.earns.map(e => {
+    ? `<ul class="earn-list">${c.earns.map(raw => {
+        const e = raw.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
         const m = e.match(/^\s*([0-9]+(?:\.[0-9]+)?\s*[x%])\s+(.+)$/i);
         if (m) {
           return `<li class="earn-row"><span class="earn-rate">${escapeHtml(m[1].replace(/\s+/g, ''))}</span><span class="earn-label">${escapeHtml(m[2])}</span></li>`;
