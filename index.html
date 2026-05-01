@@ -4,24 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Wallet</title>
-  <link rel="stylesheet" href="styles.css?v=133">
+  <link rel="stylesheet" href="styles.css?v=134">
 </head>
 <body>
   <header class="app-header">
     <div class="app-header-row">
       <div class="app-header-text">
         <h1>Card Wallet</h1>
-        <p class="subtitle">Track fees, retention, and renewal countdowns.</p>
+        <p class="subtitle">Track Fees, Retention, and Renewal Countdowns.</p>
         <p class="last-saved" id="last-saved"></p>
       </div>
       <div class="app-actions">
         <select id="sort-key" class="btn-ghost btn-select" aria-label="Sort">
-          <option value="opened-asc">Oldest first</option>
-          <option value="opened-desc">Newest first</option>
+          <option value="opened-asc">Oldest First</option>
+          <option value="opened-desc">Newest First</option>
           <option value="issuer-asc">Issuer (A–Z)</option>
           <option value="card-asc">Card (A–Z)</option>
-          <option value="annualFee-desc">Annual fee (high → low)</option>
-          <option value="annualFee-asc">Annual fee (low → high)</option>
+          <option value="annualFee-desc">Annual Fee (High → Low)</option>
+          <option value="annualFee-asc">Annual Fee (Low → High)</option>
           <option value="type-asc">Type</option>
           <option value="retention-asc">Retention</option>
         </select>
@@ -30,7 +30,7 @@
         <button class="btn-ghost" id="export-cards">Export</button>
         <button class="btn-ghost" id="header-edit" disabled title="Select a card first">Edit</button>
         <button class="btn-danger-ghost" id="header-delete" disabled title="Select a card first">Delete</button>
-        <button class="btn-ghost" id="add-card">+ Add card</button>
+        <button class="btn-ghost" id="add-card">+ Add Card</button>
         <input type="file" id="import-file" accept="application/json,.json" hidden>
       </div>
     </div>
@@ -50,7 +50,7 @@
   <div class="modal-backdrop" id="modal-backdrop" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-header">
-        <h2 id="modal-title">Edit card</h2>
+        <h2 id="modal-title">Edit Card</h2>
         <button class="icon-btn" id="modal-close" aria-label="Close">×</button>
       </div>
       <form id="card-form" class="modal-body">
@@ -69,7 +69,7 @@
             <option value="Maybe">Undecided</option>
           </select>
         </label>
-        <label><span>Annual fee ($)</span><input name="annualFee" type="number" min="0" step="1" required></label>
+        <label><span>Annual Fee ($)</span><input name="annualFee" type="number" min="0" step="1" required></label>
         <label><span>Opened</span><input name="opened" type="date" required></label>
         <div class="modal-footer">
           <button type="button" class="btn-danger" id="delete-card" hidden>Delete</button>
@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=133"></script>
-  <script src="app.js?v=133"></script>
+  <script src="cards.js?v=134"></script>
+  <script src="app.js?v=134"></script>
 </body>
 </html>

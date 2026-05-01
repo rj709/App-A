@@ -221,10 +221,27 @@ main { padding: 20px 28px 60px; }
 
 /* ----- Stats ----- */
 .stats {
-  display: grid;
-  grid-template-columns: 0.7fr 1.7fr 2fr;
-  gap: 14px;
+  display: block;
   margin-bottom: 16px;
+}
+.stat-combined {
+  display: grid;
+  grid-template-columns: 1.8fr auto 0.9fr auto 1.6fr;
+  align-items: stretch;
+  gap: 0;
+  padding: 18px 26px;
+}
+.stat-combined .stat-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 0 22px;
+  min-width: 0;
+}
+.stat-combined > .stat-value-divider {
+  align-self: stretch;
+  margin: 6px 0;
 }
 
 .stat {

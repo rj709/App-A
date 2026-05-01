@@ -333,32 +333,36 @@ function renderStats() {
   const renewalStripe = 'hsl(95, 22%, 55%)';
 
   el.innerHTML = `
-    <div class="stat" style="--accent-stripe: hsl(0, 70%, 55%)">
-      <div class="stat-label">Total cards</div>
-      <div class="stat-count">${s.count}</div>
-      <div class="stat-value-row stat-value-row-sm">
-        <span class="stat-value">${s.personal} personal</span>
-        <span class="stat-value-divider"></span>
-        <span class="stat-value">${s.business} business</span>
+    <div class="stat stat-combined" style="--accent-stripe: hsl(220, 10%, 60%)">
+      <div class="stat-cell">
+        <div class="stat-header-row">
+          <div class="stat-label">Annual fees</div>
+          <span class="stat-value-divider"></span>
+          <div class="stat-value">${formatFee(s.totalFees)}</div>
+        </div>
+        <div class="fee-breakdown">${s.issuerFees.map(([i, f]) => `<div class="fee-group"><div class="fee-issuer">${escapeHtml(i)}</div><hr class="earn-divider"><div class="fee-amount">${formatFee(f)}</div></div>`).join('')}</div>
       </div>
-    </div>
-    <div class="stat" style="--accent-stripe: hsl(220, 10%, 60%)">
-      <div class="stat-header-row">
-        <div class="stat-label">Annual fees</div>
-        <span class="stat-value-divider"></span>
-        <div class="stat-value">${formatFee(s.totalFees)}</div>
+      <span class="stat-value-divider"></span>
+      <div class="stat-cell">
+        <div class="stat-label">Total cards</div>
+        <div class="stat-count">${s.count}</div>
+        <div class="stat-value-row stat-value-row-sm">
+          <span class="stat-value">${s.personal} personal</span>
+          <span class="stat-value-divider"></span>
+          <span class="stat-value">${s.business} business</span>
+        </div>
       </div>
-      <div class="fee-breakdown">${s.issuerFees.map(([i, f]) => `<div class="fee-group"><div class="fee-issuer">${escapeHtml(i)}</div><hr class="earn-divider"><div class="fee-amount">${formatFee(f)}</div></div>`).join('')}</div>
-    </div>
-    <div class="stat" style="--accent-stripe: ${renewalStripe}">
-      <div class="stat-header">
-        <div class="stat-label">Next renewal</div>
-        <span class="stat-value-divider"></span>
-        <div class="stat-sub stat-sub-inline">${renewalSub}</div>
-      </div>
-      <div class="stat-value-row">
-        ${renewalCardName ? `<span class="stat-value">${renewalCardName}</span>${renewalCardFee ? `<span class="stat-value-divider"></span><span class="stat-value">${renewalCardFee}</span>` : ''}<span class="stat-value-divider"></span>` : ''}
-        <span class="stat-value">${countdown}</span>
+      <span class="stat-value-divider"></span>
+      <div class="stat-cell">
+        <div class="stat-header">
+          <div class="stat-label">Next renewal</div>
+          <span class="stat-value-divider"></span>
+          <div class="stat-sub stat-sub-inline">${renewalSub}</div>
+        </div>
+        <div class="stat-value-row">
+          ${renewalCardName ? `<span class="stat-value">${renewalCardName}</span>${renewalCardFee ? `<span class="stat-value-divider"></span><span class="stat-value">${renewalCardFee}</span>` : ''}<span class="stat-value-divider"></span>` : ''}
+          <span class="stat-value">${countdown}</span>
+        </div>
       </div>
     </div>
   `;
@@ -500,7 +504,7 @@ function renderGrid() {
   if (visible.length === 0) {
     empty.hidden = false;
     empty.textContent = state.cards.length === 0
-      ? 'No cards yet. Click "+ Add card" to get started.'
+      ? 'No Cards Yet. Click "+ Add Card" to Get Started.'
       : 'No cards match your filters.';
     return;
   }
@@ -560,7 +564,7 @@ function openModal(id) {
   state.editingId = id || null;
   const card = id ? state.cards.find(c => c.id === id) : null;
 
-  document.getElementById('modal-title').textContent = isNew ? 'Add card' : 'Edit card';
+  document.getElementById('modal-title').textContent = isNew ? 'Add Card' : 'Edit Card';
   document.getElementById('delete-card').hidden = isNew;
 
   const f = form();
