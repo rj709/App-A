@@ -226,7 +226,7 @@ main { padding: 20px 28px 60px; }
 }
 .stat.stat-combined {
   display: grid;
-  grid-template-columns: 1.8fr auto 0.9fr auto 1.6fr;
+  grid-template-columns: 0.9fr auto 1.8fr auto 1.6fr;
   align-items: stretch;
   gap: 0;
   padding: 18px 26px;
