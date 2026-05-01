@@ -255,7 +255,7 @@ function filterCards(cards) {
 const meta = loadMeta();
 const state = {
   cards: [],
-  sortKey: localStorage.getItem(SORT_KEY) || 'opened-desc',
+  sortKey: 'opened-asc',
   editingId: null,
   selectedId: null,
   search: '',
@@ -653,20 +653,6 @@ function handleImportFile(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
   state.cards = loadCards();
-
-  const sortSel = document.getElementById('sort-key');
-  sortSel.value = state.sortKey;
-  sortSel.addEventListener('change', () => {
-    state.sortKey = sortSel.value;
-    localStorage.setItem(SORT_KEY, state.sortKey);
-    renderGrid();
-  });
-
-  const search = document.getElementById('search');
-  search.addEventListener('input', () => { state.search = search.value; renderGrid(); });
-
-  const typeFilter = document.getElementById('type-filter');
-  typeFilter.addEventListener('change', () => { state.typeFilter = typeFilter.value; renderGrid(); });
 
   document.getElementById('add-card').addEventListener('click', () => openModal(null));
   document.getElementById('export-cards').addEventListener('click', handleExport);
