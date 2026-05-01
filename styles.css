@@ -314,17 +314,19 @@ main { padding: 20px 28px 60px; }
 }
 .earn-list {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 14px 28px;
   width: 100%;
-  max-width: 320px;
-  align-items: stretch;
 }
 .earn-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 6px;
+  min-width: 90px;
 }
 .earn-rate-heading {
   font-size: 22px;
@@ -333,9 +335,10 @@ main { padding: 20px 28px 60px; }
   color: var(--detail-accent, var(--ink));
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
+  text-align: center;
 }
 .earn-divider {
-  width: 56%;
+  width: 100%;
   height: 1px;
   border: none;
   background: var(--line);
