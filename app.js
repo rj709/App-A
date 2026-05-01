@@ -1,6 +1,27 @@
 const STORAGE_KEY = 'cardTracker.cards.v1';
 const SORT_KEY    = 'cardTracker.sort.v1';
 const META_KEY    = 'cardTracker.meta.v1';
+const THEME_KEY   = 'cardTracker.theme.v1';
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = theme === 'dark' ? 'Light' : 'Dark';
+}
+function initTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  const initial = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(initial);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, next);
+      applyTheme(next);
+    });
+  }
+}
 
 // ---------- Data ----------
 
@@ -161,7 +182,7 @@ function feeTier(fee) {
 }
 function feeStyle(fee) {
   const { h } = feeTier(fee);
-  return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
+  return `background:hsl(${h}, 55%, var(--tier-l, 88%));color:hsl(${h}, 55%, var(--tier-fg-l, 26%));`;
 }
 
 const AGE_TIERS = [
@@ -178,7 +199,7 @@ function ageTier(dateStr) {
 }
 function ageStyle(dateStr) {
   const { h } = ageTier(dateStr);
-  return `background:hsl(${h}, 55%, 88%);color:hsl(${h}, 55%, 26%);`;
+  return `background:hsl(${h}, 55%, var(--tier-l, 88%));color:hsl(${h}, 55%, var(--tier-fg-l, 26%));`;
 }
 function ageAccent(dateStr) {
   const { h } = ageTier(dateStr);
@@ -653,6 +674,8 @@ function handleImportFile(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
   state.cards = loadCards();
+
+  initTheme();
 
   const sortSel = document.getElementById('sort-key');
   if (sortSel) {
