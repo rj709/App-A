@@ -149,10 +149,10 @@ function retentionStyle(r) { return r === 'No' ? STYLE.rose : r === 'Maybe' ? ST
 
 const FEE_TIERS = [
   { max: 0,        h: 140 },
-  { max: 99,       h: 100 },
-  { max: 249,      h: 62  },
-  { max: 499,      h: 35  },
-  { max: 699,      h: 15  },
+  { max: 99,       h: 270 },
+  { max: 249,      h: 215 },
+  { max: 499,      h: 30  },
+  { max: 699,      h: 12  },
   { max: Infinity, h: 0   },
 ];
 function feeTier(fee) {
@@ -166,9 +166,9 @@ function feeStyle(fee) {
 
 const AGE_TIERS = [
   { minMonths: 24, h: 140 },
-  { minMonths: 12, h: 30  },
-  { minMonths: 6,  h: 55  },
-  { minMonths: 3,  h: 25  },
+  { minMonths: 12, h: 175 },
+  { minMonths: 6,  h: 215 },
+  { minMonths: 3,  h: 30  },
   { minMonths: 0,  h: 5   },
 ];
 function ageTier(dateStr) {
