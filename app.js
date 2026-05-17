@@ -652,20 +652,6 @@ function renderRewards() {
     } else {
       statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}">`;
     }
-    const isDelta = name === 'Delta SkyMiles';
-    const mqdBlock = isDelta ? `
-      <div class="reward-status-label">MQDs</div>
-      <div class="mqd-row">
-        <label class="mqd-field">
-          <span>Current</span>
-          <input type="number" min="0" step="1" class="mqd-input" data-mqd="current" placeholder="0" value="${escapeHtml(String(state.mqd.current ?? ''))}">
-        </label>
-        <label class="mqd-field">
-          <span>Pending</span>
-          <input type="number" min="0" step="1" class="mqd-input" data-mqd="pending" placeholder="0" value="${escapeHtml(String(state.mqd.pending ?? ''))}">
-        </label>
-      </div>
-    ` : '';
     return `
       <div class="reward-tile" data-program="${escapeHtml(name)}">
         <div class="reward-name">${escapeHtml(name)}</div>
@@ -673,10 +659,29 @@ function renderRewards() {
         <input type="number" min="0" step="1" class="reward-balance" placeholder="0" value="${bal}">
         <div class="reward-status-label">Status</div>
         ${statusField}
-        ${mqdBlock}
       </div>
     `;
   }).join('');
+
+  const hasDelta = programs.some(([n]) => n === 'Delta SkyMiles');
+  if (hasDelta) {
+    grid.innerHTML += `
+      <div class="reward-tile mqd-tile">
+        <div class="reward-name">Delta MQDs</div>
+        <div class="reward-count">Medallion Qualification</div>
+        <div class="mqd-row">
+          <label class="mqd-field">
+            <span>Current</span>
+            <input type="number" min="0" step="1" class="mqd-input" data-mqd="current" placeholder="0" value="${escapeHtml(String(state.mqd.current ?? ''))}">
+          </label>
+          <label class="mqd-field">
+            <span>Pending</span>
+            <input type="number" min="0" step="1" class="mqd-input" data-mqd="pending" placeholder="0" value="${escapeHtml(String(state.mqd.pending ?? ''))}">
+          </label>
+        </div>
+      </div>
+    `;
+  }
 
   grid.querySelectorAll('.reward-balance').forEach(input => {
     input.addEventListener('input', () => {
