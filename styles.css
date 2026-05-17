@@ -143,6 +143,12 @@ button { font-family: inherit; }
 main { padding: 20px 28px 60px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
+.rewards-empty {
+  text-align: center;
+  color: var(--ink-mute);
+  padding: 60px 0;
+  font-size: 16px;
+}
 
 /* ----- Buttons ----- */
 .btn-primary {

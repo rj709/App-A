@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Card Wallet</title>
-  <link rel="stylesheet" href="styles.css?v=148">
+  <link rel="stylesheet" href="styles.css?v=149">
 </head>
 <body>
   <header class="app-header">
@@ -36,6 +36,7 @@
     </div>
     <nav class="tabs" id="tabs">
       <button class="tab active" data-tab="cards">Cards</button>
+      <button class="tab" data-tab="rewards">Rewards</button>
     </nav>
   </header>
   <main>
@@ -44,6 +45,9 @@
       <div class="detail-panel" id="detail-panel" hidden></div>
       <div class="cards-grid" id="cards-grid"></div>
       <p class="grid-empty" id="grid-empty" hidden>No cards match your filters.</p>
+    </section>
+    <section class="tab-panel" id="panel-rewards" hidden>
+      <p class="rewards-empty" id="rewards-empty">No reward programs yet.</p>
     </section>
   </main>
 
@@ -100,7 +104,7 @@
     </div>
   </div>
 
-  <script src="cards.js?v=148"></script>
-  <script src="app.js?v=148"></script>
+  <script src="cards.js?v=149"></script>
+  <script src="app.js?v=149"></script>
 </body>
 </html>

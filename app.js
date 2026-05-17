@@ -8,6 +8,17 @@ function applyTheme(theme) {
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.textContent = theme === 'dark' ? 'Light' : 'Dark';
 }
+function switchTab(name) {
+  document.querySelectorAll('#tabs .tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    const match = p.id === `panel-${name}`;
+    p.classList.toggle('active', match);
+    p.hidden = !match;
+  });
+}
+
 function initTheme() {
   const stored = localStorage.getItem(THEME_KEY);
   const initial = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -724,6 +735,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.selectedId) openModal(state.selectedId);
   });
   document.getElementById('header-delete').addEventListener('click', deleteSelected);
+
+  document.querySelectorAll('#tabs .tab').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('cancel-card').addEventListener('click', closeModal);
