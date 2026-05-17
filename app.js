@@ -661,6 +661,83 @@ function renderAll() {
   updateHeaderActions();
 }
 
+function openRewardEditor(tile) {
+  const oldName = tile.dataset.program;
+  const status = state.rewardStatuses[oldName] ?? '';
+  const tiers = PROGRAM_STATUSES[oldName];
+  let statusField;
+  if (tiers) {
+    statusField = `<select class="edit-status">${
+      tiers.map(t => `<option value="${escapeHtml(t)}"${t === status ? ' selected' : ''}>${escapeHtml(t)}</option>`).join('')
+    }</select>`;
+  } else {
+    statusField = `<input type="text" class="edit-status" placeholder="No status" value="${escapeHtml(status)}">`;
+  }
+  tile.innerHTML = `
+    <div class="reward-edit-mode">
+      <label class="edit-row">
+        <span>Name</span>
+        <input type="text" class="edit-name" value="${escapeHtml(oldName)}">
+      </label>
+      <label class="edit-row">
+        <span>Status</span>
+        ${statusField}
+      </label>
+      <div class="edit-actions">
+        <button type="button" class="btn-ghost edit-cancel">Cancel</button>
+        <button type="button" class="btn-ghost edit-save">Save</button>
+      </div>
+    </div>
+  `;
+  const nameInput = tile.querySelector('.edit-name');
+  const statusInput = tile.querySelector('.edit-status');
+  nameInput.focus();
+  nameInput.select();
+
+  const cancel = () => renderRewards();
+  const save = () => {
+    const newName = nameInput.value.trim();
+    if (!newName) return;
+    if (newName !== oldName) {
+      const exists = state.extraPrograms.some(p => p.toLowerCase() === newName.toLowerCase() && p !== oldName)
+        || state.cards.some(c => (c.pointCurrency || '').toLowerCase() === newName.toLowerCase()
+          && (c.pointCurrency || '') !== oldName);
+      if (exists) { alert('That program already exists.'); return; }
+      const idx = state.extraPrograms.indexOf(oldName);
+      if (idx >= 0) state.extraPrograms[idx] = newName;
+      let cardsTouched = false;
+      for (const c of state.cards) {
+        if ((c.pointCurrency || '') === oldName) {
+          c.pointCurrency = newName;
+          cardsTouched = true;
+        }
+      }
+      if (state.rewardBalances[oldName] !== undefined) {
+        state.rewardBalances[newName] = state.rewardBalances[oldName];
+        delete state.rewardBalances[oldName];
+      }
+      if (state.rewardStatuses[oldName] !== undefined) {
+        delete state.rewardStatuses[oldName];
+      }
+      saveExtraPrograms();
+      saveRewardBalances();
+      if (cardsTouched) saveCards();
+    }
+    const newStatus = (statusInput.value || '').trim();
+    if (!newStatus || newStatus === 'None') delete state.rewardStatuses[newName];
+    else state.rewardStatuses[newName] = newStatus;
+    saveRewardStatuses();
+    renderRewards();
+  };
+
+  tile.querySelector('.edit-cancel').addEventListener('click', cancel);
+  tile.querySelector('.edit-save').addEventListener('click', save);
+  tile.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); save(); }
+    else if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+  });
+}
+
 function renderRewards() {
   const panel = document.getElementById('panel-rewards');
   if (!panel) return;
@@ -772,35 +849,7 @@ function renderRewards() {
   });
   grid.querySelectorAll('.reward-edit').forEach(btn => {
     btn.addEventListener('click', () => {
-      const oldName = btn.closest('.reward-tile').dataset.program;
-      const newName = (prompt('Rename program:', oldName) || '').trim();
-      if (!newName || newName === oldName) return;
-      const exists = state.extraPrograms.some(p => p.toLowerCase() === newName.toLowerCase() && p !== oldName)
-        || state.cards.some(c => (c.pointCurrency || '').toLowerCase() === newName.toLowerCase()
-          && (c.pointCurrency || '') !== oldName);
-      if (exists) { alert('That program already exists.'); return; }
-      const idx = state.extraPrograms.indexOf(oldName);
-      if (idx >= 0) state.extraPrograms[idx] = newName;
-      let cardsTouched = false;
-      for (const c of state.cards) {
-        if ((c.pointCurrency || '') === oldName) {
-          c.pointCurrency = newName;
-          cardsTouched = true;
-        }
-      }
-      if (state.rewardBalances[oldName] !== undefined) {
-        state.rewardBalances[newName] = state.rewardBalances[oldName];
-        delete state.rewardBalances[oldName];
-      }
-      if (state.rewardStatuses[oldName] !== undefined) {
-        state.rewardStatuses[newName] = state.rewardStatuses[oldName];
-        delete state.rewardStatuses[oldName];
-      }
-      saveExtraPrograms();
-      saveRewardBalances();
-      saveRewardStatuses();
-      if (cardsTouched) saveCards();
-      renderRewards();
+      openRewardEditor(btn.closest('.reward-tile'));
     });
   });
 
