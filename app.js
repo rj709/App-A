@@ -697,14 +697,16 @@ function renderRewards() {
     const bal = formatInt(state.rewardBalances[name]);
     const status = state.rewardStatuses[name] ?? '';
     const tiers = PROGRAM_STATUSES[name];
+    const displayStatus = status || 'Not set';
     let statusField;
     if (tiers) {
-      statusField = `<select class="reward-status">${
+      statusField = `<select class="reward-status" hidden>${
         tiers.map(t => `<option value="${escapeHtml(t)}"${t === status ? ' selected' : ''}>${escapeHtml(t)}</option>`).join('')
       }</select>`;
     } else {
-      statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}">`;
+      statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}" hidden>`;
     }
+    const statusDisplay = `<button type="button" class="reward-status-display${status ? '' : ' is-empty'}">${escapeHtml(displayStatus)}</button>`;
     const isExtra = count === 0 && state.extraPrograms.some(p => p === name);
     const tileActions = isExtra
       ? `<div class="reward-actions">
@@ -720,6 +722,7 @@ function renderRewards() {
         <div class="reward-count">${countLabel}</div>
         <input type="text" inputmode="numeric" class="reward-balance" placeholder="0" value="${bal}">
         <div class="reward-status-label">Status</div>
+        ${statusDisplay}
         ${statusField}
       </div>
     `;
@@ -806,16 +809,41 @@ function renderRewards() {
       input.value = formatInt(parseInteger(input.value));
     });
   });
+  grid.querySelectorAll('.reward-status-display').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const field = btn.nextElementSibling;
+      if (!field) return;
+      btn.hidden = true;
+      field.hidden = false;
+      field.focus();
+      if (field.tagName === 'SELECT' && typeof field.showPicker === 'function') {
+        try { field.showPicker(); } catch (e) {}
+      } else if (field.tagName === 'INPUT') {
+        field.select();
+      }
+    });
+  });
   grid.querySelectorAll('.reward-status').forEach(el => {
-    const handler = () => {
-      const name = el.closest('.reward-tile').dataset.program;
+    const commit = () => {
+      const tile = el.closest('.reward-tile');
+      const name = tile.dataset.program;
       const v = (el.value || '').trim();
       if (!v || v === 'None') delete state.rewardStatuses[name];
       else state.rewardStatuses[name] = v;
       saveRewardStatuses();
+      const display = el.previousElementSibling;
+      const shown = (!v || v === 'None') ? 'Not set' : v;
+      display.textContent = shown;
+      display.classList.toggle('is-empty', !v || v === 'None');
+      el.hidden = true;
+      display.hidden = false;
     };
-    el.addEventListener('change', handler);
-    el.addEventListener('input', handler);
+    el.addEventListener('change', commit);
+    el.addEventListener('blur', commit);
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      if (e.key === 'Escape') { e.preventDefault(); el.blur(); }
+    });
   });
   grid.querySelectorAll('.mqd-input').forEach(el => {
     el.addEventListener('input', () => {

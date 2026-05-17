@@ -263,6 +263,28 @@ main { padding: 20px 28px 60px; }
   outline: none;
   border-color: var(--accent);
 }
+.reward-status-display {
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink);
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  letter-spacing: -0.005em;
+}
+.reward-status-display:hover {
+  background: var(--bg);
+  border-color: var(--line);
+}
+.reward-status-display.is-empty {
+  color: var(--ink-mute);
+  font-weight: 500;
+  font-style: italic;
+}
 .mqd-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
