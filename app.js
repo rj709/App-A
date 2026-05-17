@@ -5,6 +5,7 @@ const THEME_KEY   = 'cardTracker.theme.v1';
 const REWARDS_KEY = 'cardTracker.rewards.v1';
 const REWARD_STATUS_KEY = 'cardTracker.rewardStatus.v1';
 const MQD_KEY = 'cardTracker.mqd.v1';
+const EXTRA_PROGRAMS_KEY = 'cardTracker.extraPrograms.v1';
 
 const MQD_TIERS_2027 = [
   { name: 'Diamond',  threshold: 28000 },
@@ -67,6 +68,17 @@ function loadRewardStatuses() {
 function saveRewardStatuses() {
   localStorage.setItem(REWARD_STATUS_KEY, JSON.stringify(state.rewardStatuses));
 }
+function loadExtraPrograms() {
+  try {
+    const raw = localStorage.getItem(EXTRA_PROGRAMS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return [];
+}
+function saveExtraPrograms() {
+  localStorage.setItem(EXTRA_PROGRAMS_KEY, JSON.stringify(state.extraPrograms));
+}
+
 function loadMqd() {
   try {
     const raw = localStorage.getItem(MQD_KEY);
@@ -372,6 +384,7 @@ const state = {
   rewardBalances: loadRewardBalances(),
   rewardStatuses: loadRewardStatuses(),
   mqd: loadMqd(),
+  extraPrograms: loadExtraPrograms(),
 };
 
 // ---------- Stats render ----------
@@ -657,6 +670,9 @@ function renderRewards() {
     if (!p) continue;
     counts.set(p, (counts.get(p) || 0) + 1);
   }
+  for (const p of state.extraPrograms) {
+    if (!counts.has(p)) counts.set(p, 0);
+  }
   const programs = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
   let grid = panel.querySelector('.rewards-grid');
@@ -685,16 +701,35 @@ function renderRewards() {
     } else {
       statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}">`;
     }
+    const isExtra = count === 0 && state.extraPrograms.some(p => p === name);
+    const removeBtn = isExtra
+      ? `<button type="button" class="reward-remove" aria-label="Remove ${escapeHtml(name)}" title="Remove program">×</button>`
+      : '';
+    const countLabel = count === 0 ? 'No cards earning' : `${count} card${count === 1 ? '' : 's'}`;
     return `
-      <div class="reward-tile" data-program="${escapeHtml(name)}">
+      <div class="reward-tile${isExtra ? ' reward-tile-extra' : ''}" data-program="${escapeHtml(name)}">
+        ${removeBtn}
         <div class="reward-name">${escapeHtml(name)}</div>
-        <div class="reward-count">${count} card${count === 1 ? '' : 's'}</div>
+        <div class="reward-count">${countLabel}</div>
         <input type="text" inputmode="numeric" class="reward-balance" placeholder="0" value="${bal}">
         <div class="reward-status-label">Status</div>
         ${statusField}
       </div>
     `;
   }).join('');
+
+  grid.querySelectorAll('.reward-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.closest('.reward-tile').dataset.program;
+      state.extraPrograms = state.extraPrograms.filter(p => p !== name);
+      delete state.rewardBalances[name];
+      delete state.rewardStatuses[name];
+      saveExtraPrograms();
+      saveRewardBalances();
+      saveRewardStatuses();
+      renderRewards();
+    });
+  });
 
   const hasDelta = programs.some(([n]) => n === 'Delta SkyMiles');
   if (hasDelta) {
@@ -940,6 +975,24 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('#tabs .tab').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
+
+  const addProgramForm = document.getElementById('add-program-form');
+  if (addProgramForm) {
+    addProgramForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const input = document.getElementById('add-program-input');
+      const name = input.value.trim();
+      if (!name) return;
+      const exists = state.extraPrograms.some(p => p.toLowerCase() === name.toLowerCase())
+        || state.cards.some(c => (c.pointCurrency || '').toLowerCase() === name.toLowerCase());
+      if (!exists) {
+        state.extraPrograms.push(name);
+        saveExtraPrograms();
+      }
+      input.value = '';
+      renderRewards();
+    });
+  }
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('cancel-card').addEventListener('click', closeModal);
