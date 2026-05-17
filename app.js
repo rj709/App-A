@@ -2,6 +2,18 @@ const STORAGE_KEY = 'cardTracker.cards.v1';
 const SORT_KEY    = 'cardTracker.sort.v1';
 const META_KEY    = 'cardTracker.meta.v1';
 const THEME_KEY   = 'cardTracker.theme.v1';
+const REWARDS_KEY = 'cardTracker.rewards.v1';
+
+function loadRewardBalances() {
+  try {
+    const raw = localStorage.getItem(REWARDS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return {};
+}
+function saveRewardBalances() {
+  localStorage.setItem(REWARDS_KEY, JSON.stringify(state.rewardBalances));
+}
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -63,6 +75,7 @@ function loadCards() {
       network: seed.network ?? c.network,
       earns:   seed.earns   ?? c.earns,
       perks:   seed.perks   ?? c.perks,
+      pointCurrency: c.pointCurrency ?? seed.pointCurrency,
     };
   });
 }
@@ -293,6 +306,7 @@ const state = {
   search: '',
   typeFilter: 'all',
   lastSaved: meta.lastSaved,
+  rewardBalances: loadRewardBalances(),
 };
 
 // ---------- Stats render ----------
@@ -562,8 +576,59 @@ function renderAll() {
   renderStats();
   renderDetail();
   renderGrid();
+  renderRewards();
   renderLastSaved();
   updateHeaderActions();
+}
+
+function renderRewards() {
+  const panel = document.getElementById('panel-rewards');
+  if (!panel) return;
+  const empty = document.getElementById('rewards-empty');
+
+  const counts = new Map();
+  for (const c of state.cards) {
+    const p = (c.pointCurrency || '').trim();
+    if (!p) continue;
+    counts.set(p, (counts.get(p) || 0) + 1);
+  }
+  const programs = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+
+  let grid = panel.querySelector('.rewards-grid');
+  if (!grid) {
+    grid = document.createElement('div');
+    grid.className = 'rewards-grid';
+    panel.appendChild(grid);
+  }
+
+  if (!programs.length) {
+    grid.innerHTML = '';
+    if (empty) empty.hidden = false;
+    return;
+  }
+  if (empty) empty.hidden = true;
+
+  grid.innerHTML = programs.map(([name, count]) => {
+    const bal = state.rewardBalances[name] ?? '';
+    return `
+      <div class="reward-tile" data-program="${escapeHtml(name)}">
+        <div class="reward-name">${escapeHtml(name)}</div>
+        <div class="reward-count">${count} card${count === 1 ? '' : 's'}</div>
+        <input type="number" min="0" step="1" class="reward-balance" placeholder="0" value="${bal}">
+      </div>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('.reward-balance').forEach(input => {
+    input.addEventListener('input', () => {
+      const tile = input.closest('.reward-tile');
+      const name = tile.dataset.program;
+      const v = input.value.trim();
+      if (v === '') delete state.rewardBalances[name];
+      else state.rewardBalances[name] = Number(v) || 0;
+      saveRewardBalances();
+    });
+  });
 }
 
 // ---------- Modal ----------

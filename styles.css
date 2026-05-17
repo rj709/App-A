@@ -149,6 +149,50 @@ main { padding: 20px 28px 60px; }
   padding: 60px 0;
   font-size: 16px;
 }
+.rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.reward-tile {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+.reward-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.reward-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.reward-balance {
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink);
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+.reward-balance:focus {
+  outline: none;
+  border-color: var(--accent);
+}
 
 /* ----- Buttons ----- */
 .btn-primary {
