@@ -3,6 +3,15 @@ const SORT_KEY    = 'cardTracker.sort.v1';
 const META_KEY    = 'cardTracker.meta.v1';
 const THEME_KEY   = 'cardTracker.theme.v1';
 const REWARDS_KEY = 'cardTracker.rewards.v1';
+const REWARD_STATUS_KEY = 'cardTracker.rewardStatus.v1';
+
+const PROGRAM_STATUSES = {
+  'Delta SkyMiles':       ['None', 'Silver', 'Gold', 'Platinum', 'Diamond'],
+  'Hilton Honors':        ['None', 'Silver', 'Gold', 'Diamond'],
+  'IHG One Rewards':      ['None', 'Club', 'Silver Elite', 'Gold Elite', 'Platinum Elite', 'Diamond Elite'],
+  'Bilt Points':          ['None', 'Blue', 'Silver', 'Gold', 'Platinum'],
+  'Amtrak Guest Rewards': ['None', 'Select', 'Select Plus', 'Select Executive'],
+};
 
 function loadRewardBalances() {
   try {
@@ -13,6 +22,16 @@ function loadRewardBalances() {
 }
 function saveRewardBalances() {
   localStorage.setItem(REWARDS_KEY, JSON.stringify(state.rewardBalances));
+}
+function loadRewardStatuses() {
+  try {
+    const raw = localStorage.getItem(REWARD_STATUS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return {};
+}
+function saveRewardStatuses() {
+  localStorage.setItem(REWARD_STATUS_KEY, JSON.stringify(state.rewardStatuses));
 }
 
 function applyTheme(theme) {
@@ -307,6 +326,7 @@ const state = {
   typeFilter: 'all',
   lastSaved: meta.lastSaved,
   rewardBalances: loadRewardBalances(),
+  rewardStatuses: loadRewardStatuses(),
 };
 
 // ---------- Stats render ----------
@@ -610,24 +630,46 @@ function renderRewards() {
 
   grid.innerHTML = programs.map(([name, count]) => {
     const bal = state.rewardBalances[name] ?? '';
+    const status = state.rewardStatuses[name] ?? '';
+    const tiers = PROGRAM_STATUSES[name];
+    let statusField;
+    if (tiers) {
+      statusField = `<select class="reward-status">${
+        tiers.map(t => `<option value="${escapeHtml(t)}"${t === status ? ' selected' : ''}>${escapeHtml(t)}</option>`).join('')
+      }</select>`;
+    } else {
+      statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}">`;
+    }
     return `
       <div class="reward-tile" data-program="${escapeHtml(name)}">
         <div class="reward-name">${escapeHtml(name)}</div>
         <div class="reward-count">${count} card${count === 1 ? '' : 's'}</div>
         <input type="number" min="0" step="1" class="reward-balance" placeholder="0" value="${bal}">
+        <div class="reward-status-label">Status</div>
+        ${statusField}
       </div>
     `;
   }).join('');
 
   grid.querySelectorAll('.reward-balance').forEach(input => {
     input.addEventListener('input', () => {
-      const tile = input.closest('.reward-tile');
-      const name = tile.dataset.program;
+      const name = input.closest('.reward-tile').dataset.program;
       const v = input.value.trim();
       if (v === '') delete state.rewardBalances[name];
       else state.rewardBalances[name] = Number(v) || 0;
       saveRewardBalances();
     });
+  });
+  grid.querySelectorAll('.reward-status').forEach(el => {
+    const handler = () => {
+      const name = el.closest('.reward-tile').dataset.program;
+      const v = (el.value || '').trim();
+      if (!v || v === 'None') delete state.rewardStatuses[name];
+      else state.rewardStatuses[name] = v;
+      saveRewardStatuses();
+    };
+    el.addEventListener('change', handler);
+    el.addEventListener('input', handler);
   });
 }
 

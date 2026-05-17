@@ -193,6 +193,29 @@ main { padding: 20px 28px 60px; }
   outline: none;
   border-color: var(--accent);
 }
+.reward-status-label {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.reward-status {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ink);
+  padding: 7px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.reward-status:focus {
+  outline: none;
+  border-color: var(--accent);
+}
 
 /* ----- Buttons ----- */
 .btn-primary {
