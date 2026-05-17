@@ -46,6 +46,8 @@ const PROGRAM_STATUSES = {
   'IHG One Rewards':      ['None', 'Club', 'Silver Elite', 'Gold Elite', 'Platinum Elite', 'Diamond Elite'],
   'Bilt Points':          ['None', 'Blue', 'Silver', 'Gold', 'Platinum'],
   'Amtrak Guest Rewards': ['None', 'Select', 'Select Plus', 'Select Executive'],
+  'Marriott Bonvoy':      ['None', 'Silver Elite', 'Gold Elite', 'Platinum Elite', 'Titanium Elite', 'Ambassador Elite'],
+  'United MileagePlus':   ['None', 'Premier Silver', 'Premier Gold', 'Premier Platinum', 'Premier 1K', 'Global Services'],
 };
 
 function loadRewardBalances() {
@@ -665,12 +667,14 @@ function renderRewards() {
   const empty = document.getElementById('rewards-empty');
 
   const counts = new Map();
+  const isProgramTrackable = (p) => p && p.toLowerCase() !== 'cash';
   for (const c of state.cards) {
     const p = (c.pointCurrency || '').trim();
-    if (!p) continue;
+    if (!isProgramTrackable(p)) continue;
     counts.set(p, (counts.get(p) || 0) + 1);
   }
   for (const p of state.extraPrograms) {
+    if (!isProgramTrackable(p)) continue;
     if (!counts.has(p)) counts.set(p, 0);
   }
   const programs = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
