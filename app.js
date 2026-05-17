@@ -689,7 +689,7 @@ function renderRewards() {
   }
   if (empty) empty.hidden = true;
 
-  grid.innerHTML = programs.map(([name, count]) => {
+  const tilesHtml = programs.map(([name, count]) => {
     const bal = formatInt(state.rewardBalances[name]);
     const status = state.rewardStatuses[name] ?? '';
     const tiers = PROGRAM_STATUSES[name];
@@ -702,13 +702,16 @@ function renderRewards() {
       statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}">`;
     }
     const isExtra = count === 0 && state.extraPrograms.some(p => p === name);
-    const removeBtn = isExtra
-      ? `<button type="button" class="reward-remove" aria-label="Remove ${escapeHtml(name)}" title="Remove program">×</button>`
+    const tileActions = isExtra
+      ? `<div class="reward-actions">
+          <button type="button" class="reward-edit" title="Rename program">✎</button>
+          <button type="button" class="reward-remove" title="Remove program">×</button>
+        </div>`
       : '';
     const countLabel = count === 0 ? 'No cards earning' : `${count} card${count === 1 ? '' : 's'}`;
     return `
       <div class="reward-tile${isExtra ? ' reward-tile-extra' : ''}" data-program="${escapeHtml(name)}">
-        ${removeBtn}
+        ${tileActions}
         <div class="reward-name">${escapeHtml(name)}</div>
         <div class="reward-count">${countLabel}</div>
         <input type="text" inputmode="numeric" class="reward-balance" placeholder="0" value="${bal}">
@@ -718,23 +721,11 @@ function renderRewards() {
     `;
   }).join('');
 
-  grid.querySelectorAll('.reward-remove').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const name = btn.closest('.reward-tile').dataset.program;
-      state.extraPrograms = state.extraPrograms.filter(p => p !== name);
-      delete state.rewardBalances[name];
-      delete state.rewardStatuses[name];
-      saveExtraPrograms();
-      saveRewardBalances();
-      saveRewardStatuses();
-      renderRewards();
-    });
-  });
-
   const hasDelta = programs.some(([n]) => n === 'Delta SkyMiles');
+  let mqdHtml = '';
   if (hasDelta) {
     const proj = mqdProjection(state.mqd.current, state.mqd.pending);
-    grid.innerHTML += `
+    mqdHtml = `
       <div class="reward-tile mqd-tile">
         <div class="reward-name">Delta MQDs</div>
         <div class="reward-count">2027 Medallion Projection</div>
@@ -759,6 +750,45 @@ function renderRewards() {
       </div>
     `;
   }
+  grid.innerHTML = tilesHtml + mqdHtml;
+
+  grid.querySelectorAll('.reward-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.closest('.reward-tile').dataset.program;
+      if (!confirm(`Remove ${name}?`)) return;
+      state.extraPrograms = state.extraPrograms.filter(p => p !== name);
+      delete state.rewardBalances[name];
+      delete state.rewardStatuses[name];
+      saveExtraPrograms();
+      saveRewardBalances();
+      saveRewardStatuses();
+      renderRewards();
+    });
+  });
+  grid.querySelectorAll('.reward-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const oldName = btn.closest('.reward-tile').dataset.program;
+      const newName = (prompt('Rename program:', oldName) || '').trim();
+      if (!newName || newName === oldName) return;
+      const exists = state.extraPrograms.some(p => p.toLowerCase() === newName.toLowerCase())
+        || state.cards.some(c => (c.pointCurrency || '').toLowerCase() === newName.toLowerCase());
+      if (exists) { alert('That program already exists.'); return; }
+      const idx = state.extraPrograms.indexOf(oldName);
+      if (idx >= 0) state.extraPrograms[idx] = newName;
+      if (state.rewardBalances[oldName] !== undefined) {
+        state.rewardBalances[newName] = state.rewardBalances[oldName];
+        delete state.rewardBalances[oldName];
+      }
+      if (state.rewardStatuses[oldName] !== undefined) {
+        state.rewardStatuses[newName] = state.rewardStatuses[oldName];
+        delete state.rewardStatuses[oldName];
+      }
+      saveExtraPrograms();
+      saveRewardBalances();
+      saveRewardStatuses();
+      renderRewards();
+    });
+  });
 
   grid.querySelectorAll('.reward-balance').forEach(input => {
     input.addEventListener('input', () => {

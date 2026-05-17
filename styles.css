@@ -168,12 +168,17 @@ main { padding: 20px 28px 60px; }
   border-color: var(--accent);
 }
 .reward-tile { position: relative; }
-.reward-remove {
+.reward-actions {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 22px;
-  height: 22px;
+  display: flex;
+  gap: 4px;
+}
+.reward-edit,
+.reward-remove {
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,9 +187,11 @@ main { padding: 20px 28px 60px; }
   color: var(--ink-mute);
   cursor: pointer;
   border-radius: 6px;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 1;
 }
+.reward-remove { font-size: 18px; }
+.reward-edit:hover,
 .reward-remove:hover {
   background: var(--bg);
   color: var(--ink);
