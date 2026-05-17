@@ -708,12 +708,10 @@ function renderRewards() {
     }
     const statusDisplay = `<button type="button" class="reward-status-display${status ? '' : ' is-empty'}">${escapeHtml(displayStatus)}</button>`;
     const isExtra = count === 0 && state.extraPrograms.some(p => p === name);
-    const tileActions = isExtra
-      ? `<div class="reward-actions">
-          <button type="button" class="reward-edit" title="Rename program">✎</button>
-          <button type="button" class="reward-remove" title="Remove program">×</button>
-        </div>`
-      : '';
+    const tileActions = `<div class="reward-actions">
+        <button type="button" class="reward-edit" title="Rename program">✎</button>
+        ${isExtra ? `<button type="button" class="reward-remove" title="Remove program">×</button>` : ''}
+      </div>`;
     const countLabel = count === 0 ? 'No cards earning' : `${count} card${count === 1 ? '' : 's'}`;
     return `
       <div class="reward-tile${isExtra ? ' reward-tile-extra' : ''}" data-program="${escapeHtml(name)}">
@@ -777,11 +775,19 @@ function renderRewards() {
       const oldName = btn.closest('.reward-tile').dataset.program;
       const newName = (prompt('Rename program:', oldName) || '').trim();
       if (!newName || newName === oldName) return;
-      const exists = state.extraPrograms.some(p => p.toLowerCase() === newName.toLowerCase())
-        || state.cards.some(c => (c.pointCurrency || '').toLowerCase() === newName.toLowerCase());
+      const exists = state.extraPrograms.some(p => p.toLowerCase() === newName.toLowerCase() && p !== oldName)
+        || state.cards.some(c => (c.pointCurrency || '').toLowerCase() === newName.toLowerCase()
+          && (c.pointCurrency || '') !== oldName);
       if (exists) { alert('That program already exists.'); return; }
       const idx = state.extraPrograms.indexOf(oldName);
       if (idx >= 0) state.extraPrograms[idx] = newName;
+      let cardsTouched = false;
+      for (const c of state.cards) {
+        if ((c.pointCurrency || '') === oldName) {
+          c.pointCurrency = newName;
+          cardsTouched = true;
+        }
+      }
       if (state.rewardBalances[oldName] !== undefined) {
         state.rewardBalances[newName] = state.rewardBalances[oldName];
         delete state.rewardBalances[oldName];
@@ -793,6 +799,7 @@ function renderRewards() {
       saveExtraPrograms();
       saveRewardBalances();
       saveRewardStatuses();
+      if (cardsTouched) saveCards();
       renderRewards();
     });
   });
