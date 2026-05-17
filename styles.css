@@ -251,6 +251,23 @@ main { padding: 20px 28px 60px; }
   outline: none;
   border-color: var(--accent);
 }
+.mqd-projection {
+  margin-top: 4px;
+  text-align: center;
+}
+.mqd-projection-status {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.mqd-projection-sub {
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
 
 /* ----- Buttons ----- */
 .btn-primary {

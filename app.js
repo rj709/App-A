@@ -6,6 +6,39 @@ const REWARDS_KEY = 'cardTracker.rewards.v1';
 const REWARD_STATUS_KEY = 'cardTracker.rewardStatus.v1';
 const MQD_KEY = 'cardTracker.mqd.v1';
 
+const MQD_TIERS_2027 = [
+  { name: 'Diamond',  threshold: 28000 },
+  { name: 'Platinum', threshold: 15000 },
+  { name: 'Gold',     threshold: 10000 },
+  { name: 'Silver',   threshold: 5000  },
+];
+
+function mqdProjection(current, pending) {
+  const total = (Number(current) || 0) + (Number(pending) || 0);
+  const tier = MQD_TIERS_2027.find(t => total >= t.threshold);
+  const upcoming = [...MQD_TIERS_2027].reverse().find(t => total < t.threshold);
+  return {
+    total,
+    tierName: tier ? tier.name : 'No status',
+    nextTier: upcoming ? upcoming.name : null,
+    toNext: upcoming ? upcoming.threshold - total : 0,
+  };
+}
+
+function formatInt(n) {
+  if (n === '' || n === null || n === undefined) return '';
+  const v = Number(n);
+  if (!isFinite(v)) return '';
+  return v.toLocaleString();
+}
+function parseInteger(s) {
+  if (s === '' || s === null || s === undefined) return '';
+  const cleaned = String(s).replace(/[^\d.-]/g, '');
+  if (cleaned === '' || cleaned === '-') return '';
+  const n = Number(cleaned);
+  return isNaN(n) ? '' : Math.floor(n);
+}
+
 const PROGRAM_STATUSES = {
   'Delta SkyMiles':       ['None', 'Silver', 'Gold', 'Platinum', 'Diamond'],
   'Hilton Honors':        ['None', 'Silver', 'Gold', 'Diamond'],
@@ -641,7 +674,7 @@ function renderRewards() {
   if (empty) empty.hidden = true;
 
   grid.innerHTML = programs.map(([name, count]) => {
-    const bal = state.rewardBalances[name] ?? '';
+    const bal = formatInt(state.rewardBalances[name]);
     const status = state.rewardStatuses[name] ?? '';
     const tiers = PROGRAM_STATUSES[name];
     let statusField;
@@ -656,7 +689,7 @@ function renderRewards() {
       <div class="reward-tile" data-program="${escapeHtml(name)}">
         <div class="reward-name">${escapeHtml(name)}</div>
         <div class="reward-count">${count} card${count === 1 ? '' : 's'}</div>
-        <input type="number" min="0" step="1" class="reward-balance" placeholder="0" value="${bal}">
+        <input type="text" inputmode="numeric" class="reward-balance" placeholder="0" value="${bal}">
         <div class="reward-status-label">Status</div>
         ${statusField}
       </div>
@@ -665,19 +698,28 @@ function renderRewards() {
 
   const hasDelta = programs.some(([n]) => n === 'Delta SkyMiles');
   if (hasDelta) {
+    const proj = mqdProjection(state.mqd.current, state.mqd.pending);
     grid.innerHTML += `
       <div class="reward-tile mqd-tile">
         <div class="reward-name">Delta MQDs</div>
-        <div class="reward-count">Medallion Qualification</div>
+        <div class="reward-count">2027 Medallion Projection</div>
         <div class="mqd-row">
           <label class="mqd-field">
             <span>Current</span>
-            <input type="number" min="0" step="1" class="mqd-input" data-mqd="current" placeholder="0" value="${escapeHtml(String(state.mqd.current ?? ''))}">
+            <input type="text" inputmode="numeric" class="mqd-input" data-mqd="current" placeholder="0" value="${formatInt(state.mqd.current)}">
           </label>
           <label class="mqd-field">
             <span>Pending</span>
-            <input type="number" min="0" step="1" class="mqd-input" data-mqd="pending" placeholder="0" value="${escapeHtml(String(state.mqd.pending ?? ''))}">
+            <input type="text" inputmode="numeric" class="mqd-input" data-mqd="pending" placeholder="0" value="${formatInt(state.mqd.pending)}">
           </label>
+        </div>
+        <div class="mqd-projection">
+          <div class="mqd-projection-status">${escapeHtml(proj.tierName)}</div>
+          <div class="mqd-projection-sub">${
+            proj.nextTier
+              ? `$${proj.toNext.toLocaleString()} to ${escapeHtml(proj.nextTier)}`
+              : 'Top tier reached'
+          }</div>
         </div>
       </div>
     `;
@@ -686,10 +728,13 @@ function renderRewards() {
   grid.querySelectorAll('.reward-balance').forEach(input => {
     input.addEventListener('input', () => {
       const name = input.closest('.reward-tile').dataset.program;
-      const v = input.value.trim();
-      if (v === '') delete state.rewardBalances[name];
-      else state.rewardBalances[name] = Number(v) || 0;
+      const n = parseInteger(input.value);
+      if (n === '') delete state.rewardBalances[name];
+      else state.rewardBalances[name] = n;
       saveRewardBalances();
+    });
+    input.addEventListener('blur', () => {
+      input.value = formatInt(parseInteger(input.value));
     });
   });
   grid.querySelectorAll('.reward-status').forEach(el => {
@@ -706,9 +751,18 @@ function renderRewards() {
   grid.querySelectorAll('.mqd-input').forEach(el => {
     el.addEventListener('input', () => {
       const key = el.dataset.mqd;
-      const v = el.value.trim();
-      state.mqd[key] = v === '' ? '' : (Number(v) || 0);
+      const n = parseInteger(el.value);
+      state.mqd[key] = n === '' ? '' : n;
       saveMqd();
+      const proj = mqdProjection(state.mqd.current, state.mqd.pending);
+      const tile = el.closest('.mqd-tile');
+      if (!tile) return;
+      tile.querySelector('.mqd-projection-status').textContent = proj.tierName;
+      tile.querySelector('.mqd-projection-sub').textContent =
+        proj.nextTier ? `$${proj.toNext.toLocaleString()} to ${proj.nextTier}` : 'Top tier reached';
+    });
+    el.addEventListener('blur', () => {
+      el.value = formatInt(parseInteger(el.value));
     });
   });
 }
