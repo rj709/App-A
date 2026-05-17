@@ -4,6 +4,7 @@ const META_KEY    = 'cardTracker.meta.v1';
 const THEME_KEY   = 'cardTracker.theme.v1';
 const REWARDS_KEY = 'cardTracker.rewards.v1';
 const REWARD_STATUS_KEY = 'cardTracker.rewardStatus.v1';
+const MQD_KEY = 'cardTracker.mqd.v1';
 
 const PROGRAM_STATUSES = {
   'Delta SkyMiles':       ['None', 'Silver', 'Gold', 'Platinum', 'Diamond'],
@@ -32,6 +33,16 @@ function loadRewardStatuses() {
 }
 function saveRewardStatuses() {
   localStorage.setItem(REWARD_STATUS_KEY, JSON.stringify(state.rewardStatuses));
+}
+function loadMqd() {
+  try {
+    const raw = localStorage.getItem(MQD_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { current: '', pending: '' };
+}
+function saveMqd() {
+  localStorage.setItem(MQD_KEY, JSON.stringify(state.mqd));
 }
 
 function applyTheme(theme) {
@@ -327,6 +338,7 @@ const state = {
   lastSaved: meta.lastSaved,
   rewardBalances: loadRewardBalances(),
   rewardStatuses: loadRewardStatuses(),
+  mqd: loadMqd(),
 };
 
 // ---------- Stats render ----------
@@ -640,6 +652,20 @@ function renderRewards() {
     } else {
       statusField = `<input type="text" class="reward-status" placeholder="No status" value="${escapeHtml(status)}">`;
     }
+    const isDelta = name === 'Delta SkyMiles';
+    const mqdBlock = isDelta ? `
+      <div class="reward-status-label">MQDs</div>
+      <div class="mqd-row">
+        <label class="mqd-field">
+          <span>Current</span>
+          <input type="number" min="0" step="1" class="mqd-input" data-mqd="current" placeholder="0" value="${escapeHtml(String(state.mqd.current ?? ''))}">
+        </label>
+        <label class="mqd-field">
+          <span>Pending</span>
+          <input type="number" min="0" step="1" class="mqd-input" data-mqd="pending" placeholder="0" value="${escapeHtml(String(state.mqd.pending ?? ''))}">
+        </label>
+      </div>
+    ` : '';
     return `
       <div class="reward-tile" data-program="${escapeHtml(name)}">
         <div class="reward-name">${escapeHtml(name)}</div>
@@ -647,6 +673,7 @@ function renderRewards() {
         <input type="number" min="0" step="1" class="reward-balance" placeholder="0" value="${bal}">
         <div class="reward-status-label">Status</div>
         ${statusField}
+        ${mqdBlock}
       </div>
     `;
   }).join('');
@@ -670,6 +697,14 @@ function renderRewards() {
     };
     el.addEventListener('change', handler);
     el.addEventListener('input', handler);
+  });
+  grid.querySelectorAll('.mqd-input').forEach(el => {
+    el.addEventListener('input', () => {
+      const key = el.dataset.mqd;
+      const v = el.value.trim();
+      state.mqd[key] = v === '' ? '' : (Number(v) || 0);
+      saveMqd();
+    });
   });
 }
 

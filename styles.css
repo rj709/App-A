@@ -216,6 +216,37 @@ main { padding: 20px 28px 60px; }
   outline: none;
   border-color: var(--accent);
 }
+.mqd-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.mqd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.mqd-input {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink);
+  padding: 6px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+.mqd-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
 
 /* ----- Buttons ----- */
 .btn-primary {
