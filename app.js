@@ -1,30 +1,91 @@
 const STORAGE_KEY = "camera-kit:v1";
 
 const CATEGORIES = [
-  "Camera body",
+  "Camera Body",
   "Lens",
-  "Flash / lighting",
-  "Tripod / support",
-  "Bag / case",
-  "Storage / memory",
+  "Flash / Lighting",
+  "Tripod / Support",
+  "Bag / Case",
+  "Storage / Memory",
   "Filter",
   "Audio",
   "Accessory",
   "Other",
 ];
 
+function displayName(g) {
+  return [g.brand, g.model].filter(Boolean).join(" ") || "Untitled";
+}
+
+const SORTS = {
+  newest: { label: "Newest First", fn: (a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") },
+  oldest: { label: "Oldest First", fn: (a, b) => (a.createdAt || "").localeCompare(b.createdAt || "") },
+  name: { label: "Alphabetical (A→Z)", fn: (a, b) => displayName(a).localeCompare(displayName(b)) },
+  priceHigh: { label: "Price (High→Low)", fn: (a, b) => (Number(b.price) || 0) - (Number(a.price) || 0) },
+  priceLow: { label: "Price (Low→High)", fn: (a, b) => (Number(a.price) || 0) - (Number(b.price) || 0) },
+  category: { label: "Category", fn: (a, b) => (a.category || "").localeCompare(b.category || "") },
+};
+
 const state = {
   gear: [],
   search: "",
   category: "",
+  sort: "newest",
 };
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function normalizeItem(g) {
+  let brand = g.brand || "";
+  let model = g.model || "";
+  if (g.name && !brand && !model) brand = g.name;
+  return {
+    id: g.id || uid(),
+    createdAt: g.createdAt || new Date().toISOString(),
+    category: migrateCategory(g.category) || "Other",
+    condition: migrateCondition(g.condition) || "Good",
+    brand,
+    model,
+    serial: g.serial || "",
+    price: g.price == null || g.price === "" ? null : Number(g.price),
+    quantity: Number(g.quantity) > 0 ? Math.floor(Number(g.quantity)) : 1,
+    replacementValue:
+      g.replacementValue == null || g.replacementValue === ""
+        ? null
+        : Number(g.replacementValue),
+    insured: !!g.insured,
+    purchaseDate: g.purchaseDate || "",
+    notes: g.notes || "",
+  };
+}
+
+const CATEGORY_MIGRATIONS = {
+  "Camera body": "Camera Body",
+  "Flash / lighting": "Flash / Lighting",
+  "Tripod / support": "Tripod / Support",
+  "Bag / case": "Bag / Case",
+  "Storage / memory": "Storage / Memory",
+};
+
+function migrateCategory(c) {
+  if (!c) return c;
+  return CATEGORY_MIGRATIONS[c] || c;
+}
+
+function migrateCondition(c) {
+  if (c === "Like new") return "Like New";
+  return c;
+}
 
 function loadGear() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(normalizeItem);
   } catch {
     return [];
   }
@@ -34,16 +95,11 @@ function saveGear() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.gear));
 }
 
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-}
-
 function formatPrice(n) {
-  if (n == null || n === "" || isNaN(n)) return "";
+  if (n == null || isNaN(n)) return "";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
   }).format(n);
 }
 
@@ -51,11 +107,25 @@ function formatPriceTotal(n) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
   }).format(n || 0);
 }
 
-function populateCategorySelects() {
+function totalValue() {
+  return state.gear.reduce(
+    (sum, g) => sum + (Number(g.price) || 0) * (g.quantity || 1),
+    0
+  );
+}
+
+function insuredValue() {
+  return state.gear.reduce((sum, g) => {
+    if (!g.insured) return sum;
+    const each = g.replacementValue ?? g.price ?? 0;
+    return sum + (Number(each) || 0) * (g.quantity || 1);
+  }, 0);
+}
+
+function populateSelects() {
   const filter = document.getElementById("filter-category");
   const form = document.getElementById("f-category");
   for (const cat of CATEGORIES) {
@@ -69,104 +139,146 @@ function populateCategorySelects() {
     o2.textContent = cat;
     form.appendChild(o2);
   }
+
+  const sortSel = document.getElementById("sort");
+  for (const [key, { label }] of Object.entries(SORTS)) {
+    const o = document.createElement("option");
+    o.value = key;
+    o.textContent = label;
+    sortSel.appendChild(o);
+  }
+  sortSel.value = state.sort;
 }
 
-function filteredGear() {
+function filteredSortedGear() {
   const q = state.search.trim().toLowerCase();
-  return state.gear.filter((g) => {
+  const filtered = state.gear.filter((g) => {
     if (state.category && g.category !== state.category) return false;
     if (!q) return true;
-    return [g.name, g.brand, g.model, g.notes, g.serial]
+    return [g.brand, g.model, g.serial, g.notes]
       .filter(Boolean)
       .some((v) => v.toLowerCase().includes(q));
   });
+  const sortFn = (SORTS[state.sort] || SORTS.newest).fn;
+  return [...filtered].sort(sortFn);
 }
 
 function render() {
   const list = document.getElementById("gear-list");
   const empty = document.getElementById("empty-state");
-  const items = filteredGear();
+  const items = filteredSortedGear();
 
   list.innerHTML = "";
 
-  const totalValue = state.gear.reduce(
-    (sum, g) => sum + (Number(g.price) || 0),
-    0
-  );
   document.getElementById("stat-count").textContent = state.gear.length;
-  document.getElementById("stat-value").textContent = formatPriceTotal(totalValue);
+  document.getElementById("stat-value").textContent = formatPriceTotal(totalValue());
+  document.getElementById("stat-insured").textContent = formatPriceTotal(insuredValue());
 
   if (state.gear.length === 0) {
     empty.hidden = false;
-    empty.querySelector("p").textContent = "No gear yet.";
+    empty.querySelector("p").textContent = "No Gear Yet.";
+    empty.querySelector("button").hidden = false;
     return;
   }
 
   if (items.length === 0) {
     empty.hidden = false;
-    empty.querySelector("p").textContent = "No items match your filters.";
+    empty.querySelector("p").textContent = "No Items Match Your Filters.";
+    empty.querySelector("button").hidden = true;
     return;
   }
 
   empty.hidden = true;
 
   for (const g of items) {
-    const card = document.createElement("article");
-    card.className = "gear-card";
-    card.dataset.id = g.id;
-    card.tabIndex = 0;
-    card.setAttribute("role", "button");
+    list.appendChild(renderCard(g));
+  }
+}
 
-    const head = document.createElement("div");
-    head.className = "gear-card-head";
+function renderCard(g) {
+  const card = document.createElement("article");
+  card.className = "gear-card";
+  card.dataset.id = g.id;
+  card.tabIndex = 0;
+  card.setAttribute("role", "button");
 
-    const name = document.createElement("h3");
-    name.className = "gear-name";
-    name.textContent = g.name;
-    head.appendChild(name);
+  const head = document.createElement("div");
+  head.className = "gear-card-head";
 
-    if (g.category) {
-      const cat = document.createElement("span");
-      cat.className = "gear-category";
-      cat.textContent = g.category;
-      head.appendChild(cat);
-    }
+  const nameWrap = document.createElement("div");
+  nameWrap.className = "gear-name-wrap";
 
-    card.appendChild(head);
+  const name = document.createElement("h3");
+  name.className = "gear-name";
+  name.textContent = displayName(g);
+  nameWrap.appendChild(name);
 
+  if (g.quantity > 1) {
+    const qty = document.createElement("span");
+    qty.className = "gear-qty";
+    qty.textContent = `× ${g.quantity}`;
+    nameWrap.appendChild(qty);
+  }
+
+  head.appendChild(nameWrap);
+
+  const badges = document.createElement("div");
+  badges.className = "gear-badges";
+  if (g.category) {
+    const cat = document.createElement("span");
+    cat.className = "gear-category";
+    cat.textContent = g.category;
+    badges.appendChild(cat);
+  }
+  if (g.insured) {
+    const ins = document.createElement("span");
+    ins.className = "gear-insured";
+    ins.textContent = "Insured";
+    badges.appendChild(ins);
+  }
+  head.appendChild(badges);
+
+  card.appendChild(head);
+
+  if (g.serial) {
     const meta = document.createElement("div");
     meta.className = "gear-meta";
-    const metaParts = [g.brand, g.model].filter(Boolean).join(" ");
-    meta.textContent = metaParts || "—";
+    meta.textContent = `S/N ${g.serial}`;
     card.appendChild(meta);
-
-    const footer = document.createElement("div");
-    footer.className = "gear-footer";
-
-    const price = document.createElement("span");
-    price.className = "gear-price";
-    price.textContent = formatPrice(g.price) || "—";
-    footer.appendChild(price);
-
-    if (g.condition) {
-      const cond = document.createElement("span");
-      cond.className = "gear-condition";
-      cond.textContent = g.condition;
-      footer.appendChild(cond);
-    }
-
-    card.appendChild(footer);
-
-    card.addEventListener("click", () => openModal(g.id));
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openModal(g.id);
-      }
-    });
-
-    list.appendChild(card);
   }
+
+  const footer = document.createElement("div");
+  footer.className = "gear-footer";
+
+  const price = document.createElement("span");
+  price.className = "gear-price";
+  if (g.price != null) {
+    price.textContent = g.quantity > 1
+      ? `${formatPrice(g.price)} ea`
+      : formatPrice(g.price);
+  } else {
+    price.textContent = "—";
+  }
+  footer.appendChild(price);
+
+  if (g.condition) {
+    const cond = document.createElement("span");
+    cond.className = "gear-condition";
+    cond.textContent = g.condition;
+    footer.appendChild(cond);
+  }
+
+  card.appendChild(footer);
+
+  card.addEventListener("click", () => openModal(g.id));
+  card.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openModal(g.id);
+    }
+  });
+
+  return card;
 }
 
 function openModal(id) {
@@ -180,29 +292,33 @@ function openModal(id) {
   if (id) {
     const item = state.gear.find((g) => g.id === id);
     if (!item) return;
-    title.textContent = "Edit gear";
+    title.textContent = "Edit Gear";
     deleteBtn.hidden = false;
     form.elements.id.value = item.id;
-    form.elements.name.value = item.name || "";
     form.elements.category.value = item.category || CATEGORIES[0];
     form.elements.condition.value = item.condition || "Good";
     form.elements.brand.value = item.brand || "";
     form.elements.model.value = item.model || "";
     form.elements.serial.value = item.serial || "";
     form.elements.price.value = item.price ?? "";
+    form.elements.quantity.value = item.quantity || 1;
+    form.elements.replacementValue.value = item.replacementValue ?? "";
+    form.elements.insured.checked = !!item.insured;
     form.elements.purchaseDate.value = item.purchaseDate || "";
     form.elements.notes.value = item.notes || "";
   } else {
-    title.textContent = "Add gear";
+    title.textContent = "Add Gear";
     deleteBtn.hidden = true;
     form.elements.id.value = "";
     form.elements.category.value = CATEGORIES[0];
     form.elements.condition.value = "Good";
+    form.elements.quantity.value = 1;
+    form.elements.insured.checked = false;
   }
 
   modal.hidden = false;
   modal.setAttribute("aria-hidden", "false");
-  requestAnimationFrame(() => form.elements.name.focus());
+  requestAnimationFrame(() => form.elements.brand.focus());
 }
 
 function closeModal() {
@@ -216,19 +332,40 @@ function handleSubmit(e) {
   const form = e.target;
   const data = Object.fromEntries(new FormData(form).entries());
 
-  if (!data.name.trim()) {
-    form.elements.name.focus();
+  const brand = data.brand.trim();
+  const model = data.model.trim();
+  if (!brand && !model) {
+    form.elements.brand.focus();
+    toast("Brand Or Model Is Required");
     return;
   }
 
+  const price = data.price === "" ? null : Number(data.price);
+  if (price != null && (isNaN(price) || price < 0)) {
+    form.elements.price.focus();
+    toast("Price Can't Be Negative");
+    return;
+  }
+
+  const repl = data.replacementValue === "" ? null : Number(data.replacementValue);
+  if (repl != null && (isNaN(repl) || repl < 0)) {
+    form.elements.replacementValue.focus();
+    toast("Replacement Value Can't Be Negative");
+    return;
+  }
+
+  const quantity = Math.max(1, Math.floor(Number(data.quantity)) || 1);
+
   const payload = {
-    name: data.name.trim(),
     category: data.category || "Other",
     condition: data.condition || "Good",
-    brand: data.brand.trim(),
-    model: data.model.trim(),
+    brand,
+    model,
     serial: data.serial.trim(),
-    price: data.price === "" ? null : Number(data.price),
+    price,
+    quantity,
+    replacementValue: repl,
+    insured: form.elements.insured.checked,
     purchaseDate: data.purchaseDate || "",
     notes: data.notes.trim(),
   };
@@ -253,7 +390,7 @@ function handleDelete() {
   if (!id) return;
   const item = state.gear.find((g) => g.id === id);
   if (!item) return;
-  if (!confirm(`Delete "${item.name}"?`)) return;
+  if (!confirm(`Delete "${displayName(item)}"?`)) return;
   state.gear = state.gear.filter((g) => g.id !== id);
   saveGear();
   closeModal();
@@ -289,7 +426,8 @@ function importJSON(file) {
     try {
       const parsed = JSON.parse(reader.result);
       if (!Array.isArray(parsed)) throw new Error("Not an array");
-      const merged = [...parsed.map(normalizeImported), ...state.gear];
+      const incoming = parsed.map(normalizeItem);
+      const merged = [...incoming, ...state.gear];
       const seen = new Set();
       state.gear = merged.filter((g) => {
         if (seen.has(g.id)) return false;
@@ -298,33 +436,17 @@ function importJSON(file) {
       });
       saveGear();
       render();
-      toast(`Imported ${parsed.length} item${parsed.length === 1 ? "" : "s"}`);
+      toast(`Imported ${parsed.length} ${parsed.length === 1 ? "Item" : "Items"}`);
     } catch (err) {
-      toast("Import failed: invalid JSON");
+      toast("Import Failed: Invalid JSON");
     }
   };
   reader.readAsText(file);
 }
 
-function normalizeImported(g) {
-  return {
-    id: g.id || uid(),
-    createdAt: g.createdAt || new Date().toISOString(),
-    name: g.name || "Untitled",
-    category: g.category || "Other",
-    condition: g.condition || "Good",
-    brand: g.brand || "",
-    model: g.model || "",
-    serial: g.serial || "",
-    price: g.price ?? null,
-    purchaseDate: g.purchaseDate || "",
-    notes: g.notes || "",
-  };
-}
-
 function init() {
   state.gear = loadGear();
-  populateCategorySelects();
+  populateSelects();
   render();
 
   document.getElementById("add-gear-btn").addEventListener("click", () => openModal());
@@ -337,6 +459,11 @@ function init() {
 
   document.getElementById("filter-category").addEventListener("change", (e) => {
     state.category = e.target.value;
+    render();
+  });
+
+  document.getElementById("sort").addEventListener("change", (e) => {
+    state.sort = e.target.value;
     render();
   });
 
