@@ -2,16 +2,34 @@ const STORAGE_KEY = "camera-kit:v1";
 
 const CATEGORIES = [
   "Camera Body",
-  "Lens",
-  "Flash / Lighting",
-  "Tripod / Support",
-  "Bag / Case",
-  "Storage / Memory",
-  "Filter",
+  "Camera Lens",
+  "Lens Hood",
+  "Lens Filter",
+  "Lighting",
+  "Camera Battery",
+  "SD Card",
   "Audio",
+  "Tripod",
+  "Camera Bag",
+  "Camera Cube",
+  "Camera Strap",
   "Accessory",
   "Other",
 ];
+
+const CATEGORY_MIGRATIONS = {
+  "Camera body": "Camera Body",
+  "Lens": "Camera Lens",
+  "Flash / lighting": "Lighting",
+  "Flash / Lighting": "Lighting",
+  "Tripod / support": "Tripod",
+  "Tripod / Support": "Tripod",
+  "Bag / case": "Camera Bag",
+  "Bag / Case": "Camera Bag",
+  "Storage / memory": "SD Card",
+  "Storage / Memory": "SD Card",
+  "Filter": "Lens Filter",
+};
 
 function displayName(g) {
   return [g.brand, g.model].filter(Boolean).join(" ") || "Untitled";
@@ -76,14 +94,6 @@ function normalizeItem(g) {
     notes: g.notes || "",
   };
 }
-
-const CATEGORY_MIGRATIONS = {
-  "Camera body": "Camera Body",
-  "Flash / lighting": "Flash / Lighting",
-  "Tripod / support": "Tripod / Support",
-  "Bag / case": "Bag / Case",
-  "Storage / memory": "Storage / Memory",
-};
 
 function migrateCategory(c) {
   if (!c) return c;
@@ -458,6 +468,136 @@ function importJSON(file) {
   reader.readAsText(file);
 }
 
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else {
+        field += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      row.push(field);
+      field = "";
+    } else if (ch === "\n") {
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = "";
+    } else if (ch !== "\r") {
+      field += ch;
+    }
+  }
+  if (field !== "" || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function parseMoney(s) {
+  if (s == null) return null;
+  const cleaned = String(s).replace(/[$,\s]/g, "");
+  if (cleaned === "") return null;
+  const n = Number(cleaned);
+  return isNaN(n) ? null : n;
+}
+
+const CSV_CATEGORY_MAP = {
+  "Lens": "Camera Lens",
+  "Lenses": "Camera Lens",
+  "Flash": "Lighting",
+  "Flash / Lighting": "Lighting",
+  "Tripod / Support": "Tripod",
+  "Support": "Tripod",
+  "Bag": "Camera Bag",
+  "Bag / Case": "Camera Bag",
+  "Case": "Camera Bag",
+  "Storage": "SD Card",
+  "Memory": "SD Card",
+  "Storage / Memory": "SD Card",
+  "Filter": "Lens Filter",
+  "Filters": "Lens Filter",
+  "Battery": "Camera Battery",
+  "Strap": "Camera Strap",
+  "Cube": "Camera Cube",
+};
+
+function normalizeCsvCategory(c) {
+  const trimmed = (c || "").trim();
+  if (!trimmed) return "Other";
+  if (CATEGORIES.includes(trimmed)) return trimmed;
+  if (CSV_CATEGORY_MAP[trimmed]) return CSV_CATEGORY_MAP[trimmed];
+  return "Other";
+}
+
+function csvRowToGear(row) {
+  const get = (key) => {
+    const k = Object.keys(row).find((rk) => rk.trim().toLowerCase() === key);
+    return k ? (row[k] || "").trim() : "";
+  };
+  const qty = Math.max(1, Math.floor(Number(get("number") || get("quantity"))) || 1);
+  return {
+    id: uid(),
+    createdAt: new Date().toISOString(),
+    brand: get("brand"),
+    model: get("item") || get("model") || get("name"),
+    category: normalizeCsvCategory(get("category")),
+    condition: get("condition") || "Good",
+    serial: get("serial") || get("serial #"),
+    price: parseMoney(get("price")),
+    quantity: qty,
+    replacementValue: parseMoney(get("replacement value") || get("replacementvalue")),
+    insured: false,
+    purchaseDate: get("purchase date") || get("purchasedate"),
+    notes: get("notes"),
+  };
+}
+
+function importCSV(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const rows = parseCSV(reader.result);
+      if (rows.length < 2) throw new Error("Empty CSV");
+      const headers = rows[0];
+      const incoming = [];
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (r.every((v) => v === "")) continue;
+        const obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = r[j] || "";
+        }
+        const item = csvRowToGear(obj);
+        if (item.brand || item.model) incoming.push(item);
+      }
+      state.gear = [...incoming, ...state.gear];
+      saveGear();
+      render();
+      toast(`Imported ${incoming.length} ${incoming.length === 1 ? "Item" : "Items"}`);
+    } catch (err) {
+      console.error(err);
+      toast("Import Failed: Invalid CSV");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function importFile(file) {
+  const name = (file.name || "").toLowerCase();
+  if (name.endsWith(".csv")) importCSV(file);
+  else importJSON(file);
+}
+
 function init() {
   state.gear = loadGear();
   populateSelects();
@@ -498,7 +638,7 @@ function init() {
   document.getElementById("import-btn").addEventListener("click", () => importInput.click());
   importInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (file) importJSON(file);
+    if (file) importFile(file);
     e.target.value = "";
   });
 }
