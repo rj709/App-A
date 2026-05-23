@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Kit</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="brand">Camera Kit</h1>
+      <nav class="tabs" role="tablist">
+        <button class="tab is-active" data-tab="gear" role="tab" aria-selected="true">Gear</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section id="tab-gear" class="tab-panel is-active" role="tabpanel">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <input type="search" id="search" placeholder="Search name, brand, model…" autocomplete="off">
+          <select id="filter-category" aria-label="Filter by category">
+            <option value="">All categories</option>
+          </select>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" id="export-btn" class="btn btn-ghost" title="Export JSON">Export</button>
+          <button type="button" id="import-btn" class="btn btn-ghost" title="Import JSON">Import</button>
+          <input type="file" id="import-file" accept="application/json" hidden>
+          <button type="button" id="add-gear-btn" class="btn btn-primary">+ Add gear</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Items</span>
+          <span class="stat-value" id="stat-count">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Total value</span>
+          <span class="stat-value" id="stat-value">$0</span>
+        </div>
+      </div>
+
+      <div class="gear-list" id="gear-list" aria-live="polite"></div>
+
+      <div class="empty-state" id="empty-state">
+        <p>No gear yet.</p>
+        <button type="button" class="btn btn-primary" id="empty-add-btn">Add your first item</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="gear-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2 id="modal-title">Add gear</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close">&times;</button>
+      </header>
+      <form id="gear-form" class="gear-form" novalidate>
+        <input type="hidden" name="id">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" required placeholder="e.g. Sony A7 IV">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="f-category">Category</label>
+            <select id="f-category" name="category" required></select>
+          </div>
+          <div class="field">
+            <label for="f-condition">Condition</label>
+            <select id="f-condition" name="condition">
+              <option value="New">New</option>
+              <option value="Like new">Like new</option>
+              <option value="Good" selected>Good</option>
+              <option value="Fair">Fair</option>
+              <option value="Poor">Poor</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="f-brand">Brand</label>
+            <input id="f-brand" name="brand" placeholder="Sony">
+          </div>
+          <div class="field">
+            <label for="f-model">Model</label>
+            <input id="f-model" name="model" placeholder="ILCE-7M4">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="f-serial">Serial #</label>
+            <input id="f-serial" name="serial" placeholder="Optional">
+          </div>
+          <div class="field">
+            <label for="f-price">Price (USD)</label>
+            <input id="f-price" name="price" type="number" min="0" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-purchaseDate">Purchase date</label>
+          <input id="f-purchaseDate" name="purchaseDate" type="date">
+        </div>
+        <div class="field">
+          <label for="f-notes">Notes</label>
+          <textarea id="f-notes" name="notes" rows="3" placeholder="Anything worth remembering…"></textarea>
+        </div>
+        <footer class="modal-actions">
+          <button type="button" class="btn btn-danger" id="delete-btn" hidden>Delete</button>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
