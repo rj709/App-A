@@ -24,7 +24,6 @@
           <select id="filter-category" aria-label="Filter by category">
             <option value="">All Categories</option>
           </select>
-          <select id="sort" aria-label="Sort"></select>
         </div>
         <div class="toolbar-actions">
           <button type="button" id="export-btn" class="btn btn-ghost" title="Export JSON">Export</button>
@@ -43,13 +42,19 @@
           <span class="stat-label">Total Value</span>
           <span class="stat-value" id="stat-value">$0.00</span>
         </div>
-        <div class="stat">
-          <span class="stat-label">Insured Value</span>
-          <span class="stat-value" id="stat-insured">$0.00</span>
-        </div>
       </div>
 
-      <div class="gear-list" id="gear-list" aria-live="polite"></div>
+      <div class="gear-table">
+        <div class="gear-thead" role="row">
+          <button class="gear-th gear-col-item" data-sort="name" type="button">Item<span class="sort-arrow"></span></button>
+          <button class="gear-th gear-col-category" data-sort="category" type="button">Category<span class="sort-arrow"></span></button>
+          <button class="gear-th gear-col-qty" data-sort="quantity" type="button">Qty<span class="sort-arrow"></span></button>
+          <button class="gear-th gear-col-price" data-sort="price" type="button">Price<span class="sort-arrow"></span></button>
+          <span class="gear-th gear-col-condition">Condition</span>
+          <span class="gear-th gear-col-insured" aria-label="Insured"></span>
+        </div>
+        <div class="gear-tbody" id="gear-list" aria-live="polite"></div>
+      </div>
 
       <div class="empty-state" id="empty-state">
         <p>No Gear Yet.</p>
