@@ -17,20 +17,36 @@ function displayName(g) {
   return [g.brand, g.model].filter(Boolean).join(" ") || "Untitled";
 }
 
-const SORTS = {
-  newest: { label: "Newest First", fn: (a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") },
-  oldest: { label: "Oldest First", fn: (a, b) => (a.createdAt || "").localeCompare(b.createdAt || "") },
-  name: { label: "Alphabetical (A→Z)", fn: (a, b) => displayName(a).localeCompare(displayName(b)) },
-  priceHigh: { label: "Price (High→Low)", fn: (a, b) => (Number(b.price) || 0) - (Number(a.price) || 0) },
-  priceLow: { label: "Price (Low→High)", fn: (a, b) => (Number(a.price) || 0) - (Number(b.price) || 0) },
-  category: { label: "Category", fn: (a, b) => (a.category || "").localeCompare(b.category || "") },
+function sortComparator(field, dir) {
+  const flip = dir === "desc" ? -1 : 1;
+  switch (field) {
+    case "name":
+      return (a, b) => flip * displayName(a).localeCompare(displayName(b));
+    case "category":
+      return (a, b) => flip * (a.category || "").localeCompare(b.category || "");
+    case "quantity":
+      return (a, b) => flip * ((a.quantity || 1) - (b.quantity || 1));
+    case "price":
+      return (a, b) => flip * ((Number(a.price) || 0) - (Number(b.price) || 0));
+    case "createdAt":
+    default:
+      return (a, b) => flip * (a.createdAt || "").localeCompare(b.createdAt || "");
+  }
+}
+
+const DEFAULT_DIR = {
+  createdAt: "desc",
+  price: "desc",
+  quantity: "desc",
+  name: "asc",
+  category: "asc",
 };
 
 const state = {
   gear: [],
   search: "",
   category: "",
-  sort: "newest",
+  sort: { field: "createdAt", dir: "desc" },
 };
 
 function uid() {
@@ -117,14 +133,6 @@ function totalValue() {
   );
 }
 
-function insuredValue() {
-  return state.gear.reduce((sum, g) => {
-    if (!g.insured) return sum;
-    const each = g.replacementValue ?? g.price ?? 0;
-    return sum + (Number(each) || 0) * (g.quantity || 1);
-  }, 0);
-}
-
 function populateSelects() {
   const filter = document.getElementById("filter-category");
   const form = document.getElementById("f-category");
@@ -139,15 +147,6 @@ function populateSelects() {
     o2.textContent = cat;
     form.appendChild(o2);
   }
-
-  const sortSel = document.getElementById("sort");
-  for (const [key, { label }] of Object.entries(SORTS)) {
-    const o = document.createElement("option");
-    o.value = key;
-    o.textContent = label;
-    sortSel.appendChild(o);
-  }
-  sortSel.value = state.sort;
 }
 
 function filteredSortedGear() {
@@ -159,8 +158,7 @@ function filteredSortedGear() {
       .filter(Boolean)
       .some((v) => v.toLowerCase().includes(q));
   });
-  const sortFn = (SORTS[state.sort] || SORTS.newest).fn;
-  return [...filtered].sort(sortFn);
+  return [...filtered].sort(sortComparator(state.sort.field, state.sort.dir));
 }
 
 function render() {
@@ -172,7 +170,8 @@ function render() {
 
   document.getElementById("stat-count").textContent = state.gear.length;
   document.getElementById("stat-value").textContent = formatPriceTotal(totalValue());
-  document.getElementById("stat-insured").textContent = formatPriceTotal(insuredValue());
+
+  updateSortIndicators();
 
   if (state.gear.length === 0) {
     empty.hidden = false;
@@ -191,94 +190,109 @@ function render() {
   empty.hidden = true;
 
   for (const g of items) {
-    list.appendChild(renderCard(g));
+    list.appendChild(renderRow(g));
   }
 }
 
-function renderCard(g) {
-  const card = document.createElement("article");
-  card.className = "gear-card";
-  card.dataset.id = g.id;
-  card.tabIndex = 0;
-  card.setAttribute("role", "button");
+function renderRow(g) {
+  const row = document.createElement("div");
+  row.className = "gear-row";
+  row.dataset.id = g.id;
+  row.tabIndex = 0;
+  row.setAttribute("role", "button");
+  row.setAttribute("aria-label", `Edit ${displayName(g)}`);
 
-  const head = document.createElement("div");
-  head.className = "gear-card-head";
-
-  const nameWrap = document.createElement("div");
-  nameWrap.className = "gear-name-wrap";
-
-  const name = document.createElement("h3");
-  name.className = "gear-name";
-  name.textContent = displayName(g);
-  nameWrap.appendChild(name);
-
-  if (g.quantity > 1) {
-    const qty = document.createElement("span");
-    qty.className = "gear-qty";
-    qty.textContent = `× ${g.quantity}`;
-    nameWrap.appendChild(qty);
-  }
-
-  head.appendChild(nameWrap);
-
-  const badges = document.createElement("div");
-  badges.className = "gear-badges";
-  if (g.category) {
-    const cat = document.createElement("span");
-    cat.className = "gear-category";
-    cat.textContent = g.category;
-    badges.appendChild(cat);
-  }
-  if (g.insured) {
-    const ins = document.createElement("span");
-    ins.className = "gear-insured";
-    ins.textContent = "Insured";
-    badges.appendChild(ins);
-  }
-  head.appendChild(badges);
-
-  card.appendChild(head);
-
-  if (g.serial) {
-    const meta = document.createElement("div");
-    meta.className = "gear-meta";
-    meta.textContent = `S/N ${g.serial}`;
-    card.appendChild(meta);
-  }
-
-  const footer = document.createElement("div");
-  footer.className = "gear-footer";
+  const item = document.createElement("span");
+  item.className = "gear-cell gear-col-item";
+  item.textContent = displayName(g);
+  row.appendChild(item);
 
   const price = document.createElement("span");
-  price.className = "gear-price";
+  price.className = "gear-cell gear-col-price";
   if (g.price != null) {
-    price.textContent = g.quantity > 1
-      ? `${formatPrice(g.price)} ea`
-      : formatPrice(g.price);
+    price.textContent = formatPrice(g.price);
+    if (g.quantity > 1) {
+      const ea = document.createElement("span");
+      ea.className = "ea";
+      ea.textContent = " ea";
+      price.appendChild(ea);
+    }
   } else {
     price.textContent = "—";
   }
-  footer.appendChild(price);
+  row.appendChild(price);
 
-  if (g.condition) {
-    const cond = document.createElement("span");
-    cond.className = "gear-condition";
-    cond.textContent = g.condition;
-    footer.appendChild(cond);
+  const metaGroup = document.createElement("div");
+  metaGroup.className = "gear-meta-group";
+
+  const cat = document.createElement("span");
+  cat.className = "gear-cell gear-col-category";
+  if (g.category) {
+    const pill = document.createElement("span");
+    pill.className = "gear-category";
+    pill.textContent = g.category;
+    cat.appendChild(pill);
   }
+  metaGroup.appendChild(cat);
 
-  card.appendChild(footer);
+  const qty = document.createElement("span");
+  qty.className = "gear-cell gear-col-qty";
+  qty.textContent = g.quantity > 1 ? String(g.quantity) : "";
+  metaGroup.appendChild(qty);
 
-  card.addEventListener("click", () => openModal(g.id));
-  card.addEventListener("keydown", (e) => {
+  const cond = document.createElement("span");
+  cond.className = "gear-cell gear-col-condition";
+  cond.textContent = g.condition || "";
+  metaGroup.appendChild(cond);
+
+  const ins = document.createElement("span");
+  ins.className = "gear-cell gear-col-insured";
+  if (g.insured) {
+    const mark = document.createElement("span");
+    mark.className = "insured-mark";
+    mark.title = "Insured";
+    mark.textContent = "Insured";
+    ins.appendChild(mark);
+  }
+  metaGroup.appendChild(ins);
+
+  row.appendChild(metaGroup);
+
+  row.addEventListener("click", () => openModal(g.id));
+  row.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       openModal(g.id);
     }
   });
 
-  return card;
+  return row;
+}
+
+function updateSortIndicators() {
+  for (const th of document.querySelectorAll(".gear-th[data-sort]")) {
+    const field = th.dataset.sort;
+    const arrow = th.querySelector(".sort-arrow");
+    if (field === state.sort.field) {
+      th.classList.add("is-sorted");
+      th.setAttribute("aria-sort", state.sort.dir === "asc" ? "ascending" : "descending");
+      arrow.textContent = state.sort.dir === "asc" ? "↑" : "↓";
+    } else {
+      th.classList.remove("is-sorted");
+      th.removeAttribute("aria-sort");
+      arrow.textContent = "";
+    }
+  }
+}
+
+function setSort(field) {
+  if (state.sort.field === field) {
+    state.sort.dir = state.sort.dir === "asc" ? "desc" : "asc";
+  } else {
+    state.sort.field = field;
+    state.sort.dir = DEFAULT_DIR[field] || "asc";
+  }
+  render();
 }
 
 function openModal(id) {
@@ -462,10 +476,9 @@ function init() {
     render();
   });
 
-  document.getElementById("sort").addEventListener("change", (e) => {
-    state.sort = e.target.value;
-    render();
-  });
+  for (const th of document.querySelectorAll(".gear-th[data-sort]")) {
+    th.addEventListener("click", () => setSort(th.dataset.sort));
+  }
 
   document.getElementById("gear-form").addEventListener("submit", handleSubmit);
   document.getElementById("delete-btn").addEventListener("click", handleDelete);
