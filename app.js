@@ -598,23 +598,22 @@ function importFile(file) {
   else importJSON(file);
 }
 
-const SEED_FLAG_KEY = "camera-kit:seeded";
+const SEED_FLAG_KEY = "camera-kit:seeded-v2";
 
 async function loadSeedIfFirstRun() {
   if (state.gear.length > 0) return;
   if (localStorage.getItem(SEED_FLAG_KEY)) return;
   try {
-    const res = await fetch("gear-seed.json", { cache: "no-store" });
+    const res = await fetch("gear-seed.json?v=" + Date.now(), { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const seed = await res.json();
-    if (!Array.isArray(seed)) throw new Error("Seed not an array");
+    if (!Array.isArray(seed) || seed.length === 0) throw new Error("Seed empty or invalid");
     state.gear = seed.map(normalizeItem);
     saveGear();
     localStorage.setItem(SEED_FLAG_KEY, "1");
     render();
   } catch (err) {
-    console.warn("Seed load skipped:", err.message);
-    localStorage.setItem(SEED_FLAG_KEY, "1");
+    console.warn("Seed load failed; will retry next visit:", err.message);
   }
 }
 
