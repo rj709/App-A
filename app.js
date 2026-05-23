@@ -598,10 +598,31 @@ function importFile(file) {
   else importJSON(file);
 }
 
+const SEED_FLAG_KEY = "camera-kit:seeded";
+
+async function loadSeedIfFirstRun() {
+  if (state.gear.length > 0) return;
+  if (localStorage.getItem(SEED_FLAG_KEY)) return;
+  try {
+    const res = await fetch("gear-seed.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const seed = await res.json();
+    if (!Array.isArray(seed)) throw new Error("Seed not an array");
+    state.gear = seed.map(normalizeItem);
+    saveGear();
+    localStorage.setItem(SEED_FLAG_KEY, "1");
+    render();
+  } catch (err) {
+    console.warn("Seed load skipped:", err.message);
+    localStorage.setItem(SEED_FLAG_KEY, "1");
+  }
+}
+
 function init() {
   state.gear = loadGear();
   populateSelects();
   render();
+  loadSeedIfFirstRun();
 
   document.getElementById("add-gear-btn").addEventListener("click", () => openModal());
   document.getElementById("empty-add-btn").addEventListener("click", () => openModal());
