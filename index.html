@@ -20,16 +20,17 @@
     <section id="tab-gear" class="tab-panel is-active" role="tabpanel">
       <div class="toolbar">
         <div class="toolbar-search">
-          <input type="search" id="search" placeholder="Search name, brand, model…" autocomplete="off">
+          <input type="search" id="search" placeholder="Search Gear…" autocomplete="off">
           <select id="filter-category" aria-label="Filter by category">
-            <option value="">All categories</option>
+            <option value="">All Categories</option>
           </select>
+          <select id="sort" aria-label="Sort"></select>
         </div>
         <div class="toolbar-actions">
           <button type="button" id="export-btn" class="btn btn-ghost" title="Export JSON">Export</button>
           <button type="button" id="import-btn" class="btn btn-ghost" title="Import JSON">Import</button>
           <input type="file" id="import-file" accept="application/json" hidden>
-          <button type="button" id="add-gear-btn" class="btn btn-primary">+ Add gear</button>
+          <button type="button" id="add-gear-btn" class="btn btn-primary">+ Add Gear</button>
         </div>
       </div>
 
@@ -39,16 +40,20 @@
           <span class="stat-value" id="stat-count">0</span>
         </div>
         <div class="stat">
-          <span class="stat-label">Total value</span>
-          <span class="stat-value" id="stat-value">$0</span>
+          <span class="stat-label">Total Value</span>
+          <span class="stat-value" id="stat-value">$0.00</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Insured Value</span>
+          <span class="stat-value" id="stat-insured">$0.00</span>
         </div>
       </div>
 
       <div class="gear-list" id="gear-list" aria-live="polite"></div>
 
       <div class="empty-state" id="empty-state">
-        <p>No gear yet.</p>
-        <button type="button" class="btn btn-primary" id="empty-add-btn">Add your first item</button>
+        <p>No Gear Yet.</p>
+        <button type="button" class="btn btn-primary" id="empty-add-btn">Add Your First Item</button>
       </div>
     </section>
   </main>
@@ -57,14 +62,20 @@
     <div class="modal-backdrop" data-close></div>
     <div class="modal-card">
       <header class="modal-head">
-        <h2 id="modal-title">Add gear</h2>
+        <h2 id="modal-title">Add Gear</h2>
         <button type="button" class="icon-btn" data-close aria-label="Close">&times;</button>
       </header>
       <form id="gear-form" class="gear-form" novalidate>
         <input type="hidden" name="id">
-        <div class="field">
-          <label for="f-name">Name</label>
-          <input id="f-name" name="name" required placeholder="e.g. Sony A7 IV">
+        <div class="row">
+          <div class="field">
+            <label for="f-brand">Brand</label>
+            <input id="f-brand" name="brand" placeholder="Sony">
+          </div>
+          <div class="field">
+            <label for="f-model">Model</label>
+            <input id="f-model" name="model" placeholder="A7 IV">
+          </div>
         </div>
         <div class="row">
           <div class="field">
@@ -75,40 +86,47 @@
             <label for="f-condition">Condition</label>
             <select id="f-condition" name="condition">
               <option value="New">New</option>
-              <option value="Like new">Like new</option>
+              <option value="Like New">Like New</option>
               <option value="Good" selected>Good</option>
               <option value="Fair">Fair</option>
               <option value="Poor">Poor</option>
             </select>
           </div>
         </div>
-        <div class="row">
-          <div class="field">
-            <label for="f-brand">Brand</label>
-            <input id="f-brand" name="brand" placeholder="Sony">
-          </div>
-          <div class="field">
-            <label for="f-model">Model</label>
-            <input id="f-model" name="model" placeholder="ILCE-7M4">
-          </div>
+        <div class="field">
+          <label for="f-serial">Serial #</label>
+          <input id="f-serial" name="serial" placeholder="Optional">
         </div>
         <div class="row">
-          <div class="field">
-            <label for="f-serial">Serial #</label>
-            <input id="f-serial" name="serial" placeholder="Optional">
-          </div>
           <div class="field">
             <label for="f-price">Price (USD)</label>
             <input id="f-price" name="price" type="number" min="0" step="0.01" placeholder="0.00">
           </div>
+          <div class="field">
+            <label for="f-quantity">Quantity</label>
+            <input id="f-quantity" name="quantity" type="number" min="1" step="1" value="1">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="f-replacementValue">Replacement Value (USD)</label>
+            <input id="f-replacementValue" name="replacementValue" type="number" min="0" step="0.01" placeholder="Defaults to Price">
+          </div>
+          <div class="field field-checkbox">
+            <span class="field-label-spacer" aria-hidden="true"></span>
+            <label class="checkbox-label" for="f-insured">
+              <input id="f-insured" name="insured" type="checkbox">
+              <span>Insured</span>
+            </label>
+          </div>
         </div>
         <div class="field">
-          <label for="f-purchaseDate">Purchase date</label>
+          <label for="f-purchaseDate">Purchase Date</label>
           <input id="f-purchaseDate" name="purchaseDate" type="date">
         </div>
         <div class="field">
           <label for="f-notes">Notes</label>
-          <textarea id="f-notes" name="notes" rows="3" placeholder="Anything worth remembering…"></textarea>
+          <textarea id="f-notes" name="notes" rows="3" placeholder="Anything Worth Remembering…"></textarea>
         </div>
         <footer class="modal-actions">
           <button type="button" class="btn btn-danger" id="delete-btn" hidden>Delete</button>
