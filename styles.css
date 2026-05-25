@@ -253,25 +253,6 @@ select { cursor: pointer; }
   color: var(--text);
 }
 
-.breakdown {
-  display: flex;
-  gap: 2px;
-  height: 8px;
-  margin-top: 18px;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.breakdown-seg {
-  min-width: 4px;
-  flex-basis: 0;
-  transition: opacity 0.12s;
-}
-.breakdown:hover .breakdown-seg { opacity: 0.55; }
-.breakdown .breakdown-seg:hover { opacity: 1; }
-.breakdown.has-active .breakdown-seg { opacity: 0.32; }
-.breakdown.has-active .breakdown-seg.is-active { opacity: 1; }
-
 /* Toolbar */
 .toolbar {
   display: flex;
