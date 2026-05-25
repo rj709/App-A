@@ -51,7 +51,6 @@
           <button class="gear-th gear-col-category" data-sort="category" type="button">Category<span class="sort-arrow"></span></button>
           <button class="gear-th gear-col-qty" data-sort="quantity" type="button">Qty<span class="sort-arrow"></span></button>
           <button class="gear-th gear-col-price" data-sort="price" type="button">Price<span class="sort-arrow"></span></button>
-          <span class="gear-th gear-col-insured" aria-label="Insured"></span>
         </div>
         <div class="gear-tbody" id="gear-list" aria-live="polite"></div>
       </div>
@@ -108,19 +107,6 @@
             <span>Price is for the whole pack, not each</span>
           </label>
         </div>
-        <div class="row">
-          <div class="field">
-            <label for="f-replacementValue">Replacement Value (USD)</label>
-            <input id="f-replacementValue" name="replacementValue" type="number" min="0" step="0.01" placeholder="Defaults to Price">
-          </div>
-          <div class="field field-checkbox">
-            <span class="field-label-spacer" aria-hidden="true"></span>
-            <label class="checkbox-label" for="f-insured">
-              <input id="f-insured" name="insured" type="checkbox">
-              <span>Insured</span>
-            </label>
-          </div>
-        </div>
         <div class="field">
           <label for="f-purchaseDate">Purchase Date</label>
           <input id="f-purchaseDate" name="purchaseDate" type="date">
@@ -141,6 +127,6 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

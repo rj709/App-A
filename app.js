@@ -92,11 +92,6 @@ function normalizeItem(g) {
     serial: g.serial || "",
     price: g.price == null || g.price === "" ? null : Number(g.price),
     quantity: Number(g.quantity) > 0 ? Math.floor(Number(g.quantity)) : 1,
-    replacementValue:
-      g.replacementValue == null || g.replacementValue === ""
-        ? null
-        : Number(g.replacementValue),
-    insured: !!g.insured,
     pack: !!g.pack,
     purchaseDate: g.purchaseDate || "",
     notes: g.notes || "",
@@ -301,17 +296,6 @@ function renderRow(g) {
   qty.textContent = String(g.quantity || 1);
   metaGroup.appendChild(qty);
 
-  const ins = document.createElement("span");
-  ins.className = "gear-cell gear-col-insured";
-  if (g.insured) {
-    const mark = document.createElement("span");
-    mark.className = "insured-mark";
-    mark.title = "Insured";
-    mark.textContent = "Insured";
-    ins.appendChild(mark);
-  }
-  metaGroup.appendChild(ins);
-
   row.appendChild(metaGroup);
 
   row.addEventListener("click", () => openModal(g.id));
@@ -372,8 +356,6 @@ function openModal(id) {
     form.elements.price.value = item.price ?? "";
     form.elements.quantity.value = item.quantity || 1;
     form.elements.pack.checked = !!item.pack;
-    form.elements.replacementValue.value = item.replacementValue ?? "";
-    form.elements.insured.checked = !!item.insured;
     form.elements.purchaseDate.value = item.purchaseDate || "";
     form.elements.notes.value = item.notes || "";
   } else {
@@ -383,7 +365,6 @@ function openModal(id) {
     form.elements.category.value = CATEGORIES[0];
     form.elements.quantity.value = 1;
     form.elements.pack.checked = false;
-    form.elements.insured.checked = false;
   }
 
   modal.hidden = false;
@@ -417,13 +398,6 @@ function handleSubmit(e) {
     return;
   }
 
-  const repl = data.replacementValue === "" ? null : Number(data.replacementValue);
-  if (repl != null && (isNaN(repl) || repl < 0)) {
-    form.elements.replacementValue.focus();
-    toast("Replacement Value Can't Be Negative");
-    return;
-  }
-
   const quantity = Math.max(1, Math.floor(Number(data.quantity)) || 1);
 
   const payload = {
@@ -434,8 +408,6 @@ function handleSubmit(e) {
     price,
     quantity,
     pack: form.elements.pack.checked,
-    replacementValue: repl,
-    insured: form.elements.insured.checked,
     purchaseDate: data.purchaseDate || "",
     notes: data.notes.trim(),
   };
@@ -601,8 +573,6 @@ function csvRowToGear(row) {
     price: parseMoney(get("price")),
     quantity: qty,
     pack: /^(1|true|yes|pack|y)$/i.test(get("pack")),
-    replacementValue: parseMoney(get("replacement value") || get("replacementvalue")),
-    insured: false,
     purchaseDate: get("purchase date") || get("purchasedate"),
     notes: get("notes"),
   };
