@@ -674,7 +674,7 @@ function importFile(file) {
   else importJSON(file);
 }
 
-const SEED_VERSION = 4;
+const SEED_VERSION = 5;
 const SEED_VERSION_KEY = "camera-kit:seed-version";
 
 async function loadSeedIfNeeded() {
