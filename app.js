@@ -6,14 +6,19 @@ const CATEGORIES = [
   "Camera Lens",
   "Lens Hood",
   "Lens Filter",
+  "Lens Filter Accessory",
   "Lighting",
   "Camera Battery",
+  "Charging",
   "SD Card",
+  "SD Card Accessory",
   "Audio",
+  "Audio Accessory",
   "Tripod",
   "Camera Bag",
   "Camera Cube",
   "Camera Strap",
+  "Maintenance",
   "Accessory",
   "Other",
 ];
@@ -629,11 +634,12 @@ function importFile(file) {
   else importJSON(file);
 }
 
-const SEED_FLAG_KEY = "camera-kit:seeded-v2";
+const SEED_VERSION = 2;
+const SEED_VERSION_KEY = "camera-kit:seed-version";
 
-async function loadSeedIfFirstRun() {
-  if (state.gear.length > 0) return;
-  if (localStorage.getItem(SEED_FLAG_KEY)) return;
+async function loadSeedIfNeeded() {
+  const loaded = Number(localStorage.getItem(SEED_VERSION_KEY) || 0);
+  if (loaded >= SEED_VERSION) return;
   try {
     const res = await fetch("gear-seed.json?v=" + Date.now(), { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -641,7 +647,7 @@ async function loadSeedIfFirstRun() {
     if (!Array.isArray(seed) || seed.length === 0) throw new Error("Seed empty or invalid");
     state.gear = seed.map(normalizeItem);
     saveGear();
-    localStorage.setItem(SEED_FLAG_KEY, "1");
+    localStorage.setItem(SEED_VERSION_KEY, String(SEED_VERSION));
     render();
   } catch (err) {
     console.warn("Seed load failed; will retry next visit:", err.message);
@@ -657,7 +663,7 @@ function init() {
   state.gear = loadGear();
   populateSelects();
   render();
-  loadSeedIfFirstRun();
+  loadSeedIfNeeded();
 
   document.getElementById("add-gear-btn").addEventListener("click", () => openModal());
   document.getElementById("empty-add-btn").addEventListener("click", () => openModal());
