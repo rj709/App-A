@@ -97,6 +97,7 @@ function normalizeItem(g) {
         ? null
         : Number(g.replacementValue),
     insured: !!g.insured,
+    pack: !!g.pack,
     purchaseDate: g.purchaseDate || "",
     notes: g.notes || "",
   };
@@ -138,11 +139,13 @@ function formatPriceTotal(n) {
   }).format(n || 0);
 }
 
+function lineValue(g) {
+  const price = Number(g.price) || 0;
+  return g.pack ? price : price * (g.quantity || 1);
+}
+
 function totalValue() {
-  return state.gear.reduce(
-    (sum, g) => sum + (Number(g.price) || 0) * (g.quantity || 1),
-    0
-  );
+  return state.gear.reduce((sum, g) => sum + lineValue(g), 0);
 }
 
 function populateSelects() {
@@ -222,10 +225,7 @@ function renderGrouped(list, items) {
 
   for (const cat of ordered) {
     const group = byCat.get(cat);
-    const subtotal = group.reduce(
-      (s, g) => s + (Number(g.price) || 0) * (g.quantity || 1),
-      0
-    );
+    const subtotal = group.reduce((s, g) => s + lineValue(g), 0);
 
     const heading = document.createElement("div");
     heading.className = "gear-group-heading";
@@ -267,7 +267,12 @@ function renderRow(g) {
   price.className = "gear-cell gear-col-price";
   if (g.price != null) {
     price.textContent = formatPrice(g.price);
-    if (g.quantity > 1) {
+    if (g.pack) {
+      const tag = document.createElement("span");
+      tag.className = "ea";
+      tag.textContent = " pack";
+      price.appendChild(tag);
+    } else if (g.quantity > 1) {
       const ea = document.createElement("span");
       ea.className = "ea";
       ea.textContent = " ea";
@@ -366,6 +371,7 @@ function openModal(id) {
     form.elements.serial.value = item.serial || "";
     form.elements.price.value = item.price ?? "";
     form.elements.quantity.value = item.quantity || 1;
+    form.elements.pack.checked = !!item.pack;
     form.elements.replacementValue.value = item.replacementValue ?? "";
     form.elements.insured.checked = !!item.insured;
     form.elements.purchaseDate.value = item.purchaseDate || "";
@@ -376,6 +382,7 @@ function openModal(id) {
     form.elements.id.value = "";
     form.elements.category.value = CATEGORIES[0];
     form.elements.quantity.value = 1;
+    form.elements.pack.checked = false;
     form.elements.insured.checked = false;
   }
 
@@ -426,6 +433,7 @@ function handleSubmit(e) {
     serial: data.serial.trim(),
     price,
     quantity,
+    pack: form.elements.pack.checked,
     replacementValue: repl,
     insured: form.elements.insured.checked,
     purchaseDate: data.purchaseDate || "",
@@ -592,6 +600,7 @@ function csvRowToGear(row) {
     serial: get("serial") || get("serial #"),
     price: parseMoney(get("price")),
     quantity: qty,
+    pack: /^(1|true|yes|pack|y)$/i.test(get("pack")),
     replacementValue: parseMoney(get("replacement value") || get("replacementvalue")),
     insured: false,
     purchaseDate: get("purchase date") || get("purchasedate"),
@@ -635,7 +644,7 @@ function importFile(file) {
   else importJSON(file);
 }
 
-const SEED_VERSION = 3;
+const SEED_VERSION = 4;
 const SEED_VERSION_KEY = "camera-kit:seed-version";
 
 async function loadSeedIfNeeded() {

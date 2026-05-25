@@ -159,6 +159,7 @@
     "serial": "",
     "price": 48.99,
     "quantity": 3,
+    "pack": true,
     "replacementValue": null,
     "insured": false,
     "purchaseDate": "",
