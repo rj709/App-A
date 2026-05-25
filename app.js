@@ -15,6 +15,7 @@ const CATEGORIES = [
   "Audio",
   "Audio Accessory",
   "Tripod",
+  "Tripod Accessory",
   "Camera Bag",
   "Camera Cube",
   "Camera Strap",
@@ -634,7 +635,7 @@ function importFile(file) {
   else importJSON(file);
 }
 
-const SEED_VERSION = 2;
+const SEED_VERSION = 3;
 const SEED_VERSION_KEY = "camera-kit:seed-version";
 
 async function loadSeedIfNeeded() {
