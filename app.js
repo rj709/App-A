@@ -143,20 +143,110 @@ function totalValue() {
   return state.gear.reduce((sum, g) => sum + lineValue(g), 0);
 }
 
+function categoryStats() {
+  const map = new Map();
+  for (const g of state.gear) {
+    const c = g.category || "Other";
+    const s = map.get(c) || { count: 0, value: 0 };
+    s.count += 1;
+    s.value += lineValue(g);
+    map.set(c, s);
+  }
+  return map;
+}
+
+function orderedCategoriesWithItems(stats) {
+  const ordered = CATEGORIES.filter((c) => stats.has(c));
+  for (const c of stats.keys()) if (!ordered.includes(c)) ordered.push(c);
+  return ordered;
+}
+
+const BREAKDOWN_TINTS = [
+  "#4a90ff", "#6aa6ff", "#3b78e0", "#86b9ff",
+  "#2f5fb0", "#5b6b86", "#7b8aa3", "#46506180",
+];
+
 function populateSelects() {
-  const filter = document.getElementById("filter-category");
   const form = document.getElementById("f-category");
   for (const cat of CATEGORIES) {
-    const o1 = document.createElement("option");
-    o1.value = cat;
-    o1.textContent = cat;
-    filter.appendChild(o1);
-
-    const o2 = document.createElement("option");
-    o2.value = cat;
-    o2.textContent = cat;
-    form.appendChild(o2);
+    const o = document.createElement("option");
+    o.value = cat;
+    o.textContent = cat;
+    form.appendChild(o);
   }
+}
+
+function renderChrome() {
+  const stats = categoryStats();
+
+  document.getElementById("summary-value").textContent = formatPriceTotal(totalValue());
+  document.getElementById("summary-count").textContent = state.gear.length;
+  document.getElementById("summary-cats").textContent = stats.size;
+
+  renderSidebar(stats);
+  renderBreakdown(stats);
+  renderScope();
+}
+
+function renderSidebar(stats) {
+  const nav = document.getElementById("cat-nav");
+  nav.innerHTML = "";
+  nav.appendChild(catNavItem("", "All Gear", state.gear.length, state.category === ""));
+  for (const cat of orderedCategoriesWithItems(stats)) {
+    nav.appendChild(catNavItem(cat, cat, stats.get(cat).count, state.category === cat));
+  }
+}
+
+function catNavItem(value, label, count, active) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "cat-item" + (active ? " is-active" : "");
+
+  const name = document.createElement("span");
+  name.className = "cat-item-name";
+  name.textContent = label;
+
+  const cnt = document.createElement("span");
+  cnt.className = "cat-item-count";
+  cnt.textContent = String(count);
+
+  btn.append(name, cnt);
+  btn.addEventListener("click", () => {
+    state.category = value;
+    render();
+  });
+  return btn;
+}
+
+function renderBreakdown(stats) {
+  const el = document.getElementById("breakdown");
+  el.innerHTML = "";
+  const total = totalValue();
+  if (total <= 0) {
+    el.style.display = "none";
+    return;
+  }
+  el.style.display = "flex";
+  const ranked = [...stats.entries()]
+    .filter(([, s]) => s.value > 0)
+    .sort((a, b) => b[1].value - a[1].value);
+  ranked.forEach(([cat, s], i) => {
+    const seg = document.createElement("div");
+    seg.className = "breakdown-seg";
+    seg.style.flexGrow = String(s.value);
+    seg.style.background = BREAKDOWN_TINTS[i % BREAKDOWN_TINTS.length];
+    seg.title = `${cat} · ${formatPriceTotal(s.value)} · ${s.count} item${s.count === 1 ? "" : "s"}`;
+    el.appendChild(seg);
+  });
+}
+
+function renderScope() {
+  const scopeItems = state.category
+    ? state.gear.filter((g) => g.category === state.category)
+    : state.gear;
+  const scopeVal = scopeItems.reduce((s, g) => s + lineValue(g), 0);
+  document.getElementById("scope-label").textContent = state.category || "Total Value";
+  document.getElementById("scope-value").textContent = formatPriceTotal(scopeVal);
 }
 
 function filteredSortedGear() {
@@ -179,8 +269,7 @@ function render() {
 
   list.innerHTML = "";
 
-  document.getElementById("stat-count").textContent = state.gear.length;
-  document.getElementById("stat-value").textContent = formatPriceTotal(totalValue());
+  renderChrome();
 
   table.classList.toggle("is-grouped", state.grouped);
   updateSortIndicators();
@@ -650,11 +739,6 @@ function init() {
 
   document.getElementById("search").addEventListener("input", (e) => {
     state.search = e.target.value;
-    render();
-  });
-
-  document.getElementById("filter-category").addEventListener("change", (e) => {
-    state.category = e.target.value;
     render();
   });
 
