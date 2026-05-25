@@ -9,7 +9,14 @@
 <body>
   <header class="app-header">
     <div class="header-inner">
-      <h1 class="brand">Camera Kit</h1>
+      <h1 class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <circle cx="12" cy="12" r="3.4"></circle>
+          <path d="M12 3v5.6M21 12h-5.6M12 21v-5.6M3 12h5.6"></path>
+        </svg>
+        Camera Kit
+      </h1>
       <nav class="tabs" role="tablist">
         <button class="tab is-active" data-tab="gear" role="tab" aria-selected="true">Gear</button>
       </nav>
@@ -127,6 +134,6 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
