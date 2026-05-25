@@ -179,13 +179,21 @@ function populateSelects() {
 function renderChrome() {
   const stats = categoryStats();
 
-  document.getElementById("summary-value").textContent = formatPriceTotal(totalValue());
-  document.getElementById("summary-count").textContent = state.gear.length;
-  document.getElementById("summary-cats").textContent = stats.size;
+  const scopeItems = state.category
+    ? state.gear.filter((g) => g.category === state.category)
+    : state.gear;
+  const scopeValue = scopeItems.reduce((s, g) => s + lineValue(g), 0);
+  const scopeCats = new Set(scopeItems.map((g) => g.category || "Other")).size;
+
+  document.getElementById("summary-value").textContent = formatPriceTotal(scopeValue);
+  document.getElementById("summary-count").textContent = scopeItems.length;
+  document.getElementById("summary-cats").textContent = scopeCats;
+
+  const valueLabel = document.getElementById("summary-value-label");
+  if (valueLabel) valueLabel.textContent = state.category ? `${state.category} Value` : "Total Value";
 
   renderSidebar(stats);
   renderBreakdown(stats);
-  renderScope();
 }
 
 function renderSidebar(stats) {
@@ -227,26 +235,18 @@ function renderBreakdown(stats) {
     return;
   }
   el.style.display = "flex";
+  el.classList.toggle("has-active", state.category !== "");
   const ranked = [...stats.entries()]
     .filter(([, s]) => s.value > 0)
     .sort((a, b) => b[1].value - a[1].value);
   ranked.forEach(([cat, s], i) => {
     const seg = document.createElement("div");
-    seg.className = "breakdown-seg";
+    seg.className = "breakdown-seg" + (cat === state.category ? " is-active" : "");
     seg.style.flexGrow = String(s.value);
     seg.style.background = BREAKDOWN_TINTS[i % BREAKDOWN_TINTS.length];
     seg.title = `${cat} · ${formatPriceTotal(s.value)} · ${s.count} item${s.count === 1 ? "" : "s"}`;
     el.appendChild(seg);
   });
-}
-
-function renderScope() {
-  const scopeItems = state.category
-    ? state.gear.filter((g) => g.category === state.category)
-    : state.gear;
-  const scopeVal = scopeItems.reduce((s, g) => s + lineValue(g), 0);
-  document.getElementById("scope-label").textContent = state.category || "Total Value";
-  document.getElementById("scope-value").textContent = formatPriceTotal(scopeVal);
 }
 
 function filteredSortedGear() {

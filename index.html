@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Camera Kit</title>
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=13">
 </head>
 <body>
   <header class="app-header">
@@ -26,10 +26,6 @@
   <div class="app-body">
     <aside class="sidebar">
       <nav class="cat-nav" id="cat-nav" aria-label="Categories"></nav>
-      <div class="sidebar-foot">
-        <span class="sidebar-foot-label" id="scope-label">Total Value</span>
-        <span class="sidebar-foot-value" id="scope-value">$0.00</span>
-      </div>
     </aside>
 
     <main class="app-main">
@@ -37,7 +33,7 @@
         <div class="summary">
           <div class="summary-stats">
             <div class="summary-stat summary-stat-hero">
-              <span class="summary-stat-label">Total Value</span>
+              <span class="summary-stat-label" id="summary-value-label">Total Value</span>
               <span class="summary-stat-value" id="summary-value">$0.00</span>
             </div>
             <div class="summary-stat">
@@ -148,6 +144,6 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
 </body>
 </html>
