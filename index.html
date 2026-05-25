@@ -24,6 +24,7 @@
           <select id="filter-category" aria-label="Filter by category">
             <option value="">All Categories</option>
           </select>
+          <button type="button" id="group-toggle" class="btn btn-ghost toggle-btn" aria-pressed="false">Group by Type</button>
         </div>
         <div class="toolbar-actions">
           <button type="button" id="export-btn" class="btn btn-ghost" title="Export JSON">Export</button>
@@ -50,7 +51,6 @@
           <button class="gear-th gear-col-category" data-sort="category" type="button">Category<span class="sort-arrow"></span></button>
           <button class="gear-th gear-col-qty" data-sort="quantity" type="button">Qty<span class="sort-arrow"></span></button>
           <button class="gear-th gear-col-price" data-sort="price" type="button">Price<span class="sort-arrow"></span></button>
-          <span class="gear-th gear-col-condition">Condition</span>
           <span class="gear-th gear-col-insured" aria-label="Insured"></span>
         </div>
         <div class="gear-tbody" id="gear-list" aria-live="polite"></div>
@@ -88,19 +88,9 @@
             <select id="f-category" name="category" required></select>
           </div>
           <div class="field">
-            <label for="f-condition">Condition</label>
-            <select id="f-condition" name="condition">
-              <option value="New">New</option>
-              <option value="Like New">Like New</option>
-              <option value="Good" selected>Good</option>
-              <option value="Fair">Fair</option>
-              <option value="Poor">Poor</option>
-            </select>
+            <label for="f-serial">Serial #</label>
+            <input id="f-serial" name="serial" placeholder="Optional">
           </div>
-        </div>
-        <div class="field">
-          <label for="f-serial">Serial #</label>
-          <input id="f-serial" name="serial" placeholder="Optional">
         </div>
         <div class="row">
           <div class="field">
@@ -145,6 +135,6 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

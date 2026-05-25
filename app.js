@@ -1,4 +1,5 @@
 const STORAGE_KEY = "camera-kit:v1";
+const GROUP_KEY = "camera-kit:grouped";
 
 const CATEGORIES = [
   "Camera Body",
@@ -65,6 +66,7 @@ const state = {
   search: "",
   category: "",
   sort: { field: "createdAt", dir: "desc" },
+  grouped: localStorage.getItem(GROUP_KEY) === "1",
 };
 
 function uid() {
@@ -79,7 +81,6 @@ function normalizeItem(g) {
     id: g.id || uid(),
     createdAt: g.createdAt || new Date().toISOString(),
     category: migrateCategory(g.category) || "Other",
-    condition: migrateCondition(g.condition) || "Good",
     brand,
     model,
     serial: g.serial || "",
@@ -98,11 +99,6 @@ function normalizeItem(g) {
 function migrateCategory(c) {
   if (!c) return c;
   return CATEGORY_MIGRATIONS[c] || c;
-}
-
-function migrateCondition(c) {
-  if (c === "Like new") return "Like New";
-  return c;
 }
 
 function loadGear() {
@@ -172,6 +168,7 @@ function filteredSortedGear() {
 }
 
 function render() {
+  const table = document.querySelector(".gear-table");
   const list = document.getElementById("gear-list");
   const empty = document.getElementById("empty-state");
   const items = filteredSortedGear();
@@ -181,6 +178,7 @@ function render() {
   document.getElementById("stat-count").textContent = state.gear.length;
   document.getElementById("stat-value").textContent = formatPriceTotal(totalValue());
 
+  table.classList.toggle("is-grouped", state.grouped);
   updateSortIndicators();
 
   if (state.gear.length === 0) {
@@ -199,8 +197,50 @@ function render() {
 
   empty.hidden = true;
 
+  if (state.grouped) {
+    renderGrouped(list, items);
+  } else {
+    for (const g of items) list.appendChild(renderRow(g));
+  }
+}
+
+function renderGrouped(list, items) {
+  const byCat = new Map();
   for (const g of items) {
-    list.appendChild(renderRow(g));
+    const c = g.category || "Other";
+    if (!byCat.has(c)) byCat.set(c, []);
+    byCat.get(c).push(g);
+  }
+  const ordered = CATEGORIES.filter((c) => byCat.has(c));
+  for (const c of byCat.keys()) if (!ordered.includes(c)) ordered.push(c);
+
+  for (const cat of ordered) {
+    const group = byCat.get(cat);
+    const subtotal = group.reduce(
+      (s, g) => s + (Number(g.price) || 0) * (g.quantity || 1),
+      0
+    );
+
+    const heading = document.createElement("div");
+    heading.className = "gear-group-heading";
+
+    const title = document.createElement("span");
+    title.className = "gear-group-title";
+    title.textContent = cat;
+    heading.appendChild(title);
+
+    const count = document.createElement("span");
+    count.className = "gear-group-count";
+    count.textContent = String(group.length);
+    heading.appendChild(count);
+
+    const value = document.createElement("span");
+    value.className = "gear-group-value";
+    value.textContent = formatPriceTotal(subtotal);
+    heading.appendChild(value);
+
+    list.appendChild(heading);
+    for (const g of group) list.appendChild(renderRow(g));
   }
 }
 
@@ -249,11 +289,6 @@ function renderRow(g) {
   qty.className = "gear-cell gear-col-qty";
   qty.textContent = g.quantity > 1 ? String(g.quantity) : "";
   metaGroup.appendChild(qty);
-
-  const cond = document.createElement("span");
-  cond.className = "gear-cell gear-col-condition";
-  cond.textContent = g.condition || "";
-  metaGroup.appendChild(cond);
 
   const ins = document.createElement("span");
   ins.className = "gear-cell gear-col-insured";
@@ -320,7 +355,6 @@ function openModal(id) {
     deleteBtn.hidden = false;
     form.elements.id.value = item.id;
     form.elements.category.value = item.category || CATEGORIES[0];
-    form.elements.condition.value = item.condition || "Good";
     form.elements.brand.value = item.brand || "";
     form.elements.model.value = item.model || "";
     form.elements.serial.value = item.serial || "";
@@ -335,7 +369,6 @@ function openModal(id) {
     deleteBtn.hidden = true;
     form.elements.id.value = "";
     form.elements.category.value = CATEGORIES[0];
-    form.elements.condition.value = "Good";
     form.elements.quantity.value = 1;
     form.elements.insured.checked = false;
   }
@@ -382,7 +415,6 @@ function handleSubmit(e) {
 
   const payload = {
     category: data.category || "Other",
-    condition: data.condition || "Good",
     brand,
     model,
     serial: data.serial.trim(),
@@ -551,7 +583,6 @@ function csvRowToGear(row) {
     brand: get("brand"),
     model: get("item") || get("model") || get("name"),
     category: normalizeCsvCategory(get("category")),
-    condition: get("condition") || "Good",
     serial: get("serial") || get("serial #"),
     price: parseMoney(get("price")),
     quantity: qty,
@@ -617,6 +648,11 @@ async function loadSeedIfFirstRun() {
   }
 }
 
+function syncGroupToggle(btn) {
+  btn.classList.toggle("is-active", state.grouped);
+  btn.setAttribute("aria-pressed", String(state.grouped));
+}
+
 function init() {
   state.gear = loadGear();
   populateSelects();
@@ -633,6 +669,15 @@ function init() {
 
   document.getElementById("filter-category").addEventListener("change", (e) => {
     state.category = e.target.value;
+    render();
+  });
+
+  const groupToggle = document.getElementById("group-toggle");
+  syncGroupToggle(groupToggle);
+  groupToggle.addEventListener("click", () => {
+    state.grouped = !state.grouped;
+    localStorage.setItem(GROUP_KEY, state.grouped ? "1" : "0");
+    syncGroupToggle(groupToggle);
     render();
   });
 
