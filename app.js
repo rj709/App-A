@@ -293,7 +293,7 @@ function renderRow(g) {
 
   const qty = document.createElement("span");
   qty.className = "gear-cell gear-col-qty";
-  qty.textContent = g.quantity > 1 ? String(g.quantity) : "";
+  qty.textContent = String(g.quantity || 1);
   metaGroup.appendChild(qty);
 
   const ins = document.createElement("span");
