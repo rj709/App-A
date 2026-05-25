@@ -161,11 +161,6 @@ function orderedCategoriesWithItems(stats) {
   return ordered;
 }
 
-const BREAKDOWN_TINTS = [
-  "#4a90ff", "#6aa6ff", "#3b78e0", "#86b9ff",
-  "#2f5fb0", "#5b6b86", "#7b8aa3", "#46506180",
-];
-
 function populateSelects() {
   const form = document.getElementById("f-category");
   for (const cat of CATEGORIES) {
@@ -193,7 +188,6 @@ function renderChrome() {
   if (valueLabel) valueLabel.textContent = state.category ? `${state.category} Value` : "Total Value";
 
   renderSidebar(stats);
-  renderBreakdown(stats);
 }
 
 function renderSidebar(stats) {
@@ -224,29 +218,6 @@ function catNavItem(value, label, count, active) {
     render();
   });
   return btn;
-}
-
-function renderBreakdown(stats) {
-  const el = document.getElementById("breakdown");
-  el.innerHTML = "";
-  const total = totalValue();
-  if (total <= 0) {
-    el.style.display = "none";
-    return;
-  }
-  el.style.display = "flex";
-  el.classList.toggle("has-active", state.category !== "");
-  const ranked = [...stats.entries()]
-    .filter(([, s]) => s.value > 0)
-    .sort((a, b) => b[1].value - a[1].value);
-  ranked.forEach(([cat, s], i) => {
-    const seg = document.createElement("div");
-    seg.className = "breakdown-seg" + (cat === state.category ? " is-active" : "");
-    seg.style.flexGrow = String(s.value);
-    seg.style.background = BREAKDOWN_TINTS[i % BREAKDOWN_TINTS.length];
-    seg.title = `${cat} · ${formatPriceTotal(s.value)} · ${s.count} item${s.count === 1 ? "" : "s"}`;
-    el.appendChild(seg);
-  });
 }
 
 function filteredSortedGear() {
