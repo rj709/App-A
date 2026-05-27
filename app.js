@@ -1,5 +1,4 @@
 const STORAGE_KEY = "camera-kit:v1";
-const GROUP_KEY = "camera-kit:grouped";
 
 const CATEGORIES = [
   "Camera Body",
@@ -64,7 +63,7 @@ const state = {
   search: "",
   category: "",
   sort: { field: "createdAt", dir: "desc" },
-  grouped: localStorage.getItem(GROUP_KEY) === "1",
+  grouped: false,
 };
 
 function uid() {
@@ -702,7 +701,6 @@ function init() {
   syncGroupToggle(groupToggle);
   groupToggle.addEventListener("click", () => {
     state.grouped = !state.grouped;
-    localStorage.setItem(GROUP_KEY, state.grouped ? "1" : "0");
     syncGroupToggle(groupToggle);
     render();
   });
