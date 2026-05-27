@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Camera Kit</title>
-  <link rel="stylesheet" href="styles.css?v=14">
+  <link rel="stylesheet" href="styles.css?v=15">
 </head>
 <body>
   <header class="app-header">
@@ -50,6 +50,19 @@
         <div class="toolbar">
           <div class="toolbar-search">
             <input type="search" id="search" placeholder="Search Gear…" autocomplete="off">
+          </div>
+          <div class="toolbar-controls">
+            <label class="sort-control">
+              <span class="sort-control-label">Sort</span>
+              <select id="sort-select" aria-label="Sort gear">
+                <option value="createdAt:desc">Newest</option>
+                <option value="name:asc">Name (A–Z)</option>
+                <option value="price:desc">Price (High–Low)</option>
+                <option value="price:asc">Price (Low–High)</option>
+                <option value="quantity:desc">Quantity</option>
+                <option value="category:asc">Category</option>
+              </select>
+            </label>
             <button type="button" id="group-toggle" class="btn btn-ghost toggle-btn" aria-pressed="false">Group by Type</button>
           </div>
           <div class="toolbar-actions">
@@ -60,15 +73,7 @@
           </div>
         </div>
 
-        <div class="gear-table">
-          <div class="gear-thead" role="row">
-            <button class="gear-th gear-col-item" data-sort="name" type="button">Item<span class="sort-arrow"></span></button>
-            <button class="gear-th gear-col-category" data-sort="category" type="button">Category<span class="sort-arrow"></span></button>
-            <button class="gear-th gear-col-qty" data-sort="quantity" type="button">Qty<span class="sort-arrow"></span></button>
-            <button class="gear-th gear-col-price" data-sort="price" type="button">Price<span class="sort-arrow"></span></button>
-          </div>
-          <div class="gear-tbody" id="gear-list" aria-live="polite"></div>
-        </div>
+        <div id="gear-list" aria-live="polite"></div>
 
         <div class="empty-state" id="empty-state">
           <p>No Gear Yet.</p>
@@ -143,6 +148,6 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>

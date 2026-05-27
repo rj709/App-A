@@ -59,14 +59,6 @@ function sortComparator(field, dir) {
   }
 }
 
-const DEFAULT_DIR = {
-  createdAt: "desc",
-  price: "desc",
-  quantity: "desc",
-  name: "asc",
-  category: "asc",
-};
-
 const state = {
   gear: [],
   search: "",
@@ -233,7 +225,6 @@ function filteredSortedGear() {
 }
 
 function render() {
-  const table = document.querySelector(".gear-table");
   const list = document.getElementById("gear-list");
   const empty = document.getElementById("empty-state");
   const items = filteredSortedGear();
@@ -241,9 +232,7 @@ function render() {
   list.innerHTML = "";
 
   renderChrome();
-
-  table.classList.toggle("is-grouped", state.grouped);
-  updateSortIndicators();
+  syncSortSelect();
 
   if (state.gear.length === 0) {
     empty.hidden = false;
@@ -264,8 +253,15 @@ function render() {
   if (state.grouped) {
     renderGrouped(list, items);
   } else {
-    for (const g of items) list.appendChild(renderRow(g));
+    list.appendChild(renderGrid(items));
   }
+}
+
+function renderGrid(items) {
+  const grid = document.createElement("div");
+  grid.className = "gear-grid";
+  for (const g of items) grid.appendChild(renderCard(g));
+  return grid;
 }
 
 function renderGrouped(list, items) {
@@ -301,25 +297,48 @@ function renderGrouped(list, items) {
     heading.appendChild(value);
 
     list.appendChild(heading);
-    for (const g of group) list.appendChild(renderRow(g));
+    list.appendChild(renderGrid(group));
   }
 }
 
-function renderRow(g) {
-  const row = document.createElement("div");
-  row.className = "gear-row";
-  row.dataset.id = g.id;
-  row.tabIndex = 0;
-  row.setAttribute("role", "button");
-  row.setAttribute("aria-label", `Edit ${displayName(g)}`);
+function renderCard(g) {
+  const card = document.createElement("article");
+  card.className = "gear-card";
+  card.dataset.id = g.id;
+  card.tabIndex = 0;
+  card.setAttribute("role", "button");
+  card.setAttribute("aria-label", `Edit ${displayName(g)}`);
 
-  const item = document.createElement("span");
-  item.className = "gear-cell gear-col-item";
-  item.textContent = displayName(g);
-  row.appendChild(item);
+  const top = document.createElement("div");
+  top.className = "gear-card-top";
+  if (g.category) {
+    const pill = document.createElement("span");
+    pill.className = "gear-category";
+    pill.textContent = g.category;
+    top.appendChild(pill);
+  }
+  if ((g.quantity || 1) > 1) {
+    const qty = document.createElement("span");
+    qty.className = "gear-card-qty";
+    qty.textContent = `×${g.quantity}`;
+    top.appendChild(qty);
+  }
+  card.appendChild(top);
 
-  const price = document.createElement("span");
-  price.className = "gear-cell gear-col-price";
+  const name = document.createElement("h3");
+  name.className = "gear-card-name";
+  name.textContent = displayName(g);
+  card.appendChild(name);
+
+  if (g.notes) {
+    const notes = document.createElement("p");
+    notes.className = "gear-card-notes";
+    notes.textContent = g.notes;
+    card.appendChild(notes);
+  }
+
+  const price = document.createElement("div");
+  price.className = "gear-card-price";
   if (g.price != null) {
     price.textContent = formatPrice(g.price);
     if (g.pack) {
@@ -335,63 +354,29 @@ function renderRow(g) {
     }
   } else {
     price.textContent = "—";
+    price.classList.add("is-empty");
   }
-  row.appendChild(price);
+  card.appendChild(price);
 
-  const metaGroup = document.createElement("div");
-  metaGroup.className = "gear-meta-group";
-
-  const cat = document.createElement("span");
-  cat.className = "gear-cell gear-col-category";
-  if (g.category) {
-    const pill = document.createElement("span");
-    pill.className = "gear-category";
-    pill.textContent = g.category;
-    cat.appendChild(pill);
-  }
-  metaGroup.appendChild(cat);
-
-  const qty = document.createElement("span");
-  qty.className = "gear-cell gear-col-qty";
-  qty.textContent = String(g.quantity || 1);
-  metaGroup.appendChild(qty);
-
-  row.appendChild(metaGroup);
-
-  row.addEventListener("click", () => openModal(g.id));
-  row.addEventListener("keydown", (e) => {
+  card.addEventListener("click", () => openModal(g.id));
+  card.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       openModal(g.id);
     }
   });
 
-  return row;
+  return card;
 }
 
-function updateSortIndicators() {
-  for (const th of document.querySelectorAll(".gear-th[data-sort]")) {
-    const field = th.dataset.sort;
-    const arrow = th.querySelector(".sort-arrow");
-    if (field === state.sort.field) {
-      th.classList.add("is-sorted");
-      th.setAttribute("aria-sort", state.sort.dir === "asc" ? "ascending" : "descending");
-      arrow.textContent = state.sort.dir === "asc" ? "↑" : "↓";
-    } else {
-      th.classList.remove("is-sorted");
-      th.removeAttribute("aria-sort");
-      arrow.textContent = "";
-    }
-  }
+function syncSortSelect() {
+  const sel = document.getElementById("sort-select");
+  if (sel) sel.value = `${state.sort.field}:${state.sort.dir}`;
 }
 
-function setSort(field) {
-  if (state.sort.field === field) {
-    state.sort.dir = state.sort.dir === "asc" ? "desc" : "asc";
-  } else {
-    state.sort.field = field;
-    state.sort.dir = DEFAULT_DIR[field] || "asc";
-  }
+function applySort(value) {
+  const [field, dir] = value.split(":");
+  state.sort = { field, dir: dir === "asc" ? "asc" : "desc" };
   render();
 }
 
@@ -722,9 +707,8 @@ function init() {
     render();
   });
 
-  for (const th of document.querySelectorAll(".gear-th[data-sort]")) {
-    th.addEventListener("click", () => setSort(th.dataset.sort));
-  }
+  const sortSelect = document.getElementById("sort-select");
+  sortSelect.addEventListener("change", () => applySort(sortSelect.value));
 
   document.getElementById("gear-form").addEventListener("submit", handleSubmit);
   document.getElementById("delete-btn").addEventListener("click", handleDelete);
