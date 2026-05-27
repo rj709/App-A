@@ -253,14 +253,14 @@ function render() {
   if (state.grouped) {
     renderGrouped(list, items);
   } else {
-    list.appendChild(renderGrid(items));
+    list.appendChild(renderGrid(items, false));
   }
 }
 
-function renderGrid(items) {
+function renderGrid(items, grouped) {
   const grid = document.createElement("div");
   grid.className = "gear-grid";
-  for (const g of items) grid.appendChild(renderCard(g));
+  for (const g of items) grid.appendChild(renderCard(g, grouped));
   return grid;
 }
 
@@ -297,11 +297,11 @@ function renderGrouped(list, items) {
     heading.appendChild(value);
 
     list.appendChild(heading);
-    list.appendChild(renderGrid(group));
+    list.appendChild(renderGrid(group, true));
   }
 }
 
-function renderCard(g) {
+function renderCard(g, grouped) {
   const card = document.createElement("article");
   card.className = "gear-card";
   card.dataset.id = g.id;
@@ -311,7 +311,7 @@ function renderCard(g) {
 
   const top = document.createElement("div");
   top.className = "gear-card-top";
-  if (g.category) {
+  if (g.category && !grouped) {
     const pill = document.createElement("span");
     pill.className = "gear-category";
     pill.textContent = g.category;
@@ -323,7 +323,7 @@ function renderCard(g) {
     qty.textContent = `×${g.quantity}`;
     top.appendChild(qty);
   }
-  card.appendChild(top);
+  if (top.children.length) card.appendChild(top);
 
   const name = document.createElement("h3");
   name.className = "gear-card-name";

@@ -427,11 +427,11 @@ select { cursor: pointer; }
 .gear-card-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
 }
 
 .gear-card-qty {
+  margin-left: auto;
   flex-shrink: 0;
   font-size: 11.5px;
   font-weight: 650;
