@@ -1,40 +1,51 @@
 const STORAGE_KEY = "camera-kit:v1";
 
 const CATEGORIES = [
-  "Camera Body",
-  "Camera Lens",
-  "Lens Hood",
-  "Lens Filter",
-  "Lens Filter Accessory",
+  "Camera Bodies",
+  "Camera Lenses",
   "Lighting",
-  "Camera Battery",
-  "Charging",
-  "SD Card",
-  "SD Card Accessory",
+  "Filters",
+  "Filter Accessories",
+  "Power & Charging",
+  "Memory",
   "Audio",
-  "Audio Accessory",
-  "Tripod",
-  "Tripod Accessory",
-  "Camera Bag",
-  "Camera Cube",
-  "Camera Strap",
+  "Tripods & Monopods",
+  "Support Accessories",
+  "Bags & Packs",
+  "Carry Accessories",
+  "Camera Accessories",
   "Maintenance",
-  "Accessory",
   "Other",
 ];
 
 const CATEGORY_MIGRATIONS = {
-  "Camera body": "Camera Body",
-  "Lens": "Camera Lens",
+  "Camera Body": "Camera Bodies",
+  "Camera body": "Camera Bodies",
+  "Camera Lens": "Camera Lenses",
+  "Lens": "Camera Lenses",
+  "Lens Hood": "Camera Accessories",
+  "Lens Filter": "Filters",
+  "Filter": "Filters",
+  "Lens Filter Accessory": "Filter Accessories",
   "Flash / lighting": "Lighting",
   "Flash / Lighting": "Lighting",
-  "Tripod / support": "Tripod",
-  "Tripod / Support": "Tripod",
-  "Bag / case": "Camera Bag",
-  "Bag / Case": "Camera Bag",
-  "Storage / memory": "SD Card",
-  "Storage / Memory": "SD Card",
-  "Filter": "Lens Filter",
+  "Camera Battery": "Power & Charging",
+  "Charging": "Power & Charging",
+  "SD Card": "Memory",
+  "SD Card Accessory": "Camera Accessories",
+  "Storage / memory": "Memory",
+  "Storage / Memory": "Memory",
+  "Audio Accessory": "Audio",
+  "Tripod": "Tripods & Monopods",
+  "Tripod / support": "Tripods & Monopods",
+  "Tripod / Support": "Tripods & Monopods",
+  "Tripod Accessory": "Support Accessories",
+  "Camera Bag": "Bags & Packs",
+  "Bag / case": "Bags & Packs",
+  "Bag / Case": "Bags & Packs",
+  "Camera Cube": "Bags & Packs",
+  "Camera Strap": "Bags & Packs",
+  "Accessory": "Camera Accessories",
 };
 
 function displayName(g) {
@@ -574,23 +585,26 @@ function parseMoney(s) {
 }
 
 const CSV_CATEGORY_MAP = {
-  "Lens": "Camera Lens",
-  "Lenses": "Camera Lens",
+  "Camera Body": "Camera Bodies",
+  "Bodies": "Camera Bodies",
+  "Lens": "Camera Lenses",
+  "Lenses": "Camera Lenses",
+  "Camera Lens": "Camera Lenses",
   "Flash": "Lighting",
-  "Flash / Lighting": "Lighting",
-  "Tripod / Support": "Tripod",
-  "Support": "Tripod",
-  "Bag": "Camera Bag",
-  "Bag / Case": "Camera Bag",
-  "Case": "Camera Bag",
-  "Storage": "SD Card",
-  "Memory": "SD Card",
-  "Storage / Memory": "SD Card",
-  "Filter": "Lens Filter",
-  "Filters": "Lens Filter",
-  "Battery": "Camera Battery",
-  "Strap": "Camera Strap",
-  "Cube": "Camera Cube",
+  "Filter": "Filters",
+  "Battery": "Power & Charging",
+  "Power": "Power & Charging",
+  "Storage": "Memory",
+  "SD Card": "Memory",
+  "Tripod": "Tripods & Monopods",
+  "Tripods": "Tripods & Monopods",
+  "Support": "Support Accessories",
+  "Bag": "Bags & Packs",
+  "Bags": "Bags & Packs",
+  "Cube": "Bags & Packs",
+  "Strap": "Bags & Packs",
+  "Accessory": "Camera Accessories",
+  "Accessories": "Camera Accessories",
 };
 
 function normalizeCsvCategory(c) {
@@ -607,18 +621,21 @@ function csvRowToGear(row) {
     return k ? (row[k] || "").trim() : "";
   };
   const qty = Math.max(1, Math.floor(Number(get("number") || get("quantity"))) || 1);
+  const note = get("notes");
+  const source = get("source");
+  const notes = [/^n\/a$/i.test(note) ? "" : note, source].filter(Boolean).join(" · ");
   return {
     id: uid(),
     createdAt: new Date().toISOString(),
     brand: get("brand"),
-    model: get("item") || get("model") || get("name"),
+    model: get("item name") || get("item") || get("model") || get("name"),
     category: normalizeCsvCategory(get("category")),
     serial: get("serial") || get("serial #"),
     price: parseMoney(get("price")),
     quantity: qty,
     pack: /^(1|true|yes|pack|y)$/i.test(get("pack")),
     purchaseDate: get("purchase date") || get("purchasedate"),
-    notes: get("notes"),
+    notes,
   };
 }
 
@@ -658,7 +675,7 @@ function importFile(file) {
   else importJSON(file);
 }
 
-const SEED_VERSION = 5;
+const SEED_VERSION = 6;
 const SEED_VERSION_KEY = "camera-kit:seed-version";
 
 async function loadSeedIfNeeded() {
