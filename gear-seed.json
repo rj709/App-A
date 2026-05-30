@@ -16,14 +16,14 @@
     "id": "seed-1",
     "createdAt": "2024-01-01T00:00:02.000Z",
     "brand": "Canon",
-    "model": "EL-10 Speedlight",
-    "category": "Lighting",
+    "model": "EW-60F Lens Hood",
+    "category": "Camera Accessories",
     "serial": "",
-    "price": 239,
+    "price": 31.95,
     "quantity": 1,
     "pack": false,
     "purchaseDate": "",
-    "notes": "Amazon"
+    "notes": "For the 18-150mm · B&H Photo"
   },
   {
     "id": "seed-2",
@@ -42,45 +42,6 @@
     "id": "seed-3",
     "createdAt": "2024-01-01T00:00:04.000Z",
     "brand": "Canon",
-    "model": "EW-60F Lens Hood",
-    "category": "Camera Accessories",
-    "serial": "",
-    "price": 31.95,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "For the 18-150mm · B&H Photo"
-  },
-  {
-    "id": "seed-4",
-    "createdAt": "2024-01-01T00:00:05.000Z",
-    "brand": "Canon",
-    "model": "LP-E6NH Battery",
-    "category": "Power & Charging",
-    "serial": "",
-    "price": 0,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Camera Kit"
-  },
-  {
-    "id": "seed-5",
-    "createdAt": "2024-01-01T00:00:06.000Z",
-    "brand": "Canon",
-    "model": "LP-E6NH Charger",
-    "category": "Power & Charging",
-    "serial": "",
-    "price": 0,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Camera Kit"
-  },
-  {
-    "id": "seed-6",
-    "createdAt": "2024-01-01T00:00:07.000Z",
-    "brand": "Canon",
     "model": "RF 100-400mm F5.6-8 IS USM",
     "category": "Camera Lenses",
     "serial": "",
@@ -91,8 +52,8 @@
     "notes": "Canon"
   },
   {
-    "id": "seed-7",
-    "createdAt": "2024-01-01T00:00:08.000Z",
+    "id": "seed-4",
+    "createdAt": "2024-01-01T00:00:05.000Z",
     "brand": "Canon",
     "model": "RF 50mm F1.8 STM",
     "category": "Camera Lenses",
@@ -104,8 +65,8 @@
     "notes": "Canon"
   },
   {
-    "id": "seed-8",
-    "createdAt": "2024-01-01T00:00:09.000Z",
+    "id": "seed-5",
+    "createdAt": "2024-01-01T00:00:06.000Z",
     "brand": "Canon",
     "model": "RF-S 10-18mm F4.5-6.3 IS STM",
     "category": "Camera Lenses",
@@ -117,8 +78,8 @@
     "notes": "Canon"
   },
   {
-    "id": "seed-9",
-    "createdAt": "2024-01-01T00:00:10.000Z",
+    "id": "seed-6",
+    "createdAt": "2024-01-01T00:00:07.000Z",
     "brand": "Canon",
     "model": "RF-S 18-150mm F3.5-6.3 IS STM",
     "category": "Camera Lenses",
@@ -128,6 +89,45 @@
     "pack": false,
     "purchaseDate": "",
     "notes": "B&H Photo"
+  },
+  {
+    "id": "seed-7",
+    "createdAt": "2024-01-01T00:00:08.000Z",
+    "brand": "Canon",
+    "model": "EL-10 Speedlight",
+    "category": "Lighting",
+    "serial": "",
+    "price": 239,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Amazon"
+  },
+  {
+    "id": "seed-8",
+    "createdAt": "2024-01-01T00:00:09.000Z",
+    "brand": "Canon",
+    "model": "LP-E6NH Battery",
+    "category": "Power & Charging",
+    "serial": "",
+    "price": 0,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Camera Kit"
+  },
+  {
+    "id": "seed-9",
+    "createdAt": "2024-01-01T00:00:10.000Z",
+    "brand": "Canon",
+    "model": "LP-E6NH Charger",
+    "category": "Power & Charging",
+    "serial": "",
+    "price": 0,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Camera Kit"
   },
   {
     "id": "seed-a",
@@ -172,19 +172,6 @@
     "id": "seed-d",
     "createdAt": "2024-01-01T00:00:14.000Z",
     "brand": "K&F Concept",
-    "model": "Lens Filter Case",
-    "category": "Filter Accessories",
-    "serial": "",
-    "price": 17.99,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Larger Lens Filter Pouch · Amazon"
-  },
-  {
-    "id": "seed-e",
-    "createdAt": "2024-01-01T00:00:15.000Z",
-    "brand": "K&F Concept",
     "model": "Lens Hood",
     "category": "Camera Accessories",
     "serial": "",
@@ -195,21 +182,8 @@
     "notes": "For the 100-400mm · Amazon"
   },
   {
-    "id": "seed-f",
-    "createdAt": "2024-01-01T00:00:16.000Z",
-    "brand": "K&F Concept",
-    "model": "Screen Protector For EOS R7",
-    "category": "Maintenance",
-    "serial": "",
-    "price": 8,
-    "quantity": 3,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Amazon"
-  },
-  {
-    "id": "seed-g",
-    "createdAt": "2024-01-01T00:00:17.000Z",
+    "id": "seed-e",
+    "createdAt": "2024-01-01T00:00:15.000Z",
     "brand": "K&F Concept",
     "model": "SD Card Holder",
     "category": "Camera Accessories",
@@ -219,6 +193,32 @@
     "pack": false,
     "purchaseDate": "",
     "notes": "4 Full Size SD Cards · Amazon"
+  },
+  {
+    "id": "seed-f",
+    "createdAt": "2024-01-01T00:00:16.000Z",
+    "brand": "K&F Concept",
+    "model": "Lens Filter Case",
+    "category": "Filter Accessories",
+    "serial": "",
+    "price": 17.99,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Larger Lens Filter Pouch · Amazon"
+  },
+  {
+    "id": "seed-g",
+    "createdAt": "2024-01-01T00:00:17.000Z",
+    "brand": "K&F Concept",
+    "model": "Screen Protector For EOS R7",
+    "category": "Maintenance",
+    "serial": "",
+    "price": 8,
+    "quantity": 3,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Amazon"
   },
   {
     "id": "seed-h",
@@ -244,7 +244,7 @@
     "quantity": 2,
     "pack": true,
     "purchaseDate": "",
-    "notes": "Slot 2 · B&H Photo"
+    "notes": "Backup · B&H Photo"
   },
   {
     "id": "seed-j",
@@ -257,76 +257,24 @@
     "quantity": 2,
     "pack": true,
     "purchaseDate": "",
-    "notes": "Slot 1 · B&H Photo"
+    "notes": "Backup · B&H Photo"
   },
   {
     "id": "seed-k",
     "createdAt": "2024-01-01T00:00:21.000Z",
-    "brand": "Neewer",
-    "model": "3 Slot LP-E6NH Charger",
-    "category": "Power & Charging",
+    "brand": "Lexar",
+    "model": "256GB Professional 2000x UHS-II SDXC",
+    "category": "Memory",
     "serial": "",
-    "price": 0,
-    "quantity": 1,
-    "pack": false,
+    "price": 264.99,
+    "quantity": 2,
+    "pack": true,
     "purchaseDate": "",
-    "notes": "Spare Battery Charger · Amazon"
+    "notes": "Primary · B&H Photo"
   },
   {
     "id": "seed-l",
     "createdAt": "2024-01-01T00:00:22.000Z",
-    "brand": "Neewer",
-    "model": "Aluminum 50mm Quick Release Plate QR Clamp",
-    "category": "Support Accessories",
-    "serial": "",
-    "price": 18.18,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Monopod Head · B&H Photo"
-  },
-  {
-    "id": "seed-m",
-    "createdAt": "2024-01-01T00:00:23.000Z",
-    "brand": "Neewer",
-    "model": "GM24 Metal Fluid Tripod Head",
-    "category": "Support Accessories",
-    "serial": "",
-    "price": 30,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Monopod & Peak Design with Head Adapter · B&H Photo"
-  },
-  {
-    "id": "seed-n",
-    "createdAt": "2024-01-01T00:00:24.000Z",
-    "brand": "Neewer",
-    "model": "LP-E6NH Batteries",
-    "category": "Power & Charging",
-    "serial": "",
-    "price": 48.99,
-    "quantity": 3,
-    "pack": true,
-    "purchaseDate": "",
-    "notes": "Spare Batteries · Amazon"
-  },
-  {
-    "id": "seed-o",
-    "createdAt": "2024-01-01T00:00:25.000Z",
-    "brand": "Neewer",
-    "model": "TP05 74.4\" Tripod",
-    "category": "Tripods & Monopods",
-    "serial": "",
-    "price": 64.99,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Backup Tripod & Overhead Shots · TikTok Shop"
-  },
-  {
-    "id": "seed-p",
-    "createdAt": "2024-01-01T00:00:26.000Z",
     "brand": "Neewer",
     "model": "TP05 74.4\" Tripod Plates",
     "category": "Camera Accessories",
@@ -338,21 +286,8 @@
     "notes": "Came With Tripod · Amazon"
   },
   {
-    "id": "seed-q",
-    "createdAt": "2024-01-01T00:00:27.000Z",
-    "brand": "Neewer",
-    "model": "TP41 61\" Monopod",
-    "category": "Tripods & Monopods",
-    "serial": "",
-    "price": 30,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Primary Monopod · B&H Photo"
-  },
-  {
-    "id": "seed-r",
-    "createdAt": "2024-01-01T00:00:28.000Z",
+    "id": "seed-m",
+    "createdAt": "2024-01-01T00:00:23.000Z",
     "brand": "Neewer",
     "model": "True Colors Variable ND + CPL 2-in-1 Filter 43mm",
     "category": "Filters",
@@ -364,8 +299,8 @@
     "notes": "Amazon"
   },
   {
-    "id": "seed-s",
-    "createdAt": "2024-01-01T00:00:29.000Z",
+    "id": "seed-n",
+    "createdAt": "2024-01-01T00:00:24.000Z",
     "brand": "Neewer",
     "model": "True Colors Variable ND + CPL 2-in-1 Filter 49mm",
     "category": "Filters",
@@ -377,8 +312,8 @@
     "notes": "Amazon"
   },
   {
-    "id": "seed-t",
-    "createdAt": "2024-01-01T00:00:30.000Z",
+    "id": "seed-o",
+    "createdAt": "2024-01-01T00:00:25.000Z",
     "brand": "Neewer",
     "model": "True Colors Variable ND + CPL 2-in-1 Filter 55mm",
     "category": "Filters",
@@ -390,8 +325,8 @@
     "notes": "Amazon"
   },
   {
-    "id": "seed-u",
-    "createdAt": "2024-01-01T00:00:31.000Z",
+    "id": "seed-p",
+    "createdAt": "2024-01-01T00:00:26.000Z",
     "brand": "Neewer",
     "model": "True Colors Variable ND + CPL 2-in-1 Filter 67mm",
     "category": "Filters",
@@ -403,21 +338,99 @@
     "notes": "Amazon"
   },
   {
-    "id": "seed-v",
-    "createdAt": "2024-01-01T00:00:32.000Z",
-    "brand": "Peak Design",
-    "model": "Anchor Links",
-    "category": "Carry Accessories",
+    "id": "seed-q",
+    "createdAt": "2024-01-01T00:00:27.000Z",
+    "brand": "Neewer",
+    "model": "3 Slot LP-E6NH Charger",
+    "category": "Power & Charging",
     "serial": "",
     "price": 0,
-    "quantity": 5,
+    "quantity": 1,
     "pack": false,
     "purchaseDate": "",
-    "notes": "Came with Slide and Cuff · Peak Design"
+    "notes": "Spare Battery Charger · Amazon"
+  },
+  {
+    "id": "seed-r",
+    "createdAt": "2024-01-01T00:00:28.000Z",
+    "brand": "Neewer",
+    "model": "LP-E6NH Batteries",
+    "category": "Power & Charging",
+    "serial": "",
+    "price": 48.99,
+    "quantity": 3,
+    "pack": true,
+    "purchaseDate": "",
+    "notes": "Spare Batteries · Amazon"
+  },
+  {
+    "id": "seed-s",
+    "createdAt": "2024-01-01T00:00:29.000Z",
+    "brand": "Neewer",
+    "model": "Aluminum 50mm Quick Release Plate QR Clamp",
+    "category": "Support Accessories",
+    "serial": "",
+    "price": 18.18,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Monopod Head · B&H Photo"
+  },
+  {
+    "id": "seed-t",
+    "createdAt": "2024-01-01T00:00:30.000Z",
+    "brand": "Neewer",
+    "model": "GM24 Metal Fluid Tripod Head",
+    "category": "Support Accessories",
+    "serial": "",
+    "price": 30,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Monopod & Peak Design with Head Adapter · B&H Photo"
+  },
+  {
+    "id": "seed-u",
+    "createdAt": "2024-01-01T00:00:31.000Z",
+    "brand": "Neewer",
+    "model": "TP05 74.4\" Tripod",
+    "category": "Tripods & Monopods",
+    "serial": "",
+    "price": 64.99,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Backup Tripod & Overhead Shots · TikTok Shop"
+  },
+  {
+    "id": "seed-v",
+    "createdAt": "2024-01-01T00:00:32.000Z",
+    "brand": "Neewer",
+    "model": "TP41 61\" Monopod",
+    "category": "Tripods & Monopods",
+    "serial": "",
+    "price": 30,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Primary Monopod · B&H Photo"
   },
   {
     "id": "seed-w",
     "createdAt": "2024-01-01T00:00:33.000Z",
+    "brand": "NEEWER",
+    "model": "Dummy Battery",
+    "category": "Camera Accessories",
+    "serial": "",
+    "price": 32.6,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Amazon"
+  },
+  {
+    "id": "seed-x",
+    "createdAt": "2024-01-01T00:00:34.000Z",
     "brand": "Peak Design",
     "model": "Camera Cube V2 Large",
     "category": "Bags & Packs",
@@ -429,8 +442,8 @@
     "notes": "Cube for 35L Backpack · Amazon"
   },
   {
-    "id": "seed-x",
-    "createdAt": "2024-01-01T00:00:34.000Z",
+    "id": "seed-y",
+    "createdAt": "2024-01-01T00:00:35.000Z",
     "brand": "Peak Design",
     "model": "Camera Cube V2 Small",
     "category": "Bags & Packs",
@@ -442,8 +455,8 @@
     "notes": "Standard EDC Bag Cube · Amazon"
   },
   {
-    "id": "seed-y",
-    "createdAt": "2024-01-01T00:00:35.000Z",
+    "id": "seed-z",
+    "createdAt": "2024-01-01T00:00:36.000Z",
     "brand": "Peak Design",
     "model": "Camera Cube V2 Smedium",
     "category": "Bags & Packs",
@@ -455,30 +468,17 @@
     "notes": "Plus Sized EDC Bag Cube · B&H Photo"
   },
   {
-    "id": "seed-z",
-    "createdAt": "2024-01-01T00:00:36.000Z",
+    "id": "seed-10",
+    "createdAt": "2024-01-01T00:00:37.000Z",
     "brand": "Peak Design",
     "model": "Capture Camera Clip v3",
     "category": "Bags & Packs",
     "serial": "",
     "price": 79.99,
-    "quantity": 1,
+    "quantity": 2,
     "pack": false,
     "purchaseDate": "",
     "notes": "To Secure Camera · B&H Photo"
-  },
-  {
-    "id": "seed-10",
-    "createdAt": "2024-01-01T00:00:37.000Z",
-    "brand": "Peak Design",
-    "model": "Cube Clips",
-    "category": "Carry Accessories",
-    "serial": "",
-    "price": 0,
-    "quantity": 12,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Came with Cubes · Peak Design"
   },
   {
     "id": "seed-11",
@@ -523,19 +523,6 @@
     "id": "seed-14",
     "createdAt": "2024-01-01T00:00:41.000Z",
     "brand": "Peak Design",
-    "model": "Gear Pouch",
-    "category": "Carry Accessories",
-    "serial": "",
-    "price": 0,
-    "quantity": 2,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "Came with Cubes · Peak Design"
-  },
-  {
-    "id": "seed-15",
-    "createdAt": "2024-01-01T00:00:42.000Z",
-    "brand": "Peak Design",
     "model": "PROpad v2",
     "category": "Bags & Packs",
     "serial": "",
@@ -546,8 +533,8 @@
     "notes": "For Capture Clip · B&H Photo"
   },
   {
-    "id": "seed-16",
-    "createdAt": "2024-01-01T00:00:43.000Z",
+    "id": "seed-15",
+    "createdAt": "2024-01-01T00:00:42.000Z",
     "brand": "Peak Design",
     "model": "Slide Lite",
     "category": "Bags & Packs",
@@ -559,8 +546,8 @@
     "notes": "Camera Strap · Amazon"
   },
   {
-    "id": "seed-17",
-    "createdAt": "2024-01-01T00:00:44.000Z",
+    "id": "seed-16",
+    "createdAt": "2024-01-01T00:00:43.000Z",
     "brand": "Peak Design",
     "model": "Travel Backpack 30L Sage",
     "category": "Bags & Packs",
@@ -572,21 +559,21 @@
     "notes": "EDC Bag · EDC Bag"
   },
   {
-    "id": "seed-18",
-    "createdAt": "2024-01-01T00:00:45.000Z",
+    "id": "seed-17",
+    "createdAt": "2024-01-01T00:00:44.000Z",
     "brand": "Peak Design",
-    "model": "Travel Tripod",
-    "category": "Tripods & Monopods",
+    "model": "Anchor Links",
+    "category": "Carry Accessories",
     "serial": "",
-    "price": 178.65,
-    "quantity": 1,
+    "price": 0,
+    "quantity": 5,
     "pack": false,
     "purchaseDate": "",
-    "notes": "Primary Tripod · eBay"
+    "notes": "Came with Slide and Cuff · Peak Design"
   },
   {
-    "id": "seed-19",
-    "createdAt": "2024-01-01T00:00:46.000Z",
+    "id": "seed-18",
+    "createdAt": "2024-01-01T00:00:45.000Z",
     "brand": "Peak Design",
     "model": "Travel Tripod Tool Kit",
     "category": "Support Accessories",
@@ -598,8 +585,8 @@
     "notes": "For Taking On and Off Plate · Amazon"
   },
   {
-    "id": "seed-1a",
-    "createdAt": "2024-01-01T00:00:47.000Z",
+    "id": "seed-19",
+    "createdAt": "2024-01-01T00:00:46.000Z",
     "brand": "Peak Design",
     "model": "Universal Head Adapter",
     "category": "Support Accessories",
@@ -611,8 +598,34 @@
     "notes": "For Using Video Head with Travel Tripod · B&H Photo"
   },
   {
+    "id": "seed-1a",
+    "createdAt": "2024-01-01T00:00:47.000Z",
+    "brand": "Peak Design",
+    "model": "Travel Tripod",
+    "category": "Tripods & Monopods",
+    "serial": "",
+    "price": 178.65,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Primary Tripod · eBay"
+  },
+  {
     "id": "seed-1b",
     "createdAt": "2024-01-01T00:00:48.000Z",
+    "brand": "Peak Design",
+    "model": "Pro Plate",
+    "category": "Support Accessories",
+    "serial": "",
+    "price": 6.34,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "Extra Plate · Peak Design"
+  },
+  {
+    "id": "seed-1c",
+    "createdAt": "2024-01-01T00:00:49.000Z",
     "brand": "RØDE",
     "model": "3.5mm TRS to TRS Patch Cable",
     "category": "Audio",
@@ -624,8 +637,8 @@
     "notes": "Came with Røde Mic · Amazon"
   },
   {
-    "id": "seed-1c",
-    "createdAt": "2024-01-01T00:00:49.000Z",
+    "id": "seed-1d",
+    "createdAt": "2024-01-01T00:00:50.000Z",
     "brand": "RØDE",
     "model": "VideoMicro II",
     "category": "Audio",
@@ -637,8 +650,8 @@
     "notes": "Shotgun Mic · Amazon"
   },
   {
-    "id": "seed-1d",
-    "createdAt": "2024-01-01T00:00:50.000Z",
+    "id": "seed-1e",
+    "createdAt": "2024-01-01T00:00:51.000Z",
     "brand": "Ruggard",
     "model": "11 x 11\" Padded Equipment Wrap",
     "category": "Camera Accessories",
@@ -650,8 +663,8 @@
     "notes": "For the 55mm & 10-18mm · B&H Photo"
   },
   {
-    "id": "seed-1e",
-    "createdAt": "2024-01-01T00:00:51.000Z",
+    "id": "seed-1f",
+    "createdAt": "2024-01-01T00:00:52.000Z",
     "brand": "Ruggard",
     "model": "15 x 15\" Padded Equipment Wrap",
     "category": "Camera Accessories",
@@ -663,8 +676,8 @@
     "notes": "For the 18-150mm & 18-50mm · B&H Photo"
   },
   {
-    "id": "seed-1f",
-    "createdAt": "2024-01-01T00:00:52.000Z",
+    "id": "seed-1g",
+    "createdAt": "2024-01-01T00:00:53.000Z",
     "brand": "Ruggard",
     "model": "3-Pocket Filter Pouch",
     "category": "Filter Accessories",
@@ -674,19 +687,6 @@
     "pack": false,
     "purchaseDate": "",
     "notes": "Smaller Lens Filter Pouch · B&H Photo"
-  },
-  {
-    "id": "seed-1g",
-    "createdAt": "2024-01-01T00:00:53.000Z",
-    "brand": "Sigma",
-    "model": "18-50mm F2.8 DC DN Contemporary",
-    "category": "Camera Lenses",
-    "serial": "",
-    "price": 659,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "B&H Photo"
   },
   {
     "id": "seed-1h",
@@ -704,6 +704,19 @@
   {
     "id": "seed-1i",
     "createdAt": "2024-01-01T00:00:55.000Z",
+    "brand": "Sigma",
+    "model": "18-50mm F2.8 DC DN Contemporary",
+    "category": "Camera Lenses",
+    "serial": "",
+    "price": 659,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "B&H Photo"
+  },
+  {
+    "id": "seed-1j",
+    "createdAt": "2024-01-01T00:00:56.000Z",
     "brand": "SPUDZ",
     "model": "Microfiber Lens Cleaner",
     "category": "Maintenance",
@@ -715,36 +728,23 @@
     "notes": "Amazon"
   },
   {
-    "id": "seed-1j",
-    "createdAt": "2024-01-01T00:00:56.000Z",
-    "brand": "Tiffen",
-    "model": "Circular Polarizer Filter 43mm",
-    "category": "Filters",
-    "serial": "",
-    "price": 18.99,
-    "quantity": 1,
-    "pack": false,
-    "purchaseDate": "",
-    "notes": "B&H Photo"
-  },
-  {
     "id": "seed-1k",
     "createdAt": "2024-01-01T00:00:57.000Z",
     "brand": "Tiffen",
-    "model": "Circular Polarizer Filter 55mm",
-    "category": "Filters",
+    "model": "Filter Pouch",
+    "category": "Filter Accessories",
     "serial": "",
-    "price": 18.99,
+    "price": 0,
     "quantity": 1,
     "pack": false,
     "purchaseDate": "",
-    "notes": "B&H Photo"
+    "notes": "Taller Filter Pouch · Amazon"
   },
   {
     "id": "seed-1l",
     "createdAt": "2024-01-01T00:00:58.000Z",
     "brand": "Tiffen",
-    "model": "Circular Polarizer Filter 67mm",
+    "model": "Circular Polarizer Filter 43mm",
     "category": "Filters",
     "serial": "",
     "price": 18.99,
@@ -757,18 +757,31 @@
     "id": "seed-1m",
     "createdAt": "2024-01-01T00:00:59.000Z",
     "brand": "Tiffen",
-    "model": "Filter Pouch",
-    "category": "Filter Accessories",
+    "model": "Circular Polarizer Filter 55mm",
+    "category": "Filters",
     "serial": "",
-    "price": 0,
+    "price": 18.99,
     "quantity": 1,
     "pack": false,
     "purchaseDate": "",
-    "notes": "Taller Filter Pouch · Amazon"
+    "notes": "B&H Photo"
   },
   {
     "id": "seed-1n",
     "createdAt": "2024-01-01T00:01:00.000Z",
+    "brand": "Tiffen",
+    "model": "Circular Polarizer Filter 67mm",
+    "category": "Filters",
+    "serial": "",
+    "price": 18.99,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "B&H Photo"
+  },
+  {
+    "id": "seed-1o",
+    "createdAt": "2024-01-01T00:01:01.000Z",
     "brand": "Tiffen",
     "model": "Neutral Density 0.6 Filter 55mm",
     "category": "Filters",
@@ -780,8 +793,8 @@
     "notes": "B&H Photo"
   },
   {
-    "id": "seed-1o",
-    "createdAt": "2024-01-01T00:01:01.000Z",
+    "id": "seed-1p",
+    "createdAt": "2024-01-01T00:01:02.000Z",
     "brand": "Tiffen",
     "model": "UV Protector Filter 43mm",
     "category": "Filters",
@@ -793,8 +806,8 @@
     "notes": "B&H Photo"
   },
   {
-    "id": "seed-1p",
-    "createdAt": "2024-01-01T00:01:02.000Z",
+    "id": "seed-1q",
+    "createdAt": "2024-01-01T00:01:03.000Z",
     "brand": "Tiffen",
     "model": "UV Protector Filter 49mm",
     "category": "Filters",
@@ -806,21 +819,21 @@
     "notes": "Amazon"
   },
   {
-    "id": "seed-1q",
-    "createdAt": "2024-01-01T00:01:03.000Z",
+    "id": "seed-1r",
+    "createdAt": "2024-01-01T00:01:04.000Z",
     "brand": "Tiffen",
     "model": "UV Protector Filter 55mm",
     "category": "Filters",
     "serial": "",
     "price": 19.9,
-    "quantity": 1,
+    "quantity": 2,
     "pack": false,
     "purchaseDate": "",
     "notes": "Amazon"
   },
   {
-    "id": "seed-1r",
-    "createdAt": "2024-01-01T00:01:04.000Z",
+    "id": "seed-1s",
+    "createdAt": "2024-01-01T00:01:05.000Z",
     "brand": "Tiffen",
     "model": "UV Protector Filter 67mm",
     "category": "Filters",
@@ -832,8 +845,34 @@
     "notes": "B&H Photo"
   },
   {
-    "id": "seed-1s",
-    "createdAt": "2024-01-01T00:01:05.000Z",
+    "id": "seed-1t",
+    "createdAt": "2024-01-01T00:01:06.000Z",
+    "brand": "UGreen",
+    "model": "Micro HDMI to HDMI",
+    "category": "Camera Accessories",
+    "serial": "",
+    "price": 9.99,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "For Webcam Mode · Amazon"
+  },
+  {
+    "id": "seed-1u",
+    "createdAt": "2024-01-01T00:01:07.000Z",
+    "brand": "UGreen",
+    "model": "Video Capture Card",
+    "category": "Camera Accessories",
+    "serial": "",
+    "price": 19.79,
+    "quantity": 1,
+    "pack": false,
+    "purchaseDate": "",
+    "notes": "For Webcam Mode · Amazon"
+  },
+  {
+    "id": "seed-1v",
+    "createdAt": "2024-01-01T00:01:08.000Z",
     "brand": "Veria Islanders",
     "model": "Savvy 35L",
     "category": "Bags & Packs",
@@ -845,8 +884,8 @@
     "notes": "For Large Camera Cube · Gift"
   },
   {
-    "id": "seed-1t",
-    "createdAt": "2024-01-01T00:01:06.000Z",
+    "id": "seed-1w",
+    "createdAt": "2024-01-01T00:01:09.000Z",
     "brand": "Voyager",
     "model": "11 in. Tool Bag",
     "category": "Bags & Packs",
@@ -858,10 +897,10 @@
     "notes": "For Tripod Gear · Harbor Freight"
   },
   {
-    "id": "seed-1u",
-    "createdAt": "2024-01-01T00:01:07.000Z",
+    "id": "seed-1x",
+    "createdAt": "2024-01-01T00:01:10.000Z",
     "brand": "VRIG",
-    "model": "Cold Shoe for DJI Transmitter",
+    "model": "Cold Shoe for DJI",
     "category": "Camera Accessories",
     "serial": "",
     "price": 9.99,
